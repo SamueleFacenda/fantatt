@@ -14,3 +14,6 @@ TODO:
 - [ ] score assignement (shoud think about something smart)
 - [ ] match simulation (A-X and score comparison)
  
+https://stackoverflow.com/questions/21771025/how-do-i-replace-the-default-source-folders-for-gradle
+https://github.com/NixOS/nixpkgs/blob/c1f0be03736e6d5ab4d19e867e6684686203eee8/pkgs/games/mindustry/default.nix#L127
+https://www.baeldung.com/spring-mvc-static-resources

@@ -1,8 +1,7 @@
-# first line
+# nix comments
 {
   description = "Fantasy tabletennis!";
 
-  # Nixpkgs / NixOS version to use.
   inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
@@ -18,49 +17,29 @@
 
         packages = rec {
           default = fitet-parser;
-          fitet-parser = pkgs.python3.pkgs.buildPythonApplication {
-            pname = "fitet-parser";
-            src = ./.;
-            version = 0.1 .0;
-            pyproject = true;
-            #format = "pyproject";
-
-            propagatedBuildInputs = with pkgs.python3.pkgs; [
-              beautifulsoup4
-              requests
-              icecream
-              sqlalchemy
-            ];
-
-            nativeBuildInputs = with pkgs; [
-              python3.pkgs.setuptools
-            ];
-
-          };
+          fitet-parser = pkgs.callpackage (import ./nix/fitet-parser.nix) {} ;
         };
 
         apps = {
           default = {
             type = "app";
-            program = "${self.packages.${system}.default}/bin/fitet-runner";
+            program = "${self.packages.${system}.fitet-parser}/bin/fitet-runner";
           };
         };
 
         devShells = {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              php
               (python3.withPackages (ps: with ps; [
                 beautifulsoup4
                 requests
                 icecream
-                pillow
                 tqdm
-                pandas
-                pyautogui
-                keyboard
                 sqlalchemy
               ]))
+              
+              jdk21
+              
             ];
 
             #shellHook = ''
