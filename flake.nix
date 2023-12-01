@@ -40,6 +40,9 @@
               
               jdk21
               
+              nodejs_20
+              yarn
+              create-react-app
             ];
 
             #shellHook = ''
