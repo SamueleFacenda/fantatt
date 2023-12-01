@@ -17,7 +17,8 @@
 
         packages = rec {
           default = fitet-parser;
-          fitet-parser = pkgs.callpackage (import ./nix/fitet-parser.nix) {} ;
+          fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {} ;
+          fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {} ;
         };
 
         apps = {
