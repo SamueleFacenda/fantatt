@@ -20,7 +20,6 @@ plugins {
 }
 
 group = "com.fantatt"
-version = "0.0.1-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -60,4 +59,12 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.register("resolveDependencies") {
+    doLast {
+        rootProject.allprojects { project: Project ->
+            project.configuration.findAll{c: Configuration -> c.canBeResolved}.forEach{c: Configuration -> c.resolve()}
+        }
+    }
 }

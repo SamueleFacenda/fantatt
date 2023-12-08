@@ -19,6 +19,7 @@
           default = fitet-parser;
           fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {} ;
           fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {} ;
+          fantatt-backend = pkgs.callPackage (import ./nix/fantatt-backend.nix) {} ;
         };
 
         apps = {
@@ -46,11 +47,6 @@
               yarn
               create-react-app
             ];
-
-            #shellHook = ''
-            #  exec zsh
-            #'';
-
           };
 
         };
