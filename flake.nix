@@ -39,7 +39,8 @@
                 sqlalchemy
               ]))
               
-              jdk21
+              jdk17
+              gradle_8
               
               nodejs_20
               yarn
