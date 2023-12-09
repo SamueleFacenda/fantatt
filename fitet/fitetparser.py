@@ -156,6 +156,9 @@ def make_match_from_girone_row(row):
 
     if one == '<?>' or two == '<?>':
         return None
+        
+    if re.search(r"\d{1,2}/\d{1,2} \d{1,2}:\d{1,2}", score):
+        return None # is date of not played match
 
     one = one.title().strip()
     two = two.title().strip()
