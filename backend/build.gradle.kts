@@ -63,8 +63,9 @@ tasks.withType<Test> {
 
 tasks.register("resolveDependencies") {
     doLast {
-        rootProject.allprojects { project: Project ->
-            project.configuration.findAll{c: Configuration -> c.canBeResolved}.forEach{c: Configuration -> c.resolve()}
+        rootProject.allprojects.forEach { project ->
+            val configurations = project.buildscript.configurations + project.configurations
+            configurations.filter { it.isCanBeResolved }.forEach { it.resolve() }
         }
     }
 }

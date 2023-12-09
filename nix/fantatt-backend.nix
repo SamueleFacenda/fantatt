@@ -28,7 +28,7 @@ let
           | sh
       '';
       outputHashMode = "recursive";
-      outputHash = lib.fakeHash;
+      outputHash = "sha256-6n0edTHZap0pA9CH6KhA6BiOYOvzqtODfwc8gxkJOMI=";
   };
 in
 
@@ -36,11 +36,11 @@ stdenv.mkDerivation {
   inherit pname version;
   src = ./.. ; 
   nativeBuildInputs = [ gradle_8 makeWrapper ];
-  patchPhase = ''
+  postPatch = ''
     # point to offline repo
     # copied from mindustry derivation
-    sed -ie "1ipluginManagement { repositories { maven { url '${deps}' } } }; " backend/build.gradle.kts
-    sed -ie "s#mavenCentral()#mavenCentral(); maven { url '${deps}' }#g" backend/build.gradle.kts
+    sed -i "1ipluginManagement { repositories { maven { url = \"${deps}\" } } }" settings.gradle.kts
+    sed -i "s#mavenCentral()#mavenCentral(); maven { url = \"${deps}\" }#g" backend/build.gradle.kts
   '';
   
   buildPhase = ''
