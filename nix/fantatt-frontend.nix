@@ -12,8 +12,6 @@ let
     pname = "node-modules";
     yarnLock = ../frontend/yarn.lock;
     packageJSON = ../frontend/package.json;
-    outputHashMode = "recursive";
-    outputHash = lib.fakeSha256;
   };
 in
 
