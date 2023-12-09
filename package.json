@@ -1,0 +1,13 @@
+{
+  "name": "fantatt-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [ "frontend" ],
+  "scripts": {
+    "start": "yarn workspace react-frontend start",
+    "build": "yarn workspace react-frontend build",
+    "test": "yarn workspace react-frontend test",
+    "eject": "yarn workspace react-frontend eject"
+  },
+  "dependencies": {    "react-scripts": "5.0.1"}
+}
