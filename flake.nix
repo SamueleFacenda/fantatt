@@ -2,11 +2,16 @@
 {
   description = "Fantasy tabletennis!";
 
-  inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-
-  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.url = "github:numtide/flake-utils";
+  
+    dream2nix.url = "github:nix-community/dream2nix";
+    nixpkgs.follows = "dream2nix/nixpkgs";
+  };
+  
+  outputs = { self, nixpkgs, flake-utils, dream2nix }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = (nixpkgs.legacyPackages.${system}.extend (final: prev: {
@@ -18,8 +23,16 @@
         packages = rec {
           default = fitet-parser;
           fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {} ;
-          fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {} ;
           fantatt-backend = pkgs.callPackage (import ./nix/fantatt-backend.nix) {} ;
+          fantatt-frontend = dream2nix.lib.evalModules {
+            packageSets.nixpkgs = pkgs;
+            modules = [
+              ./nix/fantatt-frontend.nix
+            ];
+            projectRoot = ./.;
+            projectRootFile = "flake.nix";
+            package = ./.;
+          };
         };
 
         apps = {
