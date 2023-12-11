@@ -44,8 +44,7 @@
               gradle_8
               
               nodejs_20
-              yarn
-              create-react-app
+              yarn-berry
             ];
           };
 
