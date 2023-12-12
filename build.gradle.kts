@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 sourceSets {
     main {
-        kotlin.srcDirs("main/kotlin")
-        resources.srcDirs("main/resources")
+        kotlin.srcDirs("backend/main/kotlin")
+        resources.srcDirs("backend/main/resources")
     }
     test {
-        kotlin.srcDirs("test/kotlin")
+        kotlin.srcDirs("backend/test/kotlin")
     }
 }
 
