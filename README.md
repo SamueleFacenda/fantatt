@@ -17,3 +17,6 @@ TODO:
 https://stackoverflow.com/questions/21771025/how-do-i-replace-the-default-source-folders-for-gradle
 https://github.com/NixOS/nixpkgs/blob/c1f0be03736e6d5ab4d19e867e6684686203eee8/pkgs/games/mindustry/default.nix#L127
 https://www.baeldung.com/spring-mvc-static-resources
+
+https://github.com/madjam002/yarnpnp2nix
+https://github.com/stephank/yarn-plugin-nixify

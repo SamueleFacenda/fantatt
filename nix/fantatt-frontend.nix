@@ -1,12 +1,52 @@
-{ lib,config, dream2nix }: {
-  imports = [
-    dream2nix.modules.dream2nix.nodejs-package-lock-v3
-    dream2nix.modules.dream2nix.nodejs-granular-v3
-  ];
-  
-  mkDerivation.src = ./..;
-  
-  nodejs-package-lock-v3 = {
-    packageLockFile = "${config.mkDerivation.src}/yarn.lock";
+{ stdenv
+, lib
+, fetchNpmDeps
+, nodejs_20
+}:
+
+let
+  fetchNodeModules = {src, hash}:
+    let 
+      npmCache = fetchNpmDeps {inherit src hash; };
+    in stdenv.mkDerivation {
+      name = "node-modules";
+      dontUnpack = true;      
+      nativeBuildInputs = [ nodejs_20 ];
+      buildPhase = ''
+        echo 'cache = ${npmCache}' >> .npmrc
+        ln -st . ${src}/package-lock.json ${src}/package.json
+        npm clean-install --offline
+      '';
+      installPhase = ''
+        mkdir $out
+        cp -rf node_modules $out
+      '';
+    };
+  nodeDeps = fetchNodeModules {
+    src = ./..;
+    hash = "sha256-KSaRB9G9Yp6Ny9P8ldbP7pM7uGJDAseEvfB3FKgJfaM=";
   };
+in
+
+stdenv.mkDerivation {
+  version = "0.0.1";
+  pname = "fantatt-frontend";
+  src = ./..;
+  nativeBuildInputs = [ nodejs_20 ];
+  
+  # link the entries in node_modules alones to have a writeable node_modules/.cache
+  buildPhase = ''
+    runHook preBuild
+    
+    mkdir node_modules
+    ln -st ./node_modules ${nodeDeps}/node_modules/*
+    npm run build
+    
+    runHook postBuild
+  '';
+  
+  installPhase = ''
+    mkdir $out
+    cp -r build/* $out
+  '';
 }
