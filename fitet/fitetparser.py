@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from functools import lru_cache, partial
 
-from .entities import Match, Player, ChampionshipMatch, Tournament, Persistency, TTEvent
+from .entities import Match, Player, ChampionshipMatch, Tournament, Persistency, TTEvent, TournamentPart
 from .threadutils import WaitableThreadPool
 from .caching import cached
 
@@ -326,24 +326,6 @@ class FitetParser:
         anno = fetch_anno_campionato(campionati[0])
 
         self.pool.map_async(partial(self.add_campionato_matches, anno=anno), campionati)
-
-    def add_torneo_matches(self, name, id, reg):
-        event = Tournament(id, reg)
-        if event.name in self._already_parsed_events_names:
-            return
-        self._already_parsed_events_names.add(event.name)
-        
-        date = re.search(r"\d{2}/\d{2}/\d{4}", name).group(0)
-        event.date = datetime.strptime(date, "%d/%m/%Y")
-
-        tabelloni = fetch_tabelloni(id, reg)
-        if tabelloni is None:
-            # not played yet
-            return
-
-        # keys are names
-        # values are paths
-        self.pool.starmap_async(partial(self.add_tabellone, event=event), tabelloni.items())
     
     def add_tornei_matches(self, reg, types):
         tornei = self.pool.imap_unordered(partial(fetch_tornei, region=reg), types)
@@ -352,22 +334,52 @@ class FitetParser:
             names_ids = [(name, val["IDT"]) for name, val in torneo_type_dict.items()]
             self.pool.starmap_async(partial(self.add_torneo_matches, reg=reg), names_ids)
 
-    def add_tabellone(self, name, path, event):
-        # TODO check the page of incomplete match records
+    def add_torneo_matches(self, name, id, reg):
+        event = Tournament(id, reg)
+        if event.name in self._already_parsed_events_names:
+            return
 
+        date = re.search(r"\d{2}/\d{2}/\d{4}", name).group(0)
+        date = datetime.strptime(date, "%d/%m/%Y")
+
+        tabelloni = fetch_tabelloni(id, reg)
+        if tabelloni is None:
+            # not played yet
+            return
+
+        # keys are names
+        # values are paths
+        complete = all(self.pool.starmap(partial(self.add_tabellone, date=date, id=id, reg=reg), tabelloni.items()))
+        if complete:
+            self._already_parsed_events_names.add(event.name)
+            TTEvent.persist(self.persistency, event)
+    
+    # returns True if the tabellone is complete and therefore added to the db
+    def add_tabellone(self, name, path, date, id, reg):
+        event = TournamentPart(id, reg, name, date)
+        if event.name in self._already_parsed_events_names:
+            return True
+
+        # TODO check the page of incomplete match records
+        soup = make_soup_res("risultati/tornei/tabelloni/" + path)
+
+        is_incomplete = False # TODO
+        if is_incomplete:
+            return False
+        self._already_parsed_events_names.add(event.name)
 
         if "gironi" in name:
-            self.add_tabellone_gironi(path, event)
+            self.add_tabellone_gironi(soup, event)
         elif "eliminatoria" in name:
-            self.add_tabellone_eliminatorie(path, event)
+            self.add_tabellone_eliminatorie(soup, event)
         elif "Top AB" in name:
-            pass # TODO schifo
+            pass # TODO che schifo
         else:
             print("Unknown tabellone type", name)
             print("Path", path)
+        return True
 
-    def add_tabellone_eliminatorie(self, path, event):
-        soup = make_soup_res("risultati/tornei/tabelloni/" + path)
+    def add_tabellone_eliminatorie(self, soup, event):
         tr = soup.find_all("tr")
         if soup.find("i"):
             # i is intestation text for the two tables
@@ -381,8 +393,7 @@ class FitetParser:
 
         Match.persist_all(self.persistency, out)
 
-    def add_tabellone_gironi(self, path, event):
-        soup = make_soup_res("risultati/tornei/tabelloni/" + path)
+    def add_tabellone_gironi(self, soup, event):
         # get all tr withoud bgcolor
         trs = soup.find_all("tr", {"bgcolor": None})
         out = [make_match_from_girone_row(tr) for tr in trs]

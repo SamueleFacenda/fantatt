@@ -78,7 +78,7 @@ class Match(Base):
 
     @staticmethod
     def persist_all(persistency, matches):
-        with persistency.lock:
+        with persistency.write_lock:
             with persistency.session.begin():
                 persistency.session.add_all(matches)
 
@@ -102,12 +102,21 @@ class TTEvent(Base):
             stmt = select(TTEvent.name).distinct()
             return set(persistency.session.scalars(stmt))
 
+    @staticmethod
+    def persist(persistency, event):
+        with persistency.write_lock:
+            with persistency.session.begin():
+                persistency.session.add(event)
+
 
 # like, trentino-2021-1-1-over-4000-gironi, trentino-2021-1-1-over-4000-eliminatorie...
 class TournamentPart(TTEvent):
     def __init__(self, id, reg, specs, date=None):
-        # TODO think more about the name, the specs are recurring, maybe they should another table/attribute
-        super().__init__(f"torneo-{id}-{reg}-{specs}" date)
+        super().__init__(f"torneo-{id}-{reg}-{specs}", date)
+
+class Tournament(TTEvent):
+    def __init__(self, id, reg, date=None):
+        super().__init__(f"torneo-{id}-{reg}", date)
 
 class ChampionshipMatch(TTEvent):
     def __init__(self, camp, inc, date=None):
@@ -143,7 +152,7 @@ class Persistency:
         self.Session = sessionmaker(self.engine, autobegin=True)
         self.Session = scoped_session(self.Session)
 
-        self.lock = Lock()
+        self.write_lock = Lock()
 
         @event.listens_for(self.Session, 'before_flush')
         def add_players_references(session, flush_context, instances):

@@ -65,6 +65,10 @@ class WaitableThreadPool(ThreadPool):
         self.counter.add(len(iterable))
         return super().imap_unordered(self.counter.required(fn), iterable, chunksize)
 
+    def starmap(self, fn, iterable, chunksize=1):
+        self.counter.add(len(iterable))
+        return super().starmap(self.counter.required(fn), iterable, chunksize)
+
 
     def wait_and_end(self):
         self.counter.wait_for_zero()

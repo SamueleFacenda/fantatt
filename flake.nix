@@ -46,7 +46,6 @@
               gradle_8
               
               nodejs_20
-              yarn-berry
             ];
           };
 
