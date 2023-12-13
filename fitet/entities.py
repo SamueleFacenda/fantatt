@@ -16,7 +16,6 @@ class Player(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True, index=True)
     score: Mapped[int | None] = mapped_column()
-    # TODO think about lazy='selectin'
     matches: Mapped[List["Match"]] = relationship(primaryjoin="or_(Player.id==Match.one_id, Player.id==Match.two_id)" , cascade="merge, delete, expunge, delete-orphan", lazy='select', viewonly=True) 
 
     def __init__(self, name, score=None):
@@ -93,11 +92,6 @@ class TTEvent(Base):
 
     def __init__(self, name, date=None):
         super().__init__(name=name, date=date)
-        
-    @staticmethod
-    @abstractmethod
-    def get_name(a, b):
-        raise NotImplementedError
 
     def __repr__(self):
         return f"<TTEvent {self.name} {self.date}>"
@@ -109,19 +103,16 @@ class TTEvent(Base):
             return set(persistency.session.scalars(stmt))
 
 
-class ABTTEvent(TTEvent):
-    def __init__(self, a, b, date=None):
-        super().__init__(self.get_name(a, b), date)
+# like, trentino-2021-1-1-over-4000-gironi, trentino-2021-1-1-over-4000-eliminatorie...
+class TournamentPart(TTEvent):
+    def __init__(self, id, reg, specs, date=None):
+        # TODO think more about the name, the specs are recurring, maybe they should another table/attribute
+        super().__init__(f"torneo-{id}-{reg}-{specs}" date)
 
-class Tournament(ABTTEvent):
-    @staticmethod
-    def get_name(id, reg):
-        return f"torneo-{id}-{reg}"
+class ChampionshipMatch(TTEvent):
+    def __init__(self, camp, inc, date=None):
+        super().__init__(f"partita-{camp}-{inc}", date)
 
-class ChampionshipMatch(ABTTEvent):
-    @staticmethod
-    def get_name(camp, inc):
-        return f"partita-{camp}-{inc}"
 
 def find_or_create_by_name(session, name, Obj_class, cached_results, **kwargs):
     if name in cached_results:

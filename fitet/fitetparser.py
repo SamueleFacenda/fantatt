@@ -17,6 +17,7 @@ class Error404(Exception):
     pass
 
 URL = "https://portale.fitet.org/"
+NEW_PLAYER_SCORE = 2000
 
 
 ### Urls fetchers ###
@@ -117,9 +118,7 @@ def fetch_player_id(name, classifica=211):
 NO_ATLETA_STR = "Non sono presenti dettagli per questo atleta in questa classifica!"
 @cached
 def validate_player_id(id, classifica=211):
-    #res = r.get(URL + "risultati/new_rank/dettaglioatleta_unica.php", params={"ATLETA": id, "ID_CLASS": classifica, "ZU": 1, "AVVERSARIO": 0}).text
     soup = make_soup_res("risultati/new_rank/dettaglioatleta_unica.php", params={"ATLETA": id, "ID_CLASS": classifica, "ZU": 1, "AVVERSARIO": 0}, headers={"X-Requested-With": "XMLHttpRequest"})
-    # get body text
     res = soup.body.text
     return NO_ATLETA_STR != res.strip()
 
@@ -142,8 +141,8 @@ def make_player(name):
         id = fetch_player_id(name, classifica)
         score = fetch_player_score(id, classifica)
     except ValueError:
-        #player not in the classifica
-        return Player(name)
+        #player not in the classifica (provvisorio)
+        score = NEW_PLAYER_SCORE
     
     return Player(name, score)
 
@@ -251,7 +250,14 @@ def parse_eliminatorie_score(score):
     # reverse the tuple if the score is negative
     return [(max(11,abs(x)+2), abs(x))[::(1 if x >= 0 else -1)] for x in sets]
 
+""" 
 ## Container class for parsing ##
+
+this is a mess of random hardcoded stuff (like strings and regex),
+nosense precedures and queries to html pages, ids and codes,
+but it works and it's fast.
+
+"""
 
 class FitetParser:
 
@@ -274,6 +280,7 @@ class FitetParser:
     def add_all_new_matches(self, wanted_regions=None):
 
         regs = fetch_regioni()
+        # None means all regions
         regs = {k:v for k,v in regs.items() if (not wanted_regions or k in wanted_regions)}
         regs = [x["REG"] for x in regs.values()]
 
@@ -346,6 +353,9 @@ class FitetParser:
             self.pool.starmap_async(partial(self.add_torneo_matches, reg=reg), names_ids)
 
     def add_tabellone(self, name, path, event):
+        # TODO check the page of incomplete match records
+
+
         if "gironi" in name:
             self.add_tabellone_gironi(path, event)
         elif "eliminatoria" in name:
