@@ -6,7 +6,8 @@ __pycache__
 .gradle
 /backend/build
 result
-
+*.drawio.dtmp
+*.drawio.bkp
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

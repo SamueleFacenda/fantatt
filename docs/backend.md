@@ -13,3 +13,11 @@ For every league there is a score for each manager, a scoreboard, an history(nex
 a match calendar.
 A double italian round is used (gone and return?)
 
+In the db, the player in a team has an order number, the lower three
+players of a team (1,2,3) are the main (X,Y,Z or A,B,C),
+the other ordered are the reserves.
+
+One choice, the game data (results, current status, etc.) are saved in
+the db or computed everytime? They are lightweight to cumpute,
+but it's not the best decision.
+
