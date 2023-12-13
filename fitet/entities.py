@@ -102,11 +102,10 @@ class TTEvent(Base):
             stmt = select(TTEvent.name).distinct()
             return set(persistency.session.scalars(stmt))
 
-    @staticmethod
-    def persist(persistency, event):
+    def persist(self, persistency):
         with persistency.write_lock:
             with persistency.session.begin():
-                persistency.session.add(event)
+                persistency.session.add(self)
 
 
 # like, trentino-2021-1-1-over-4000-gironi, trentino-2021-1-1-over-4000-eliminatorie...

@@ -11,8 +11,6 @@ from .entities import Match, Player, ChampionshipMatch, Tournament, Persistency,
 from .threadutils import WaitableThreadPool
 from .caching import cached
 
-from sqlalchemy import inspect
-
 class Error404(Exception): 
     pass
 
@@ -258,7 +256,6 @@ nosense precedures and queries to html pages, ids and codes,
 but it works and it's fast.
 
 """
-
 class FitetParser:
 
     def __init__(self, dump_path=None, verbose=False):
@@ -352,7 +349,7 @@ class FitetParser:
         complete = all(self.pool.starmap(partial(self.add_tabellone, date=date, id=id, reg=reg), tabelloni.items()))
         if complete:
             self._already_parsed_events_names.add(event.name)
-            TTEvent.persist(self.persistency, event)
+            event.persist(self.persistency)
     
     # returns True if the tabellone is complete and therefore added to the db
     def add_tabellone(self, name, path, date, id, reg):
