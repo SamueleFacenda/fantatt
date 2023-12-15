@@ -21,3 +21,8 @@ One choice, the game data (results, current status, etc.) are saved in
 the db or computed everytime? They are lightweight to cumpute,
 but it's not the best decision.
 
+## DB notes (integrity clauses)
+Cheks not embebbed in the db schema
+A player can belong to more teams, but only one team per league.
+The season of a round of a match must be the same of the league of the teams playing. (hard to check, useless)
+
