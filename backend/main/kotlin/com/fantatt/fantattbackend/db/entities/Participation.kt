@@ -3,21 +3,22 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 import java.io.Serializable
 
-@Embeddable
-class PartecipationId (
-    val teamId: Long,
-    val playerId: Long,
-    val roundId: Long
+class ParticipationId (
+    val team: Long,
+    val player: Long,
+    val round: Long
 ): Serializable
 
 @Entity
-class Partecipation (
-    @EmbeddedId
-    val id: PartecipationId,
+@IdClass(ParticipationId::class)
+class Participation (
+    @Id
     @ManyToOne
     val team: Team,
+    @Id
     @ManyToOne
     val player: Player,
+    @Id
     @ManyToOne
     val round: Round,
     val score: Int,

@@ -12,5 +12,7 @@ class User(
     @Column(nullable = false)
     val password: String,
     @Column(unique = true, nullable = false)
-    val email: String
+    val email: String,
+    @OneToMany
+    val teams: List<Team>
 )

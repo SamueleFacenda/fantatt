@@ -1,6 +1,8 @@
 package com.fantatt.fantattbackend.db.entities
 
 import jakarta.persistence.*
+
+@Entity
 class Season (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
