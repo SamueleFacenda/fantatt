@@ -8,6 +8,7 @@ class MatchId (
     val teamX: Long,
     val round: Long
 ): Serializable
+
 @Entity
 @IdClass(MatchId::class)
 class Match (
