@@ -4,9 +4,6 @@ import jakarta.persistence.*
 
 @Entity
 class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
     @Column(unique = true, nullable = false)
     val username: String,
     @Column(nullable = false)
@@ -14,5 +11,8 @@ class User(
     @Column(unique = true, nullable = false)
     val email: String,
     @OneToMany
-    val teams: List<Team>
+    val teams: List<Team>?=null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long?=null
 )

@@ -4,9 +4,9 @@ import jakarta.persistence.*
 
 @Entity
 class Player (
+    @Column(unique = true, nullable = false)
+    val name: String,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-    @Column(unique = true, nullable = false)
-    val name: String
+    val id: Long?=null
 )

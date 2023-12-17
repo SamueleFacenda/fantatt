@@ -13,9 +13,9 @@ import java.security.Principal
 
 @RestController
 class LeaguesController(
-    teamRepository: TeamRepository,
-    userRepository: UserRepository,
-    leagueRepository: LeagueRepository
+    val teamRepository: TeamRepository,
+    val userRepository: UserRepository,
+    val leagueRepository: LeagueRepository
 ) {
 
     @PostMapping("/league/create")
@@ -26,7 +26,6 @@ class LeaguesController(
         checkTeamList(teams)
 
         val master = userRepository.findByUsername(principal.name)
-        val league = League(name, master, teams)
     }
 
     fun checkTeamList(teams: List<Team>) {

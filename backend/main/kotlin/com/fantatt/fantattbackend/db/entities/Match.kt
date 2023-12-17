@@ -21,7 +21,7 @@ class Match (
     @Id
     @ManyToOne
     val round: Round,
-    val scoreA: Int,
-    val scoreX: Int,
-    val winner: String
+    val scoreA: Int?=0,
+    val scoreX: Int?=0,
+    val winner: String?=""
 )

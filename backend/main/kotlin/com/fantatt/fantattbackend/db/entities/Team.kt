@@ -4,15 +4,15 @@ import jakarta.persistence.*
 
 @Entity
 class Team (
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val name: String,
+    val credits: Int,
     @ManyToOne
     val league: League,
     @ManyToOne
     val owner: User,
-    val name: String,
-    val credits: Int,
     @ManyToMany
-    val players: List<Player>
+    val players: List<Player>?=null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long?=null
 )
