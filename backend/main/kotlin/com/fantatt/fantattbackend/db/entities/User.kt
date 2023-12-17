@@ -3,6 +3,7 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 
 @Entity
+@Table(indexes = [Index(columnList = "username", unique = true), Index(columnList = "email", unique = true)])
 class User(
     @Column(unique = true, nullable = false)
     val username: String,

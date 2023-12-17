@@ -3,7 +3,7 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 
 @Entity
-class League (
+data class League (
 
     val name: String,
     @ManyToOne

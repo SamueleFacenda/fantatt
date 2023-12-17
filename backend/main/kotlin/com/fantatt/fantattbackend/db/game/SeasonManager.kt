@@ -9,7 +9,7 @@ import java.time.LocalDate
 val SEASON_START: LocalDate = LocalDate.of(0, 10, 1)
 // end of june
 val SEASON_END: LocalDate = LocalDate.of(0, 7, 1)
-val START_YEAR: Int = 2023
+
 /**
  * The season year is the year when the season begun.
  * The current season is the one that must be played

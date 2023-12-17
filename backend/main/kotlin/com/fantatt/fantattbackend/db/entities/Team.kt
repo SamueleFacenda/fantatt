@@ -3,7 +3,7 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 
 @Entity
-class Team (
+data class Team (
     val name: String,
     val credits: Int,
     @ManyToOne
