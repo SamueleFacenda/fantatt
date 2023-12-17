@@ -7,10 +7,8 @@ class Season (
     @Column(unique = true, nullable = false)
     val year: Int,
     @OneToMany
-    val rounds: List<Round>?=null,
+    val rounds: MutableList<Round> = mutableListOf(),
     @OneToMany
-    val leagues: List<League>?=null,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?=null
+    val leagues: MutableList<League> = mutableListOf(),
+    @Id @GeneratedValue val id: Long?=null
 )

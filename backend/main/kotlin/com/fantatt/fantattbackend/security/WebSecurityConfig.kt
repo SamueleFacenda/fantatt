@@ -12,9 +12,7 @@ import org.springframework.security.web.util.matcher.DispatcherTypeRequestMatche
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(
-    val userDetailsService: TTUserDetailsService
-) {
+class WebSecurityConfig() {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -34,6 +32,4 @@ class WebSecurityConfig(
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
 
-    @Bean
-    fun userDetailsService() = userDetailsService
 }

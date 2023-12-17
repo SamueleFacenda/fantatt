@@ -11,8 +11,6 @@ class League (
     @ManyToOne
     val season: Season,
     @OneToMany
-    val teams: List<Team>?=null,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?=null,
+    val teams: MutableList<Team> = mutableListOf(),
+    @Id @GeneratedValue val id: Long?=null,
 )

@@ -9,7 +9,5 @@ class Round (
     val season: Season,
     val startDate: Date,
     val index: Int,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?=null
+    @Id @GeneratedValue val id: Long?=null
 )

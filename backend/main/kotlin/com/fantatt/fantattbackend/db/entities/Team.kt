@@ -11,8 +11,6 @@ class Team (
     @ManyToOne
     val owner: User,
     @ManyToMany
-    val players: List<Player>?=null,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?=null
+    val players: MutableList<Player> = mutableListOf(),
+    @Id @GeneratedValue val id: Long?=null
 )

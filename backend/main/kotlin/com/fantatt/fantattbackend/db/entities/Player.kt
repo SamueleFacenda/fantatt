@@ -6,7 +6,5 @@ import jakarta.persistence.*
 class Player (
     @Column(unique = true, nullable = false)
     val name: String,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?=null
+    @Id @GeneratedValue val id: Long?=null
 )
