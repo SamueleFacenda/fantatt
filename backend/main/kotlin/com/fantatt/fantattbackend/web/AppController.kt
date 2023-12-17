@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 class AppController(
     val userRepository: UserRepository
 ) {
+
     @PostMapping("/register")
     fun register(@RequestBody newUser: User): User {
         if (userRepository.existsByEmailOrUsername(newUser.email, newUser.username)) {
