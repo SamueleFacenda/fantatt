@@ -6,5 +6,6 @@ import jakarta.persistence.*
 class Player (
     @Column(unique = true, nullable = false)
     val name: String,
+    val points: Int,
     @Id @GeneratedValue val id: Long?=null
 )

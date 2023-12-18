@@ -6,6 +6,7 @@ import jakarta.persistence.*
 data class Team (
     val name: String,
     val credits: Int,
+    val points: Int,
     @ManyToOne
     val league: League,
     @ManyToOne

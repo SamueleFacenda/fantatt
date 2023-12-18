@@ -2,17 +2,17 @@ package com.fantatt.fantattbackend.web
 
 import com.fantatt.fantattbackend.db.entities.League
 import com.fantatt.fantattbackend.db.entities.Team
-import com.fantatt.fantattbackend.db.game.LeagueCreator
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import com.fantatt.fantattbackend.game.LeagueCreator
+import com.fantatt.fantattbackend.db.repos.LeagueRepository
+import com.fantatt.fantattbackend.db.repos.TeamRepository
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
 class GameController(
-    val leagueCreator: LeagueCreator
+    val leagueCreator: LeagueCreator,
+    val leagueRepository: LeagueRepository,
+    val teamRepository: TeamRepository
 ) {
 
     @PostMapping("/league/create")
@@ -25,5 +25,14 @@ class GameController(
         )
     }
 
+    @GetMapping("/league/{id}/scoreboard")
+    @ResponseBody
+    fun getScoreboard(@PathVariable id: Long) = teamRepository.findAllByLeagueIdOrderByPointsDesc(id)
+
+    @GetMapping("/team/{id}/lineup")
+    @ResponseBody
+    fun getLineup(@PathVariable id: Long) {
+        TODO()
+    }
 
 }

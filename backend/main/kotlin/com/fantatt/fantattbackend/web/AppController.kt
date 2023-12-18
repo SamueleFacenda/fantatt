@@ -18,4 +18,9 @@ class AppController(
         }
         return userRepository.save(newUser)
     }
+
+    @PostMapping("/user/update")
+    fun updateUser(@RequestBody updatedUser: User): User = TODO()
+
+
 }

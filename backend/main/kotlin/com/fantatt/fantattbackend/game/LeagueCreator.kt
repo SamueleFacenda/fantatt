@@ -1,4 +1,4 @@
-package com.fantatt.fantattbackend.db.game
+package com.fantatt.fantattbackend.game
 
 import com.fantatt.fantattbackend.db.entities.League
 import com.fantatt.fantattbackend.db.entities.Team
