@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class LeagueCreator(
     private val userRepository: UserRepository,
     private val leagueRepository: LeagueRepository,
-    private val seasonManager: SeasonManager,
+    private val calendarManager: CalendarManager,
     private val teamRepository: TeamRepository
 ) {
     fun leagueFrom(masterName: String, leagueName: String, teams: List<Team>): League {
@@ -22,7 +22,7 @@ class LeagueCreator(
             name = leagueName,
             master = master,
             teams = teams.toMutableList(),
-            season = seasonManager.getCurrent()
+            season = calendarManager.getCurrentSeason()
         ))
         teamRepository.saveAll(teams.map { it.copy(league = league) })
         return league

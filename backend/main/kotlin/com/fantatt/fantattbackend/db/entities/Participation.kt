@@ -11,7 +11,7 @@ class ParticipationId (
 
 @Entity
 @IdClass(ParticipationId::class)
-class Participation (
+data class Participation (
     @Id
     @ManyToOne
     val team: Team,

@@ -30,4 +30,20 @@ Requirements: caching of the statis folder (react output with hash names)
 Possibilities:
 - nginx reverse proxy, mask the api and the react assets under one endopoint
 - spring boot assets serving, configurable via env vars, supports caching but not so configurable
-(I cannot cache the index.html)
+(I cannot not cache just the index.html)
+
+## About the game
+
+### Teams
+I'm assuming three people teams with a bench of currently 5
+players, and maybe some auto-switch logic (take from bench if
+the starting player is not playing or from auto-switch if the switch
+has better score).
+
+### Rounds
+Each round is one week long, it starts and end on thursday midnight.
+The easiest think is to not follow the championship calendar, but to
+just use weeks, because there are several championships with different
+calendars. And also when all the championships have a pause, there are 
+tournament. So I will probably implement just a season start, end, season
+pause start and end date mechanism.

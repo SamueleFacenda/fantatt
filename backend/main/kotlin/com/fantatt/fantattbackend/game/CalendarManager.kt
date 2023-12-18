@@ -1,5 +1,6 @@
 package com.fantatt.fantattbackend.game
 
+import com.fantatt.fantattbackend.db.entities.Round
 import com.fantatt.fantattbackend.db.entities.Season
 import com.fantatt.fantattbackend.db.repos.SeasonRepository
 import org.springframework.stereotype.Component
@@ -15,10 +16,10 @@ val SEASON_END: LocalDate = LocalDate.of(0, 7, 1)
  * The current season is the one that must be played
  */
 @Component
-class SeasonManager(
+class CalendarManager(
     val seasonRepository: SeasonRepository
 ) {
-    fun getCurrent(): Season {
+    fun getCurrentSeason(): Season {
         val currentSeasonYear = getCurrentSeasonYear()
         val out = seasonRepository.findByYear(getCurrentSeasonYear())
         return out.orElseGet { seasonRepository.save(Season(currentSeasonYear)) }
@@ -30,5 +31,13 @@ class SeasonManager(
         return if (currentDate > SEASON_END.withYear(currentDate.year))
             currentDate.year
             else currentDate.year -1
+    }
+
+    fun getCurrentRound(): Int {
+        TODO()
+    }
+
+    fun getRound(roundNum: Int, season: Season): Round {
+        TODO()
     }
 }

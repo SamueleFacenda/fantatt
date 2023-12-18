@@ -1,10 +1,12 @@
 package com.fantatt.fantattbackend.web
 
 import com.fantatt.fantattbackend.db.entities.League
+import com.fantatt.fantattbackend.db.entities.Participation
 import com.fantatt.fantattbackend.db.entities.Team
 import com.fantatt.fantattbackend.game.LeagueCreator
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.TeamRepository
+import com.fantatt.fantattbackend.game.LineupManager
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
@@ -12,7 +14,8 @@ import java.security.Principal
 class GameController(
     val leagueCreator: LeagueCreator,
     val leagueRepository: LeagueRepository,
-    val teamRepository: TeamRepository
+    val teamRepository: TeamRepository,
+    val lineupManager: LineupManager
 ) {
 
     @PostMapping("/league/create")
@@ -25,14 +28,15 @@ class GameController(
         )
     }
 
-    @GetMapping("/league/{id}/scoreboard")
+    @GetMapping("/league/{teamId}/scoreboard")
     @ResponseBody
-    fun getScoreboard(@PathVariable id: Long) = teamRepository.findAllByLeagueIdOrderByPointsDesc(id)
+    fun getScoreboard(@PathVariable teamId: Long) = teamRepository.findAllByLeagueIdOrderByPointsDesc(teamId)
 
-    @GetMapping("/team/{id}/lineup")
+    @GetMapping("/team/{teamId}/lineup")
     @ResponseBody
-    fun getLineup(@PathVariable id: Long) {
-        TODO()
+    fun getLineup(@PathVariable teamId: Long): List<Participation> {
+        val team = teamRepository.findById(teamId).orElseThrow { Exception("Team not found") }
+        return lineupManager.getLineup(team)
     }
 
 }
