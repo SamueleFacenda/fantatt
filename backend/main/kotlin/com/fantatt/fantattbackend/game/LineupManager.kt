@@ -18,7 +18,7 @@ class LineupManager(
 ) {
 
     fun getLineup(team: Team,
-                  roundNum: Int = calendarManager.getCurrentRound()
+                  roundNum: Int = calendarManager.getCurrentRoundNum()
     ): List<Participation> {
         // recursion base case
         if (roundNum < 0)
@@ -35,15 +35,15 @@ class LineupManager(
     fun createLineupFromPreviousRound(team: Team, roundNum: Int): List<Participation> {
         val prev = getLineup(team, roundNum - 1)
         val out = prev.map {
-            it.copy(round = roundRepository.findByIndexAndSeason(roundNum, team.league.season)?:
-                throw Exception("Round $roundNum not found"))
-        }
+            it.copy(round = roundRepository.findByIndexAndSeason(roundNum, team.league.season) ?:
+                throw IllegalStateException("Round $roundNum not found") ) }
+
         return participationRepository.saveAll(out).toList()
     }
 
     fun createDefaultLineup(team: Team, roundNum: Int): List<Participation> {
         val players = team.players.take(STARTING_LINEUP_SIZE + BENCH_SIZE).sortedBy { -it.points }
-        val round = calendarManager.getRound(roundNum, team.league.season)
+        val round = roundRepository.findByIndexAndSeason(roundNum, team.league.season)?: throw IllegalStateException("Round $roundNum not found")
         val out = players.mapIndexed {
             index, player -> Participation(
                 player = player,

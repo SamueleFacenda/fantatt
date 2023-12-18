@@ -6,5 +6,5 @@ import java.util.Optional
 
 interface SeasonRepository: CrudRepository<Season, Long> {
     fun existsByYear(year: Int): Boolean
-    fun findByYear(year :Int): Optional<Season>
+    fun findByYear(year :Int): Season?
 }

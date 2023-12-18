@@ -4,12 +4,16 @@ import com.fantatt.fantattbackend.db.entities.Round
 import com.fantatt.fantattbackend.db.entities.Season
 import com.fantatt.fantattbackend.db.repos.SeasonRepository
 import org.springframework.stereotype.Component
+import java.sql.Date
 import java.time.LocalDate
 
 // first of october
 val SEASON_START: LocalDate = LocalDate.of(0, 10, 1)
 // end of june
-val SEASON_END: LocalDate = LocalDate.of(0, 7, 1)
+val SEASON_END: LocalDate = LocalDate.of(1, 7, 1)
+// Christmas break
+val SEASON_PAUSE: LocalDate = LocalDate.of(0, 12, 25)
+val SEASON_RESUME: LocalDate = LocalDate.of(1, 1, 10)
 
 /**
  * The season year is the year when the season begun.
@@ -22,7 +26,7 @@ class CalendarManager(
     fun getCurrentSeason(): Season {
         val currentSeasonYear = getCurrentSeasonYear()
         val out = seasonRepository.findByYear(getCurrentSeasonYear())
-        return out.orElseGet { seasonRepository.save(Season(currentSeasonYear)) }
+        return out ?: createSeason(currentSeasonYear)
     }
 
     fun getCurrentSeasonYear(): Int {
@@ -33,11 +37,22 @@ class CalendarManager(
             else currentDate.year -1
     }
 
-    fun getCurrentRound(): Int {
+    fun createSeason(year: Int): Season {
+        val season = Season(year)
+        seasonRepository.save(season)
+        generateRounds(season)
+        return season
+    }
+
+    fun generateRounds(season: Season) {
         TODO()
     }
 
-    fun getRound(roundNum: Int, season: Season): Round {
-        TODO()
+    fun getCurrentRoundNum(): Int {
+        val rounds = getCurrentSeason().rounds
+        val currentDate = Date.valueOf(LocalDate.now())
+        return rounds.filter {
+            it.startDate <= currentDate
+        }.maxByOrNull(Round::startDate)?.index ?: throw IllegalStateException("No round found, should be next season")
     }
 }
