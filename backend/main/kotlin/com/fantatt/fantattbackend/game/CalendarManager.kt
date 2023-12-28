@@ -45,6 +45,23 @@ class CalendarManager(
     }
 
     fun generateRounds(season: Season) {
+        val starts = getRoundDatesForYear(season.year.toLong())
+
+    }
+
+    private fun getRoundDatesForYear(year: Long): List<LocalDate> {
+        val beforeChristmas = generateDatesInInterval(
+            start = SEASON_START.plusYears(year),
+            end = SEASON_PAUSE.plusYears(year)
+        )
+        val afterChristmas = generateDatesInInterval(
+            start = SEASON_RESUME.plusYears(year),
+            end = SEASON_END.plusYears(year)
+        )
+        return beforeChristmas + afterChristmas
+    }
+
+    fun generateDatesInInterval(start: LocalDate, end: LocalDate): List<LocalDate> {
         TODO()
     }
 
