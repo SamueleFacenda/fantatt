@@ -7,11 +7,11 @@
 , perl
 , jre_headless
 , makeWrapper
+, version ? "0.0.1"
 }:
 
 let
   pname = "fantatt-backend";
-  version = "0.0.1";
   deps = stdenv.mkDerivation {
     pname = "${pname}-deps";
     inherit version;

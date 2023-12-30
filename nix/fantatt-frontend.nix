@@ -2,6 +2,7 @@
 , lib
 , fetchNpmDeps
 , nodejs_20
+, version ? "0.0.1"
 }:
 
 let
@@ -29,7 +30,7 @@ let
 in
 
 stdenv.mkDerivation {
-  version = "0.0.1";
+  inherit version;
   pname = "fantatt-frontend";
   src = ./..;
   nativeBuildInputs = [ nodejs_20 ];

@@ -14,14 +14,15 @@
         pkgs = (nixpkgs.legacyPackages.${system}.extend (final: prev: {
           # overlays
         }));
+        version = "0.0.1";
       in
       {
 
         packages = rec {
           default = fitet-parser;
-          fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {};
-          fantatt-backend = pkgs.callPackage (import ./nix/fantatt-backend.nix) {};      
-          fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {};      
+          fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {inherit version;};
+          fantatt-backend = pkgs.callPackage (import ./nix/fantatt-backend.nix) {inherit version;};      
+          fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {inherit version;};
         };
 
         apps = {
