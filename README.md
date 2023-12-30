@@ -1,6 +1,15 @@
-# A simple scraper for the fitet result portal
+# Fantasy tabletennis
+One project, one monorepo, 3 modules, 3 build system
+
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
+## info
+
+read the docs (in /docs).
+
+## A simple scraper for the fitet result portal
 Not so simple in the end, features:
-- multithreading (more than 20 take down the website)
+- multithreading (more than 20 threads takes down the website)
 - persistency (data are saved in a relational db, for a complete list just look 
 at [sqlalchemy](https://sqlalchemy.org))
 - db update operation optimization
@@ -18,9 +27,5 @@ TODO:
 - [ ] update fitet parser request discharging (some tournaments are present 
 but not completely updated)
  
-https://stackoverflow.com/questions/21771025/how-do-i-replace-the-default-source-folders-for-gradle
 https://github.com/NixOS/nixpkgs/blob/c1f0be03736e6d5ab4d19e867e6684686203eee8/pkgs/games/mindustry/default.nix#L127
 https://www.baeldung.com/spring-mvc-static-resources
-
-https://github.com/madjam002/yarnpnp2nix
-https://github.com/stephank/yarn-plugin-nixify
