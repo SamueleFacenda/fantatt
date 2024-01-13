@@ -1,6 +1,9 @@
 # Fantasy tabletennis
 One project, one monorepo, 3 modules, 3 build system
 
+> [!IMPORTANT]  
+> Very WIP, just an idea for now.
+
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
 
 ## info
