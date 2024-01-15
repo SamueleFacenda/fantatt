@@ -43,8 +43,8 @@
                 sqlalchemy
               ]))
               
-              jdk17
-              (gradle_8.override {java = jdk17;})
+              jdk21
+              (gradle_8.override {java = jdk21_headless;})
               
               nodejs_20
             ];

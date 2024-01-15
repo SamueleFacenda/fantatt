@@ -3,20 +3,44 @@
   stdenv
 , lib
 , gradle_8
-, jdk17_headless
+, jdk21_headless
+, jre_minimal
 , perl
-, jre_headless
 , makeWrapper
 , version ? "0.0.1"
 }:
 
 let
-  pname = "fantatt-backend";
+  gradle = gradle_8.override {java = jdk21_headless;};
+  jre = jre_minimal.override {
+    jdk = jdk21_headless;
+    # retrived with 'find /nix/store/<hash>fantatt-backend-deps-0.0.1 -name '*.jar' -exec jdeps --list-deps --ignore-missing-deps '{}' ';' | sort | uniq'
+    modules = [
+      "java.base"
+      "java.compiler"
+      "java.datatransfer"
+      "java.desktop"
+      "java.instrument"
+      "java.logging"
+      "java.management"
+      "java.naming"
+      "java.net.http"
+      "java.prefs"
+      "java.rmi"
+      "java.scripting"
+      "java.security.jgss"
+      "java.sql"
+      "java.sql.rowset"
+      "java.transaction.xa"
+      "java.xml"
+    ];
+  };
+  pname = "fantatt-backend"; # !! defined also in settings.gradle.kts TODO override here
   deps = stdenv.mkDerivation {
     pname = "${pname}-deps";
     inherit version;
     src = ./.. ;
-    nativeBuildInputs = [ gradle_8 perl ];
+    nativeBuildInputs = [ gradle perl ];
     buildPhase = ''
       export GRADLE_USER_HOME=$(mktemp -d)
       gradle --no-daemon resolveDependencies
@@ -37,12 +61,12 @@ in
 stdenv.mkDerivation {
   inherit pname version;
   src = ./.. ; 
-  nativeBuildInputs = [ gradle_8 makeWrapper ];
+  nativeBuildInputs = [ gradle makeWrapper ];
   postPatch = ''
     # point to offline repo
     # copied from mindustry derivation
     sed -i "1ipluginManagement { repositories { maven { url = uri(\"${deps}\") } } }" settings.gradle.kts
-    sed -i "s#mavenCentral()#mavenCentral(); maven { url = uri(\"${deps}\") }#g" backend/build.gradle.kts
+    sed -i "s#mavenCentral()#mavenCentral(); maven { url = uri(\"${deps}\") }#g" build.gradle.kts
   '';
   
   buildPhase = ''
@@ -50,9 +74,9 @@ stdenv.mkDerivation {
   '';
   installPhase =  ''
     mkdir -pv $out/share/java $out/bin
-    cp backend/build/libs/* $out/share/java
+    cp build/libs/* $out/share/java
     
-    makeWrapper ${jre_headless}/bin/java $out/bin/fantatt-backend \
-        --add-flags "-jar $out/share/java/backend-${version}.jar"
+    makeWrapper ${jre}/bin/java $out/bin/${pname} \
+        --add-flags "-jar $out/share/java/${pname}-${version}.jar"
   '';
 }
