@@ -357,10 +357,11 @@ class FitetParser:
         if event.name in self._already_parsed_events_names:
             return True
 
-        # TODO check the page of incomplete match records
         soup = make_soup_res("risultati/tornei/tabelloni/" + path)
 
-        is_incomplete = False # TODO
+        # <h4>(incontri disputati <font color="red">63/72</font>, completezza: <font color="red">87.5%</font>)</h4>
+        INCOMPLETE_STR = '(incontri disputati '
+        is_incomplete = INCOMPLETE_STR in soup.text
         if is_incomplete:
             return False
         self._already_parsed_events_names.add(event.name)
