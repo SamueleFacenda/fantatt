@@ -44,7 +44,7 @@
               ]))
               
               jdk17
-              gradle_8
+              (gradle_8.override {java = jdk17;})
               
               nodejs_20
             ];

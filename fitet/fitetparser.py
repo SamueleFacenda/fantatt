@@ -371,10 +371,10 @@ class FitetParser:
         elif "eliminatoria" in name:
             self.add_tabellone_eliminatorie(soup, event)
         elif "Top AB" in name:
-            pass # TODO che schifo
+            # TODO che schifo, finchè non lo fanno in trentino non lo faccio
+            return False
         else:
-            print("Unknown tabellone type", name)
-            print("Path", path)
+            raise ValueError(f"Unknown tabellone type ({=path})", name)
         return True
 
     def add_tabellone_eliminatorie(self, soup, event):

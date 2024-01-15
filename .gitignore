@@ -2,21 +2,19 @@
 /.idea
 __pycache__
 .direnv
-.vscode
-.gradle
+/.gradle
 /backend/build
-result
+/result
 *.drawio.dtmp
 *.drawio.bkp
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# stable version pinning is done with nix, not the standard gradle way
 /gradle
 /gradlew*
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
 
 # testing
 /coverage
@@ -30,17 +28,7 @@ result
 .env.development.local
 .env.test.local
 .env.production.local
-/.yarn/.cache
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
