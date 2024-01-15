@@ -7,7 +7,7 @@
 , jre_minimal
 , perl
 , makeWrapper
-, version ? "0.0.1"
+, version
 }:
 
 let

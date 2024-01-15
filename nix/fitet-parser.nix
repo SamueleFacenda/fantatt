@@ -2,7 +2,7 @@
 {
   lib,
   python3Packages,
-  version ? "0.0.1"
+  version
 }:
 python3Packages.buildPythonApplication {
   pname = "fitet-parser";
@@ -10,6 +10,11 @@ python3Packages.buildPythonApplication {
   inherit version;
   pyproject = true;
   #format = "pyproject";
+
+  # version dynamic in pyproject
+  preBuild = ''
+    echo ${version} > VERSION
+  '';
 
   propagatedBuildInputs = with python3Packages; [
     beautifulsoup4

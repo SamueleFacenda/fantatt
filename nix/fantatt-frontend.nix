@@ -2,7 +2,7 @@
 , lib
 , fetchNpmDeps
 , nodejs_20
-, version ? "0.0.1"
+, version
 }:
 
 let

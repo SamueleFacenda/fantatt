@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fantatt"
-version = "0.0.1"
+dynamic = ["version"]
 description = "Fantasy tabletennis"
 requires-python = ">=3.8"
 keywords = ["python"]
@@ -23,3 +23,7 @@ fitet-runner = "fitet.__main__:main"
 
 [tool.setuptools]
 packages = ["fitet"]
+
+[tool.setuptools.dynamic]
+# Set by nix
+version = {file = "VERSION"}

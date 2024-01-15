@@ -18,12 +18,8 @@
       in
       {
 
-        packages = rec {
-          default = fitet-parser;
-          fitet-parser = pkgs.callPackage (import ./nix/fitet-parser.nix) {inherit version;};
-          fantatt-backend = pkgs.callPackage (import ./nix/fantatt-backend.nix) {inherit version;};      
-          fantatt-frontend = pkgs.callPackage (import ./nix/fantatt-frontend.nix) {inherit version;};
-        };
+        packages = pkgs.lib.genAttrs [ "fitet-parser" "fantatt-backend" "fantatt-frontend" ]
+          (name: pkgs.callPackage (import ./nix/${name}.nix) {inherit version;});
 
         apps = {
           default = {
