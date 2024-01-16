@@ -17,6 +17,7 @@ plugins {
     kotlin("jvm") version "1.9.20"
     kotlin("plugin.spring") version "1.9.20"
     kotlin("plugin.jpa") version "1.9.20"
+    id("org.kordamp.gradle.jdeps") version "0.20.0"
 }
 
 group = "com.fantatt"

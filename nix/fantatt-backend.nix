@@ -14,28 +14,24 @@ let
   gradle = gradle_8.override {java = jdk21_headless;};
   jre = jre_minimal.override {
     jdk = jdk21_headless;
-    # retrived with 'find /nix/store/<hash>fantatt-backend-deps-0.0.1 -name '*.jar' -exec jdeps --list-deps --ignore-missing-deps '{}' ';' | sort | uniq'
+    # retrived with 'gradle jdeps --print-module-deps --ignore-missing-deps --recursive | grep java | tr ',' '\n' | sed -e 's/^/      "/' -e 's/$/"/''
     modules = [
       "java.base"
       "java.compiler"
-      "java.datatransfer"
       "java.desktop"
       "java.instrument"
-      "java.logging"
       "java.management"
-      "java.naming"
       "java.net.http"
       "java.prefs"
       "java.rmi"
       "java.scripting"
       "java.security.jgss"
-      "java.sql"
       "java.sql.rowset"
-      "java.transaction.xa"
-      "java.xml"
+      "jdk.jfr"
+      "jdk.unsupported"
     ];
   };
-  pname = "fantatt-backend"; # !! defined also in settings.gradle.kts TODO override here
+  pname = "fantatt-backend";
   deps = stdenv.mkDerivation {
     pname = "${pname}-deps";
     inherit version;
@@ -67,6 +63,7 @@ stdenv.mkDerivation {
     # copied from mindustry derivation
     sed -i "1ipluginManagement { repositories { maven { url = uri(\"${deps}\") } } }" settings.gradle.kts
     sed -i "s#mavenCentral()#mavenCentral(); maven { url = uri(\"${deps}\") }#g" build.gradle.kts
+    sed -i "/org.kordamp.gradle.jdeps/d" build.gradle.kts
   '';
   
   buildPhase = ''
