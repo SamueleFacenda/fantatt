@@ -34,11 +34,31 @@ Possibilities:
 
 ## About the game
 
-### Teams
+### Teams and logic
 I'm assuming three people teams with a bench of currently 5
 players, and maybe some auto-switch logic (take from bench if
 the starting player is not playing or from auto-switch if the switch
 has better score).
+Edit:
+We want something more here. Each user is the manager of a society, each society has
+3 teams. There are three categories (A, B and C), at the beginning of a league each
+society has a team per group (category), when all the matches are played (a 'rotation'),
+a number of teams (depending on the number of teams in a group, usually two) changes group.
+The n top goes up, the n worse goes down.
+The final scoreboard (between societies) will be ordered by a score that is the sum of the scores
+of the three teams. The score of each team will be multiplied by a category-weight, that can be
+, for example:
+- A - 2.0
+- B - 1.0
+- C - 0.75
+Thinking about the weight is important to remember that: the rotations are pretty often, rising category
+and beeing the last of the higher one should be good. The last category should have some weight, 
+in order to not make if the 'trash' category.
+
+Of course every week a society's teams will play agains more than one society, derby are also possible
+(more realistic trait).
+Question: Are category changes allowed or we will follow the fitet regulamentation (allowed only after rotation or
+upward)?
 
 ### Rounds
 Each round is one week long, it starts and end on thursday midnight.
