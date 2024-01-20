@@ -54,6 +54,12 @@ of the three teams. The score of each team will be multiplied by a category-weig
 Thinking about the weight is important to remember that: the rotations are pretty often, rising category
 and beeing the last of the higher one should be good. The last category should have some weight, 
 in order to not make if the 'trash' category.
+Another option for final scoring: in order to not vanify the effort of the season
+making only the last rotation count in the score, a score can be assigned each week
+in case of winning, like:
+- A: 6pt
+- B: 3pt
+- C: 2pt
 
 Of course every week a society's teams will play agains more than one society, derby are also possible
 (more realistic trait).
