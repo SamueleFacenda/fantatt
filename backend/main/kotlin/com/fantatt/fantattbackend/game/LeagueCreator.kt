@@ -2,8 +2,10 @@ package com.fantatt.fantattbackend.game
 
 import com.fantatt.fantattbackend.db.entities.League
 import com.fantatt.fantattbackend.db.entities.Society
+import com.fantatt.fantattbackend.db.entities.Team
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.SocietyRepository
+import com.fantatt.fantattbackend.db.repos.TeamRepository
 import com.fantatt.fantattbackend.db.repos.UserRepository
 import org.springframework.stereotype.Component
 
@@ -12,19 +14,22 @@ class LeagueCreator(
     private val userRepository: UserRepository,
     private val leagueRepository: LeagueRepository,
     private val calendarManager: CalendarManager,
-    private val societyRepository: SocietyRepository
+    private val societyRepository: SocietyRepository,
+    private val teamRepository: TeamRepository
 ) {
-    fun leagueFrom(masterName: String, leagueName: String, teams: List<Society>): League {
+    fun leagueFrom(masterName: String, leagueName: String, societies: List<Society>, nDivisions: Int = 3): League {
         checkName(leagueName)
-        checkTeamList(teams)
+        checkTeamList(societies)
         val master = userRepository.findByUsername(masterName)?: throw Exception("User $masterName not found")
         val league = leagueRepository.save(League(
             name = leagueName,
             master = master,
-            teams = teams.toMutableList(),
+            societies = societies.toMutableList(),
             season = calendarManager.getCurrentSeason()
         ))
-        societyRepository.saveAll(teams.map { it.copy(league = league) })
+        val updatedSocieties = societies.map { it.copy(league = league) }
+        societyRepository.saveAll(updatedSocieties)
+        societies.forEach { generateSocietyTeams(it, nDivisions) }
         return league
     }
 
@@ -60,5 +65,13 @@ class LeagueCreator(
     private fun <T> checkAllDifferent(objs: List<T>, msg: String) {
         if (objs.size != objs.distinct().size)
             throw Exception(msg)
+    }
+
+    private fun generateSocietyTeams(society: Society, nDivisions: Int) {
+        for(i in 1..nDivisions)
+            teamRepository.save(Team(
+                society = society,
+                division = i
+            ))
     }
 }

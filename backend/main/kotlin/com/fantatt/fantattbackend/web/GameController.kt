@@ -24,7 +24,7 @@ class GameController(
         return leagueCreator.leagueFrom(
             masterName = principal.name,
             leagueName = name,
-            teams = teams
+            societies = teams
         )
     }
 

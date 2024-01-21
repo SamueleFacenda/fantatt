@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 data class Team(
     var score: Int = 0,
+    // IMPORTANT: division is 1-indexed
     val division: Int,
     @ManyToOne
     val society: Society,

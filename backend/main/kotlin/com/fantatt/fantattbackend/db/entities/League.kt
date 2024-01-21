@@ -11,6 +11,6 @@ data class League (
     val season: Season,
     val nDivisions: Int = 3,
     @OneToMany
-    val teams: MutableList<Society> = mutableListOf(),
+    val societies: MutableList<Society> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null,
 )
