@@ -69,7 +69,7 @@ class CalendarManager(
         val rounds = getCurrentSeason().rounds
         val currentDate = Date.valueOf(LocalDate.now())
         return rounds.filter {
-            it.startDate <= currentDate
-        }.maxByOrNull(Round::startDate)?.index ?: throw IllegalStateException("No round found, should be next season")
+            it.startTime <= currentDate
+        }.maxByOrNull(Round::startTime)?.index ?: throw IllegalStateException("No round found, should be next season")
     }
 }

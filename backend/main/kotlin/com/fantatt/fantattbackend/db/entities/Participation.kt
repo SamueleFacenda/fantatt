@@ -21,7 +21,5 @@ data class Participation (
     @Id
     @ManyToOne
     val round: Round,
-    val order: Int,
-    @ManyToOne
-    val score: Score?=null
+    val order: Int
 )

@@ -7,8 +7,8 @@ import java.sql.Date
 class Round (
     @ManyToOne
     val season: Season,
-    val startDate: Date,
-    val endDate: Date,
+    val startTime: Date,
+    val endTime: Date,
     val index: Int,
     @Id @GeneratedValue val id: Long?=null
 )

@@ -1,4 +1,15 @@
 package com.fantatt.fantattbackend.db.entities
 
-class Team {
-}
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
+
+@Entity
+data class Team(
+    var score: Int = 0,
+    val division: Int,
+    @ManyToOne
+    val society: Society,
+    @Id @GeneratedValue val id: Long?=null
+)

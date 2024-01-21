@@ -1,9 +1,9 @@
 package com.fantatt.fantattbackend.game
 
 import com.fantatt.fantattbackend.db.entities.League
-import com.fantatt.fantattbackend.db.entities.Team
+import com.fantatt.fantattbackend.db.entities.Society
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
-import com.fantatt.fantattbackend.db.repos.TeamRepository
+import com.fantatt.fantattbackend.db.repos.SocietyRepository
 import com.fantatt.fantattbackend.db.repos.UserRepository
 import org.springframework.stereotype.Component
 
@@ -12,9 +12,9 @@ class LeagueCreator(
     private val userRepository: UserRepository,
     private val leagueRepository: LeagueRepository,
     private val calendarManager: CalendarManager,
-    private val teamRepository: TeamRepository
+    private val societyRepository: SocietyRepository
 ) {
-    fun leagueFrom(masterName: String, leagueName: String, teams: List<Team>): League {
+    fun leagueFrom(masterName: String, leagueName: String, teams: List<Society>): League {
         checkName(leagueName)
         checkTeamList(teams)
         val master = userRepository.findByUsername(masterName)?: throw Exception("User $masterName not found")
@@ -24,7 +24,7 @@ class LeagueCreator(
             teams = teams.toMutableList(),
             season = calendarManager.getCurrentSeason()
         ))
-        teamRepository.saveAll(teams.map { it.copy(league = league) })
+        societyRepository.saveAll(teams.map { it.copy(league = league) })
         return league
     }
 
@@ -33,7 +33,7 @@ class LeagueCreator(
             throw Exception("League name cannot be blank")
     }
 
-    private fun checkTeamList(teams: List<Team>) {
+    private fun checkTeamList(teams: List<Society>) {
         if (teams.size < 2)
             throw Exception("League must have at least 2 teams")
 
@@ -45,15 +45,15 @@ class LeagueCreator(
         checkNames(teams)
     }
 
-    private fun checkOneUserPerTeam(teams: List<Team>) {
+    private fun checkOneUserPerTeam(teams: List<Society>) {
         checkAllDifferent(teams.map { it.owner }, "Each team must have a different user")
     }
 
-    private fun checkPlayersPerTeam(teams: List<Team>) {
+    private fun checkPlayersPerTeam(teams: List<Society>) {
         checkAllDifferent(teams.flatMap { it.players }, "Each team must have different players")
     }
 
-    private fun checkNames(teams: List<Team>) {
+    private fun checkNames(teams: List<Society>) {
         checkAllDifferent(teams.map { it.name }, "Each team must have a different name")
     }
 
