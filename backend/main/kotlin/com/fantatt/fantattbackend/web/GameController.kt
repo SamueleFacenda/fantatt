@@ -51,7 +51,6 @@ class GameController(
 
     // set team lineup
 
-    // get team result
 
     //
 

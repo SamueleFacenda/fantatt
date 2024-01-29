@@ -89,10 +89,9 @@ class CalendarManager(
     }
 
     fun getCurrentRoundNum(): Int {
-        val rounds = getCurrentSeason().rounds
-        val currentTime = LocalDateTime.now()
-        return rounds.filter {
-            it.startTime <= currentTime
-        }.maxByOrNull(Round::startTime)?.index ?: throw IllegalStateException("No round found, should be next season")
+        return roundRepository.findTopBySeasonYearAndStartTimeBeforeOrderByIndex(
+            getCurrentSeasonYear(),
+            LocalDateTime.now()
+        )?.index ?: 0
     }
 }
