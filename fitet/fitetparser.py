@@ -374,7 +374,7 @@ class FitetParser:
             # TODO che schifo, finchè non lo fanno in trentino non lo faccio
             return False
         else:
-            raise ValueError(f"Unknown tabellone type ({=path})", name)
+            raise ValueError(f"Unknown tabellone type ({path=})", name)
         return True
 
     def add_tabellone_eliminatorie(self, soup, event):

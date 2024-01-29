@@ -2,10 +2,12 @@ package com.fantatt.fantattbackend.web
 
 import com.fantatt.fantattbackend.db.entities.League
 import com.fantatt.fantattbackend.db.entities.Participation
+import com.fantatt.fantattbackend.db.entities.Player
 import com.fantatt.fantattbackend.db.entities.Society
 import com.fantatt.fantattbackend.game.LeagueCreator
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.SocietyRepository
+import com.fantatt.fantattbackend.db.repos.TeamRepository
 import com.fantatt.fantattbackend.game.LineupManager
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
@@ -15,7 +17,8 @@ class GameController(
     val leagueCreator: LeagueCreator,
     val leagueRepository: LeagueRepository,
     val societyRepository: SocietyRepository,
-    val lineupManager: LineupManager
+    val lineupManager: LineupManager,
+    val teamRepository: TeamRepository
 ) {
 
     @PostMapping("/league/create")
@@ -28,15 +31,29 @@ class GameController(
         )
     }
 
-    @GetMapping("/league/{teamId}/scoreboard")
+    @GetMapping("/league/{leagueId}/scoreboard")
     @ResponseBody
-    fun getScoreboard(@PathVariable teamId: Long) = societyRepository.findAllByLeagueIdOrderByPointsDesc(teamId)
+    fun getScoreboard(@PathVariable leagueId: Long) = societyRepository.findAllByLeagueIdOrderByPointsDesc(leagueId)
 
-    @GetMapping("/team/{teamId}/lineup")
+    @GetMapping("/team/{societyId}/{teamName}/lineup")
     @ResponseBody
-    fun getLineup(@PathVariable teamId: Long): List<Participation> {
-        val team = societyRepository.findById(teamId).orElseThrow { Exception("Team not found") }
+    fun getLineup(@PathVariable societyId: Long, @PathVariable teamName: String): List<Participation> {
+        val team = teamRepository.findBySocietyIdAndName(societyId, teamName) ?: throw Exception("Team not found")
         return lineupManager.getLineup(team)
     }
+
+    @GetMapping("/society/{societyId}/players")
+    @ResponseBody
+    fun getPlayers(@PathVariable societyId: Long): List<Player> {
+        val society = societyRepository.findById(societyId).orElseThrow { Exception("Society not found") }
+        return society.players
+    }
+
+    // set team lineup
+
+    // get team result
+
+    //
+
 
 }

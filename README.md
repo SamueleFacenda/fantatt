@@ -28,7 +28,7 @@ TODO:
 - [ ] formation management (choose 3 players) 
 - [ ] score assignment (should think about something smart)
 - [ ] match simulation (A-X and score comparison)
-- [ ] update fitet parser request discharging (some tournaments are present 
+- [x] update fitet parser request discharging (some tournaments are present 
 but not completely updated)
 
 ## CONTRIBUTING

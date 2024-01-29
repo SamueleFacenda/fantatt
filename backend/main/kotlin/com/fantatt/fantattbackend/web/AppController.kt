@@ -22,5 +22,15 @@ class AppController(
     @PostMapping("/user/update")
     fun updateUser(@RequestBody updatedUser: User): User = TODO()
 
+    // set society name
 
+    // set team name
+
+    // set league name
+
+    // delete user!!
+
+    // delete league
+
+    // get player leagues
 }
