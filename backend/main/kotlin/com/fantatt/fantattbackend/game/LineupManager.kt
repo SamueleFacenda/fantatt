@@ -1,8 +1,9 @@
 package com.fantatt.fantattbackend.game
 
 import com.fantatt.fantattbackend.db.entities.Participation
-import com.fantatt.fantattbackend.db.entities.Society
+import com.fantatt.fantattbackend.db.entities.Team
 import com.fantatt.fantattbackend.db.repos.ParticipationRepository
+import com.fantatt.fantattbackend.db.repos.PlayerRepository
 import com.fantatt.fantattbackend.db.repos.RoundRepository
 import org.springframework.stereotype.Component
 
@@ -13,40 +14,43 @@ const val BENCH_SIZE = 5
 class LineupManager(
     val participationRepository: ParticipationRepository,
     val calendarManager: CalendarManager,
-    val roundRepository: RoundRepository
+    val roundRepository: RoundRepository,
+    val playerRepository: PlayerRepository
 ) {
 
-    fun getLineup(society: Society,
+    fun getLineup(team: Team,
                   roundNum: Int = calendarManager.getCurrentRoundNum()
     ): List<Participation> {
         // recursion base case
-        if (roundNum < 0)
-            return createDefaultLineup(society, roundNum)
+        if (roundNum < 0) // TODO che casino
+            return createDefaultLineup(team, roundNum)
 
-        val current = participationRepository.findAllByTeamAndRound(society, roundNum)
+        val current = participationRepository.findAllByTeamAndRoundIndex(team, roundNum)
 
         if (current.isEmpty())
-            return createLineupFromPreviousRound(society, roundNum)
+            return createLineupFromPreviousRound(team, roundNum)
 
         return current
     }
 
-    fun createLineupFromPreviousRound(society: Society, roundNum: Int): List<Participation> {
-        val prev = getLineup(society, roundNum - 1)
-        val out = prev.map {
-            it.copy(round = roundRepository.findByIndexAndSeason(roundNum, society.league.season) ?:
-                throw IllegalStateException("Round $roundNum not found") ) }
+    fun createLineupFromPreviousRound(team: Team, roundNum: Int): List<Participation> {
+        val prev = getLineup(team, roundNum - 1)
+        val round = roundRepository.findByIndexAndSeason(roundNum, team.society.league.season)?: throw IllegalStateException("Round $roundNum not found")
+        val out = prev.map { it.copy(round = round) }
 
         return participationRepository.saveAll(out).toList()
     }
 
-    fun createDefaultLineup(society: Society, roundNum: Int): List<Participation> {
-        val players = society.players.take(STARTING_LINEUP_SIZE + BENCH_SIZE).sortedBy { -it.points }
-        val round = roundRepository.findByIndexAndSeason(roundNum, society.league.season)?: throw IllegalStateException("Round $roundNum not found")
+    fun createDefaultLineup(team: Team, roundNum: Int): List<Participation> {
+        val players = playerRepository
+            .findAllBySocietyAndNotParticipatingInRound(team.society, roundNum)
+            .take(STARTING_LINEUP_SIZE + BENCH_SIZE)
+            .sortedBy { -it.points }
+        val round = roundRepository.findByIndexAndSeason(roundNum, team.society.league.season)?: throw IllegalStateException("Round $roundNum not found")
         val out = players.mapIndexed {
             index, player -> Participation(
                 player = player,
-                team = society,
+                team = team,
                 round = round,
                 order = index
             )
