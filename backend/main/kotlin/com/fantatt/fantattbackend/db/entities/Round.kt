@@ -11,6 +11,6 @@ class Round (
     val season: Season,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
-    val index: Int,
+    val index: Int, // 0-indexed
     @Id @GeneratedValue val id: Long?=null
 )

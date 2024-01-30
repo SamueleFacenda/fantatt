@@ -13,5 +13,7 @@ data class Society (
     val points: Int = 0,
     @ManyToMany
     val players: MutableList<Player> = mutableListOf(),
+    @OneToMany
+    val teams: MutableList<Team> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null
 )

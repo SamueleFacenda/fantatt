@@ -61,7 +61,7 @@ class CalendarManager(
             .map { it.atStartOfDay() }
             .mapIndexed { index, date ->
                 Round(
-                    index = index + 1,
+                    index = index,
                     startTime = date.plus(ROUND_START_OFFSET),
                     endTime = date.plus(ROUND_END_OFFSET),
                     season = season
