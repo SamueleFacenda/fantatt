@@ -37,6 +37,7 @@ repositories {
     mavenCentral()
 }
 
+/*
 // lock all configurations
 dependencyLocking {
     lockAllConfigurations()
@@ -49,6 +50,7 @@ buildscript {
         resolutionStrategy.activateDependencyLocking()
     }
 }
+*/
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -84,9 +86,11 @@ tasks.withType<JDepsReportTask> {
 }
 
 tasks.register("resolveDependencies") {
+    notCompatibleWithConfigurationCache("Filters configurations at execution time")
     doLast {
         rootProject.allprojects.forEach { project ->
             val configurations = project.buildscript.configurations + project.configurations
+            print(configurations)
             configurations.filter { it.isCanBeResolved }.forEach { it.resolve() }
         }
     }

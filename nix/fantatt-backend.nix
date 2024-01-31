@@ -1,6 +1,5 @@
 # nix comment
-{
-  stdenv
+{ stdenv
 , lib
 , gradle_8
 , jdk21_headless
@@ -50,7 +49,7 @@ let
         | sh
     '';
     outputHashMode = "recursive";
-    outputHash = "sha256-Du4MZozefjiXmu/YA67G0YRU9ND6Dg+buFH3jL5LQHs=";
+    outputHash = "sha256-0dXuZvpxdiFC+3zgu3ZobNyB4g/eZ5ICQhP85baz4Ao=";
   };
 in
 
@@ -61,6 +60,7 @@ stdenv.mkDerivation {
   postPatch = ''
     # point to offline repo
     # copied from mindustry derivation
+    echo "Linking deps from path ${deps}"
     sed -i "1ipluginManagement { repositories { maven { url = uri(\"${deps}\") } } }" settings.gradle.kts
     sed -i "s#mavenCentral()#mavenCentral(); maven { url = uri(\"${deps}\") }#g" build.gradle.kts
     sed -i "/org.kordamp.gradle.jdeps/d" build.gradle.kts

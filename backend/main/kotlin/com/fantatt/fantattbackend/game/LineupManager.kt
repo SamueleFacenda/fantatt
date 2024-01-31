@@ -59,7 +59,7 @@ class LineupManager(
      */
     private fun createDefaultLineup(society: Society, roundNum: Int): Map<Team, List<Participation>> {
         val round = roundRepository.findByIndexAndSeason(roundNum, society.league.season)?: throw IllegalStateException("Round $roundNum not found")
-        val teams = society.teams.sortedBy { -it.division }
+        val teams = society.teams.sortedBy { it.division }
         val lineups = makeLineupsForNTeams(teams.size, society.players)
         return teams
             .zip(lineups)

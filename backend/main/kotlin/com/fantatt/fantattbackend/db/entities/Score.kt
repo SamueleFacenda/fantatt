@@ -20,5 +20,5 @@ data class Score (
     @Id
     @ManyToOne
     val player: Player,
-    val score: Int
+    val score: Int = -1
 )
