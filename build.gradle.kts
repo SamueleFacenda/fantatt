@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.kordamp.gradle.plugin.jdeps.tasks.JDepsReportTask
 
 sourceSets {
     main {
@@ -36,6 +37,19 @@ repositories {
     mavenCentral()
 }
 
+// lock all configurations
+dependencyLocking {
+    lockAllConfigurations()
+    lockMode = LockMode.STRICT
+}
+
+// lock plugins
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -60,6 +74,13 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<JDepsReportTask> {
+    // run only if explicitly requested
+    onlyIf { gradle.startParameter.taskNames.contains("jdeps") }
+    // run every time
+    outputs.upToDateWhen { false }
 }
 
 tasks.register("resolveDependencies") {

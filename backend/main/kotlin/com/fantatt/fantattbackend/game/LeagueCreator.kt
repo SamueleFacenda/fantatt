@@ -68,10 +68,19 @@ class LeagueCreator(
     }
 
     private fun generateSocietyTeams(society: Society, nDivisions: Int) {
-        for(i in 1..nDivisions)
-            teamRepository.save(Team(
-                society = society,
-                division = i
-            ))
+        teamRepository.saveAll(
+            generateDefaultNames(nDivisions).mapIndexed { index, name ->
+                Team(
+                    society = society,
+                    division = index + 1,
+                    name = name
+                )
+            }
+        )
+    }
+
+    private fun generateDefaultNames(len: Int): List<String> {
+        // should be enough for every league, crashes if there are more
+        return ('A'..'Z').take(len).map { it.toString() }
     }
 }
