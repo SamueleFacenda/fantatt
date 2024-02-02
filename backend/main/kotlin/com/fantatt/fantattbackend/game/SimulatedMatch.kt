@@ -39,8 +39,8 @@ const val GAME_FORMAT = "SWAYTHLING"
 val STARTING_SIZE = GAME_FORMATS[GAME_FORMAT]!!.map { it.first }.distinct().size
 
 class SimulatedMatch(
-    private val TeamX: Team,
-    private val TeamA: Team,
+    private val teamX: Team,
+    private val teamA: Team,
     private val round: Round,
     val playerScoreComputer: PlayerScoreComputer,
     val lineupManager: LineupManager,
@@ -49,15 +49,15 @@ class SimulatedMatch(
     val winner: Team
 
     init {
-        val teamXLineup = getTeamLineUp(TeamX, 'X')
-        val teamALineup = getTeamLineUp(TeamA, 'A')
+        val teamXLineup = getTeamLineUp(teamX, 'X')
+        val teamALineup = getTeamLineUp(teamA, 'A')
 
         val result = GAME_FORMATS[GAME_FORMAT]!!.sumOf { (teamXLetter, teamALetter) ->
             val teamXScore = teamXLineup[teamXLetter]!!
             val teamAScore = teamALineup[teamALetter]!!
             if (teamAScore > teamXScore) 1L else -1
         }
-        winner = if (result > 0) TeamA else TeamX
+        winner = if (result > 0) teamA else teamX
     }
 
     private fun getTeamLineUp(team: Team, startLetter: Char): Map<String, Int> {
