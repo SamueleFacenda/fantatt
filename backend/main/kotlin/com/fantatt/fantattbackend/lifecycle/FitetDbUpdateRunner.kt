@@ -11,7 +11,7 @@ const val UPDATE_CMD = "python -m fitet --update --dump-path %s"
 lateinit var sqliteMatchRepository: SqliteFitetParsedMatchRepository
 @Autowired
 lateinit var schedulingConfig: SchedulingConfig
-// one time per hour
+// one time per hour (maybe not)
 @Scheduled(cron = "0 2 * * * *")
 fun updateDb() {
     // update a copy of the database to block the access to the database for less
@@ -21,9 +21,9 @@ fun updateDb() {
     db.copyTo(tmpDb, true)
     Runtime.getRuntime().exec(UPDATE_CMD.format(tmpDb.path))
 
-    sqliteMatchRepository.startUpdate()
-    tmpDb.copyTo(db, true)
-    sqliteMatchRepository.endUpdate()
+    sqliteMatchRepository.update {
+        tmpDb.copyTo(db, true)
+    }
 
     tmpDb.delete()
 }
