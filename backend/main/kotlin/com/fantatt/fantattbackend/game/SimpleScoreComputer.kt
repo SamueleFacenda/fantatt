@@ -9,6 +9,7 @@ class SimpleScoreComputer(
     val matchRepository: MatchRepository
 ): PlayerScoreComputer {
     override fun getPlayerScoreInRound(player: String, round: Round): Int {
+        // TODO cache until db update
         val matches = matchRepository.findAllMatchesByPlayerBetweenDates(player, round.startTime, round.endTime)
         TODO("Not yet implemented")
     }

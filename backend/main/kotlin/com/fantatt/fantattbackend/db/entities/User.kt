@@ -12,6 +12,6 @@ class User(
     @Column(unique = true, nullable = false)
     val email: String,
     @OneToMany
-    val teams: MutableList<Society> = mutableListOf(),
+    val societies: MutableList<Society> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null
 )

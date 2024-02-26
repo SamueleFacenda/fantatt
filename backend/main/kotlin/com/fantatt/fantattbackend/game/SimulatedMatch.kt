@@ -10,10 +10,10 @@ class SimulatedMatch(
     private val teamX: Team,
     private val teamA: Team,
     private val round: Round,
-    val playerScoreComputer: PlayerScoreComputer,
-    val lineupManager: LineupManager,
-    val scoreRepository: ScoreRepository,
-    val gameFormat: GameFormat = GameFormat.SWAYTHLING
+    private val playerScoreComputer: PlayerScoreComputer,
+    private val lineupManager: LineupManager,
+    private val scoreRepository: ScoreRepository,
+    private val gameFormat: GameFormat = GameFormat.SWAYTHLING
 ) {
     val winner: Team
 
