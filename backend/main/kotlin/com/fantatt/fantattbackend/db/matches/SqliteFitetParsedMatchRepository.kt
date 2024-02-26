@@ -24,7 +24,7 @@ const val SELECT_MATCHES_BY_PLAYER_BETWEEN_DATES = """
 
 @Component
 class SqliteFitetParsedMatchRepository(
-    private val schedulingConfig: SchedulingConfig
+    schedulingConfig: SchedulingConfig
 ): MatchRepository {
     private val lock = ReentrantReadWriteLock()
     private val url = "jdbc:sqlite:${Path(schedulingConfig.dumpPhat).absolutePathString()}"
