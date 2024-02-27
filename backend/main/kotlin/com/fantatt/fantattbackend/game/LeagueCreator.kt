@@ -3,6 +3,7 @@ package com.fantatt.fantattbackend.game
 import com.fantatt.fantattbackend.db.entities.League
 import com.fantatt.fantattbackend.db.entities.Society
 import com.fantatt.fantattbackend.db.entities.Team
+import com.fantatt.fantattbackend.db.entities.User
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.SocietyRepository
 import com.fantatt.fantattbackend.db.repos.TeamRepository
@@ -17,10 +18,9 @@ class LeagueCreator(
     private val societyRepository: SocietyRepository,
     private val teamRepository: TeamRepository
 ) {
-    fun leagueFrom(masterName: String, leagueName: String, societies: List<Society>, nDivisions: Int = 3): League {
+    fun buildFrom(master: User, leagueName: String, societies: List<Society>, nDivisions: Int = 3): League {
         checkName(leagueName)
         checkTeamList(societies)
-        val master = userRepository.findByUsername(masterName)?: throw Exception("User $masterName not found")
         val league = leagueRepository.save(League(
             name = leagueName,
             master = master,
@@ -30,6 +30,7 @@ class LeagueCreator(
         val updatedSocieties = societies.map { it.copy(league = league) }
         societyRepository.saveAll(updatedSocieties)
         societies.forEach { generateSocietyTeams(it, nDivisions) }
+        generateMatches(league)
         return league
     }
 
@@ -82,5 +83,9 @@ class LeagueCreator(
     private fun generateDefaultNames(len: Int): List<String> {
         // should be enough for every league, crashes if there are more
         return ('A'..'Z').take(len).map { it.toString() }
+    }
+
+    private fun generateMatches(league: League) {
+        TODO()
     }
 }

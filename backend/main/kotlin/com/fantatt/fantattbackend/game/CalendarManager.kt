@@ -23,6 +23,7 @@ val SEASON_RESUME: LocalDate = LocalDate.of(1, 1, 10)
 // to add to the round date (sunday at 00:00), to get the start and end of the round
 val ROUND_START_OFFSET: Duration = Duration.ofHours(-12)
 val ROUND_END_OFFSET: Duration = Duration.ofHours(20)
+val ROUND_RESULT_OFFSET: Duration = Duration.ofDays(2).plusHours(12)
 
 /**
  * The season year is the year when the season begun.
@@ -64,6 +65,7 @@ class CalendarManager(
                     index = index,
                     startTime = date.plus(ROUND_START_OFFSET),
                     endTime = date.plus(ROUND_END_OFFSET),
+                    resultTime = date.plus(ROUND_RESULT_OFFSET),
                     season = season
                 )
             }
@@ -88,10 +90,29 @@ class CalendarManager(
             .toList()
     }
 
-    fun getCurrentRoundNum(): Int {
-        return roundRepository.findTopBySeasonYearAndStartTimeBeforeOrderByIndex(
-            getCurrentSeasonYear(),
-            LocalDateTime.now()
-        )?.index ?: 0
+    fun getPreviousRound(round: Round): Round {
+        if (round.index == 0)
+            throw IllegalStateException("No previous round")
+
+        return roundRepository.findByIndexAndSeason(round.index - 1, round.season) ?: throw IllegalStateException("No previous round")
     }
+
+    fun isRoundInProgress(): Boolean {
+        // TODO cache
+        val current = LocalDateTime.now()
+        return roundRepository.findByStartTimeAfterAndEndTimeBefore(current, current) != null
+    }
+
+    fun isResultWaitTime(): Boolean {
+        // TODO cache
+        val current = LocalDateTime.now()
+        return roundRepository.findByEndTimeAfterAndResultTimeBefore(current, current) != null
+    }
+
+    fun getNextStartingRound(): Round? {
+        // TODO cache
+        val current = LocalDateTime.now()
+        return roundRepository.findTopByStartTimeAfterOrderByStartTime(current)
+    }
+
 }

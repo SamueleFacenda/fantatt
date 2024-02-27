@@ -8,6 +8,7 @@ import com.fantatt.fantattbackend.game.LeagueCreator
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.SocietyRepository
 import com.fantatt.fantattbackend.db.repos.TeamRepository
+import com.fantatt.fantattbackend.db.repos.UserRepository
 import com.fantatt.fantattbackend.game.LineupManager
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
@@ -18,14 +19,16 @@ class GameController(
     val leagueRepository: LeagueRepository,
     val societyRepository: SocietyRepository,
     val lineupManager: LineupManager,
-    val teamRepository: TeamRepository
+    val teamRepository: TeamRepository,
+    val userRepository: UserRepository
 ) {
 
     @PostMapping("/league/create")
     @ResponseBody
     fun createLeague(@RequestParam name: String, @RequestBody teams: List<Society>, principal: Principal): League {
-        return leagueCreator.leagueFrom(
-            masterName = principal.name,
+        val master = userRepository.findByUsername(principal.name) ?: throw Exception("User not found")
+        return leagueCreator.buildFrom(
+            master = master,
             leagueName = name,
             societies = teams
         )

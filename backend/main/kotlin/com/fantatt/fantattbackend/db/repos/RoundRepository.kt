@@ -7,7 +7,8 @@ import java.sql.Date
 import java.time.LocalDateTime
 
 interface RoundRepository: CrudRepository<Round, Long> {
-    fun findByIndex(index: Int): Round?
     fun findByIndexAndSeason(index: Int, season: Season): Round?
-    fun findTopBySeasonYearAndStartTimeBeforeOrderByIndex(year: Int, startTime: LocalDateTime): Round?
+    fun findByStartTimeAfterAndEndTimeBefore(startTime: LocalDateTime, endTime: LocalDateTime): Round?
+    fun findByEndTimeAfterAndResultTimeBefore(endTime: LocalDateTime, resultTime: LocalDateTime): Round?
+    fun findTopByStartTimeAfterOrderByStartTime(startTime: LocalDateTime): Round?
 }

@@ -7,6 +7,4 @@ import org.springframework.data.repository.CrudRepository
 interface ParticipationRepository: CrudRepository<Participation, ParticipationId> {
     fun findAllByTeamAndRound(team: Team, round: Round): List<Participation>
 
-    @Query("SELECT p FROM Participation p WHERE p.team = :team AND p.round.index = :roundIndex")
-    fun findAllByTeamAndRoundIndex(team: Team, roundIndex: Int): List<Participation>
 }
