@@ -11,4 +11,5 @@ interface RoundRepository: CrudRepository<Round, Long> {
     fun findByStartTimeAfterAndEndTimeBefore(startTime: LocalDateTime, endTime: LocalDateTime): Round?
     fun findByEndTimeAfterAndResultTimeBefore(endTime: LocalDateTime, resultTime: LocalDateTime): Round?
     fun findTopByStartTimeAfterOrderByStartTime(startTime: LocalDateTime): Round?
+    fun findAllByStartTimeAfterOrderByIndex(startTime: LocalDateTime): List<Round>
 }

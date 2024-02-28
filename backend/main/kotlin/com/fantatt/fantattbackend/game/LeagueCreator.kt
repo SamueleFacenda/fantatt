@@ -1,14 +1,9 @@
 package com.fantatt.fantattbackend.game
 
-import com.fantatt.fantattbackend.db.entities.League
-import com.fantatt.fantattbackend.db.entities.Society
-import com.fantatt.fantattbackend.db.entities.Team
-import com.fantatt.fantattbackend.db.entities.User
-import com.fantatt.fantattbackend.db.repos.LeagueRepository
-import com.fantatt.fantattbackend.db.repos.SocietyRepository
-import com.fantatt.fantattbackend.db.repos.TeamRepository
-import com.fantatt.fantattbackend.db.repos.UserRepository
+import com.fantatt.fantattbackend.db.entities.*
+import com.fantatt.fantattbackend.db.repos.*
 import org.springframework.stereotype.Component
+import kotlin.random.Random
 
 @Component
 class LeagueCreator(
@@ -16,7 +11,8 @@ class LeagueCreator(
     private val leagueRepository: LeagueRepository,
     private val calendarManager: CalendarManager,
     private val societyRepository: SocietyRepository,
-    private val teamRepository: TeamRepository
+    private val teamRepository: TeamRepository,
+    private val matchRepository: MatchRepository
 ) {
     fun buildFrom(master: User, leagueName: String, societies: List<Society>, nDivisions: Int = 3): League {
         checkName(leagueName)
@@ -85,7 +81,50 @@ class LeagueCreator(
         return ('A'..'Z').take(len).map { it.toString() }
     }
 
-    private fun generateMatches(league: League) {
-        TODO()
+    private fun generateMatches(league: League, doReturnRound: Boolean = false) {
+        val rounds = calendarManager.getRemainingRounds()
+        // https://en.wikipedia.org/wiki/Round-robin_tournament?useskin=vector#Scheduling_algorithm
+        var matches = generateRoundRobin(league.societies.size)
+        if (doReturnRound)
+            matches += matches.map { it.map { pair -> pair.second to pair.first } }
+
+        val teams = league.societies.flatMap { it.teams }.groupBy { it.division }
+        teams.map { (division, teams) -> generateDivision(teams, matches, rounds) }
+            .forEach { matchRepository.saveAll(it) }
+    }
+
+    private fun generateRoundRobin(n: Int): List<List<Pair<Int, Int>>> {
+        // Richard Schurig algorithm (prefer clarity to performance)
+        val nMatchesPerRound: Int = n / 2
+        val nRounds = n - 1
+        val firstPlayer = List(nMatchesPerRound * nRounds) { it % n }
+            .chunked(nMatchesPerRound)
+        val secondPlayer = firstPlayer.drop(1) + firstPlayer.take(1)
+        val matches = firstPlayer.zip(secondPlayer) { first, second -> first.zip(second) }
+        return if (n % 2 == 0) {
+            // add the n-th player to the first match of every round
+            matches.map { round ->
+                // to be right we should add it as second and first alternatively
+                val first = round.first().copy(second = n)
+                round.drop(1) + first
+            }
+        } else {
+            // the first match is always i vs i
+            matches.map { it.drop(1) }
+        }
+    }
+
+    private fun generateDivision(teams: List<Team>, matches: List<List<Pair<Int, Int>>>, rounds: List<Round>): List<Match> {
+        val shuffledTeams = teams.shuffled()
+        return matches.zip(rounds).map { (round, roundEntity) ->
+            round.map { (home, away) ->
+                val xHome = Random.nextBoolean()
+                Match(
+                    round = roundEntity,
+                    teamX = shuffledTeams[if (xHome) home else away],
+                    teamA = shuffledTeams[if (xHome) away else home]
+                )
+            }
+        }.flatten()
     }
 }

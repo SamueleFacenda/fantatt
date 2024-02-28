@@ -115,4 +115,14 @@ class CalendarManager(
         return roundRepository.findTopByStartTimeAfterOrderByStartTime(current)
     }
 
+    /**
+     * get the round not yet started (assumes that the rounds
+     * from the next season are not in the database)
+     */
+    fun getRemainingRounds(): List<Round> {
+        // TODO cache
+        val current = LocalDateTime.now()
+        return roundRepository.findAllByStartTimeAfterOrderByIndex(current)
+    }
+
 }

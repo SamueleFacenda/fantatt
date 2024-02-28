@@ -21,6 +21,7 @@ class SimulatedMatch(
         val teamXLineup = getTeamLineUp(teamX, 'X', gameFormat.matches.size)
         val teamALineup = getTeamLineUp(teamA, 'A' , gameFormat.matches.size)
 
+        // TODO update db with results (Match entity)
         val result = gameFormat.matches.sumOf { (teamXLetter, teamALetter) ->
             val teamXScore = teamXLineup[teamXLetter]!!
             val teamAScore = teamALineup[teamALetter]!!
@@ -31,7 +32,7 @@ class SimulatedMatch(
 
     private fun getTeamLineUp(team: Team, startLetter: Char, startingSize: Int): Map<String, Int> {
         val lineup = lineupManager
-            .getLineup(team, round.index)
+            .getLineup(team, round)
             .sortedBy { it.order }
             .map { it.player }
             .map { getPlayerScore(it) }

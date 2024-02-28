@@ -8,8 +8,6 @@ import java.sql.ResultSet
 import java.time.LocalDateTime
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 
@@ -25,7 +23,7 @@ const val SELECT_MATCHES_BY_PLAYER_BETWEEN_DATES = """
 @Component
 class SqliteFitetParsedMatchRepository(
     schedulingConfig: SchedulingConfig
-): MatchRepository {
+): RealMatchRepository {
     private val lock = ReentrantReadWriteLock()
     private val url = "jdbc:sqlite:${Path(schedulingConfig.dumpPhat).absolutePathString()}"
 
