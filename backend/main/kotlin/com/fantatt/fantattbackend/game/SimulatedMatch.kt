@@ -1,21 +1,21 @@
 package com.fantatt.fantattbackend.game
 
-import com.fantatt.fantattbackend.db.entities.Player
-import com.fantatt.fantattbackend.db.entities.Round
-import com.fantatt.fantattbackend.db.entities.Score
-import com.fantatt.fantattbackend.db.entities.Team
+import com.fantatt.fantattbackend.db.entities.PlayerEntity
+import com.fantatt.fantattbackend.db.entities.RoundEntity
+import com.fantatt.fantattbackend.db.entities.ScoreEntity
+import com.fantatt.fantattbackend.db.entities.TeamEntity
 import com.fantatt.fantattbackend.db.repos.ScoreRepository
 
 class SimulatedMatch(
-    private val teamX: Team,
-    private val teamA: Team,
-    private val round: Round,
+    private val teamX: TeamEntity,
+    private val teamA: TeamEntity,
+    private val round: RoundEntity,
     private val playerScoreComputer: PlayerScoreComputer,
     private val lineupManager: LineupManager,
     private val scoreRepository: ScoreRepository,
     private val gameFormat: GameFormat = GameFormat.SWAYTHLING
 ) {
-    val winner: Team
+    val winner: TeamEntity
 
     init {
         val teamXLineup = getTeamLineUp(teamX, 'X', gameFormat.matches.size)
@@ -30,7 +30,7 @@ class SimulatedMatch(
         winner = if (result > 0) teamA else teamX
     }
 
-    private fun getTeamLineUp(team: Team, startLetter: Char, startingSize: Int): Map<String, Int> {
+    private fun getTeamLineUp(team: TeamEntity, startLetter: Char, startingSize: Int): Map<String, Int> {
         val lineup = lineupManager
             .getLineup(team, round)
             .sortedBy { it.order }
@@ -44,10 +44,10 @@ class SimulatedMatch(
             .toMap()
     }
 
-    private fun getPlayerScore(player: Player): Int {
+    private fun getPlayerScore(player: PlayerEntity): Int {
         val score = scoreRepository.findByPlayerAndRound(player, round)
         return score?.score ?: scoreRepository.save(
-            Score(
+            ScoreEntity(
                 player = player,
                 round = round,
                 score = playerScoreComputer.getPlayerScoreInRound(player.name, round)

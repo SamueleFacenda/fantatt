@@ -1,8 +1,8 @@
 package com.fantatt.fantattbackend.web.requests
 
-import com.fantatt.fantattbackend.db.entities.Society
+import com.fantatt.fantattbackend.db.entities.SocietyEntity
 
 data class NewLeagueRequest(
     val name: String,
-    val teams: List<Society>
+    val teams: List<SocietyEntity>
 )

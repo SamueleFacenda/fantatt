@@ -19,9 +19,9 @@ class LineupManager(
 ) {
 
     fun getLineup(
-        team: Team,
-        round: Round
-    ): List<Participation> {
+        team: TeamEntity,
+        round: RoundEntity
+    ): List<ParticipationEntity> {
 
         val current = participationRepository.findAllByTeamAndRound(team, round)
 
@@ -34,7 +34,7 @@ class LineupManager(
         return current
     }
 
-    private fun createLineupFromPreviousRound(society: Society, round: Round): Map<Team, List<Participation>> {
+    private fun createLineupFromPreviousRound(society: SocietyEntity, round: RoundEntity): Map<TeamEntity, List<ParticipationEntity>> {
         val prevRound = calendarManager.getPreviousRound(round)
         // for every team get the previous lineup, map the round to the current one and save it
         return society.teams
@@ -51,7 +51,7 @@ class LineupManager(
      * merge these lists to have the lineups lists.
      * Then create the participation objects for each team
      */
-    private fun createDefaultLineup(society: Society, round: Round): Map<Team, List<Participation>> {
+    private fun createDefaultLineup(society: SocietyEntity, round: RoundEntity): Map<TeamEntity, List<ParticipationEntity>> {
         val teams = society.teams.sortedBy { it.division }
         val lineups = makeLineupsForNTeams(teams.size, society.players)
         return teams
@@ -59,7 +59,7 @@ class LineupManager(
             .toMap()
             .mapValues { pair ->
                 pair.value.mapIndexed { order, player ->
-                    Participation(
+                    ParticipationEntity(
                         player = player,
                         team = pair.key,
                         round = round,
@@ -70,7 +70,7 @@ class LineupManager(
             .mapValues { pair -> participationRepository.saveAll(pair.value).toList() }
     }
 
-    private fun makeLineupsForNTeams(n: Int, players: List<Player>): List<List<Player>> {
+    private fun makeLineupsForNTeams(n: Int, players: List<PlayerEntity>): List<List<PlayerEntity>> {
         val sortedPlayers = players.sortedBy { -it.points }
 
         val startingPlayers = sortedPlayers

@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(indexes = [Index(columnList = "username", unique = true), Index(columnList = "email", unique = true)])
-class User(
+class UserEntity(
     @Column(unique = true, nullable = false)
     val username: String,
     @Column(nullable = false)
@@ -12,6 +12,6 @@ class User(
     @Column(unique = true, nullable = false)
     val email: String,
     @OneToMany
-    val societies: MutableList<Society> = mutableListOf(),
+    val societies: MutableList<SocietyEntity> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null
 )

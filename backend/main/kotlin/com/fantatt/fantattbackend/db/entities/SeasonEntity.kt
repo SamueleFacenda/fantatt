@@ -3,12 +3,12 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 
 @Entity
-class Season (
+class SeasonEntity (
     @Column(unique = true, nullable = false)
     val year: Int,
     @OneToMany
-    val rounds: MutableList<Round> = mutableListOf(),
+    val rounds: MutableList<RoundEntity> = mutableListOf(),
     @OneToMany
-    val leagues: MutableList<League> = mutableListOf(),
+    val leagues: MutableList<LeagueEntity> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null
 )

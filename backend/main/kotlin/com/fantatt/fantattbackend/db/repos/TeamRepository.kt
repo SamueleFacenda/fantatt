@@ -1,14 +1,14 @@
 package com.fantatt.fantattbackend.db.repos
 
-import com.fantatt.fantattbackend.db.entities.League
-import com.fantatt.fantattbackend.db.entities.Society
-import com.fantatt.fantattbackend.db.entities.Team
+import com.fantatt.fantattbackend.db.entities.LeagueEntity
+import com.fantatt.fantattbackend.db.entities.SocietyEntity
+import com.fantatt.fantattbackend.db.entities.TeamEntity
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
-interface TeamRepository: CrudRepository<Team, Long> {
-    @Query("SELECT t FROM Team t WHERE t.society.league = :league AND t.division = :division ORDER BY t.score DESC")
-    fun findAllByLeagueAndDivisionOrderByScoreDesc(league: League, division: Int): List<Team>
-    fun findBySocietyIdAndName(societyId: Long, name: String): Team?
-    fun findAllBySociety(society: Society): List<Team>
+interface TeamRepository: CrudRepository<TeamEntity, Long> {
+    @Query("SELECT t FROM TeamEntity t WHERE t.society.league = :league AND t.division = :division ORDER BY t.score DESC")
+    fun findAllByLeagueAndDivisionOrderByScoreDesc(league: LeagueEntity, division: Int): List<TeamEntity>
+    fun findBySocietyIdAndName(societyId: Long, name: String): TeamEntity?
+    fun findAllBySociety(society: SocietyEntity): List<TeamEntity>
 }

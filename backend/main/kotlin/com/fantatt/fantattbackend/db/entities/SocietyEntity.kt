@@ -3,17 +3,17 @@ package com.fantatt.fantattbackend.db.entities
 import jakarta.persistence.*
 
 @Entity
-data class Society (
+data class SocietyEntity (
     val name: String,
     val credits: Int,
     @ManyToOne
-    val league: League,
+    val league: LeagueEntity,
     @ManyToOne
-    val owner: User,
+    val owner: UserEntity,
     val points: Int = 0,
     @ManyToMany
-    val players: MutableList<Player> = mutableListOf(),
+    val players: MutableList<PlayerEntity> = mutableListOf(),
     @OneToMany
-    val teams: MutableList<Team> = mutableListOf(),
+    val teams: MutableList<TeamEntity> = mutableListOf(),
     @Id @GeneratedValue val id: Long?=null
 )

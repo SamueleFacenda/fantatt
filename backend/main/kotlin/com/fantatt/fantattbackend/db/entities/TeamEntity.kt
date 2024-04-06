@@ -6,12 +6,12 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 
 @Entity
-data class Team(
+data class TeamEntity(
     var score: Int = 0,
     val name: String,
     // IMPORTANT: division is 1-indexed
     val division: Int,
     @ManyToOne
-    val society: Society,
+    val society: SocietyEntity,
     @Id @GeneratedValue val id: Long?=null
 )

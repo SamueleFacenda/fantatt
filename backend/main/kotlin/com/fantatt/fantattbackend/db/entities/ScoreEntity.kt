@@ -13,12 +13,12 @@ class ScoreId(
 
 @Entity
 @IdClass(ScoreId::class)
-data class Score (
+data class ScoreEntity (
     @Id
     @ManyToOne
-    val round: Round,
+    val round: RoundEntity,
     @Id
     @ManyToOne
-    val player: Player,
+    val player: PlayerEntity,
     val score: Int = -1
 )

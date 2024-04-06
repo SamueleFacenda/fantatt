@@ -1,11 +1,10 @@
 package com.fantatt.fantattbackend.db.repos
 
-import com.fantatt.fantattbackend.db.entities.User
+import com.fantatt.fantattbackend.db.entities.UserEntity
 import org.springframework.data.repository.CrudRepository
-import java.util.Optional
 
-interface UserRepository: CrudRepository<User, Long> {
-    fun findByUsername(username: String): User?
+interface UserRepository: CrudRepository<UserEntity, Long> {
+    fun findByUsername(username: String): UserEntity?
     fun existsByUsername(username: String): Boolean
     fun existsByEmailOrUsername(email: String, username: String): Boolean
 }

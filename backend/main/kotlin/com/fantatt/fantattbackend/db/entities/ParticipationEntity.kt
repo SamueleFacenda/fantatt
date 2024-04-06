@@ -11,15 +11,15 @@ class ParticipationId (
 
 @Entity
 @IdClass(ParticipationId::class)
-data class Participation (
+data class ParticipationEntity (
     @Id
     @ManyToOne
-    val team: Team,
+    val team: TeamEntity,
     @Id
     @ManyToOne
-    val player: Player,
+    val player: PlayerEntity,
     @Id
     @ManyToOne
-    val round: Round,
+    val round: RoundEntity,
     val order: Int
 )

@@ -1,14 +1,12 @@
 package com.fantatt.fantattbackend.db.entities
 
 import jakarta.persistence.*
-import java.sql.Date
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
-class Round (
+class RoundEntity (
     @ManyToOne
-    val season: Season,
+    val season: SeasonEntity,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val resultTime: LocalDateTime, // results should be available at this time (e.g. 2-3 days)

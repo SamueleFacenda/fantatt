@@ -14,10 +14,10 @@ class LeagueCreator(
     private val teamRepository: TeamRepository,
     private val matchRepository: MatchRepository
 ) {
-    fun buildFrom(master: User, leagueName: String, societies: List<Society>, nDivisions: Int = 3): League {
+    fun buildFrom(master: UserEntity, leagueName: String, societies: List<SocietyEntity>, nDivisions: Int = 3): LeagueEntity {
         checkName(leagueName)
         checkTeamList(societies)
-        val league = leagueRepository.save(League(
+        val league = leagueRepository.save(LeagueEntity(
             name = leagueName,
             master = master,
             societies = societies.toMutableList(),
@@ -35,7 +35,7 @@ class LeagueCreator(
             throw Exception("League name cannot be blank")
     }
 
-    private fun checkTeamList(teams: List<Society>) {
+    private fun checkTeamList(teams: List<SocietyEntity>) {
         if (teams.size < 2)
             throw Exception("League must have at least 2 teams")
 
@@ -47,15 +47,15 @@ class LeagueCreator(
         checkNames(teams)
     }
 
-    private fun checkOneUserPerTeam(teams: List<Society>) {
+    private fun checkOneUserPerTeam(teams: List<SocietyEntity>) {
         checkAllDifferent(teams.map { it.owner }, "Each team must have a different user")
     }
 
-    private fun checkPlayersPerTeam(teams: List<Society>) {
+    private fun checkPlayersPerTeam(teams: List<SocietyEntity>) {
         checkAllDifferent(teams.flatMap { it.players }, "Each team must have different players")
     }
 
-    private fun checkNames(teams: List<Society>) {
+    private fun checkNames(teams: List<SocietyEntity>) {
         checkAllDifferent(teams.map { it.name }, "Each team must have a different name")
     }
 
@@ -64,10 +64,10 @@ class LeagueCreator(
             throw Exception(msg)
     }
 
-    private fun generateSocietyTeams(society: Society, nDivisions: Int) {
+    private fun generateSocietyTeams(society: SocietyEntity, nDivisions: Int) {
         teamRepository.saveAll(
             generateDefaultNames(nDivisions).mapIndexed { index, name ->
-                Team(
+                TeamEntity(
                     society = society,
                     division = index + 1,
                     name = name
@@ -81,7 +81,7 @@ class LeagueCreator(
         return ('A'..'Z').take(len).map { it.toString() }
     }
 
-    private fun generateMatches(league: League, doReturnRound: Boolean = false) {
+    private fun generateMatches(league: LeagueEntity, doReturnRound: Boolean = false) {
         val rounds = calendarManager.getRemainingRounds()
         // https://en.wikipedia.org/wiki/Round-robin_tournament?useskin=vector#Scheduling_algorithm
         var matches = generateRoundRobin(league.societies.size)
@@ -114,12 +114,12 @@ class LeagueCreator(
         }
     }
 
-    private fun generateDivision(teams: List<Team>, matches: List<List<Pair<Int, Int>>>, rounds: List<Round>): List<Match> {
+    private fun generateDivision(teams: List<TeamEntity>, matches: List<List<Pair<Int, Int>>>, rounds: List<RoundEntity>): List<MatchEntity> {
         val shuffledTeams = teams.shuffled()
         return matches.zip(rounds).map { (round, roundEntity) ->
             round.map { (home, away) ->
                 val xHome = Random.nextBoolean()
-                Match(
+                MatchEntity(
                     round = roundEntity,
                     teamX = shuffledTeams[if (xHome) home else away],
                     teamA = shuffledTeams[if (xHome) away else home]

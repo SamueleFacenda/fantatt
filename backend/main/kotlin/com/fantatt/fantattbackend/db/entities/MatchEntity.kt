@@ -11,18 +11,18 @@ class MatchId (
 
 @Entity
 @IdClass(MatchId::class)
-class Match (
+class MatchEntity (
     @Id
     @ManyToOne
-    val teamA: Team,
+    val teamA: TeamEntity,
     @Id
     @ManyToOne
-    val teamX: Team,
+    val teamX: TeamEntity,
     @Id
     @ManyToOne
-    val round: Round,
+    val round: RoundEntity,
     @ManyToOne
-    val winner: Team?=null,
+    val winner: TeamEntity?=null,
     val scoreA: Int = 0,
     val scoreX: Int = 0
 )

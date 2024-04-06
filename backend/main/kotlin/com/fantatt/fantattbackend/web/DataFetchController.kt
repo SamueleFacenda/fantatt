@@ -1,7 +1,7 @@
 package com.fantatt.fantattbackend.web
 
-import com.fantatt.fantattbackend.db.entities.League
-import com.fantatt.fantattbackend.db.entities.Society
+import com.fantatt.fantattbackend.db.entities.LeagueEntity
+import com.fantatt.fantattbackend.db.entities.SocietyEntity
 import com.fantatt.fantattbackend.db.repos.LeagueRepository
 import com.fantatt.fantattbackend.db.repos.UserRepository
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,14 +18,14 @@ class DataFetchController(
 
     @GetMapping("/user/leagues")
     @ResponseBody
-    fun getUserLeagues(principal: Principal): List<League> {
+    fun getUserLeagues(principal: Principal): List<LeagueEntity> {
         return userRepository.findByUsername(principal.name)
             ?.societies?.map { it.league } ?: throw Exception("User not found")
     }
 
     @GetMapping("league/{leagueId}/teams")
     @ResponseBody
-    fun getLeagueTeams(@PathVariable leagueId: Long): List<Society> {
+    fun getLeagueTeams(@PathVariable leagueId: Long): List<SocietyEntity> {
         return leagueRepository.findById(leagueId).orElseThrow { Exception("League not found") }.societies
     }
 

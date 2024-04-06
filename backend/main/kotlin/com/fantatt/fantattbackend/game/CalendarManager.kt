@@ -1,9 +1,10 @@
 package com.fantatt.fantattbackend.game
 
-import com.fantatt.fantattbackend.db.entities.Round
-import com.fantatt.fantattbackend.db.entities.Season
+import com.fantatt.fantattbackend.db.entities.RoundEntity
+import com.fantatt.fantattbackend.db.entities.SeasonEntity
 import com.fantatt.fantattbackend.db.repos.RoundRepository
 import com.fantatt.fantattbackend.db.repos.SeasonRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.DayOfWeek.*
@@ -30,11 +31,14 @@ val ROUND_RESULT_OFFSET: Duration = Duration.ofDays(2).plusHours(12)
  * The current season is the one that must be played
  */
 @Component
-class CalendarManager(
-    val seasonRepository: SeasonRepository,
-    val roundRepository: RoundRepository
-) {
-    fun getCurrentSeason(): Season {
+object CalendarManager {
+
+    @Autowired
+    lateinit var seasonRepository: SeasonRepository
+    @Autowired
+    lateinit var roundRepository: RoundRepository
+
+    fun getCurrentSeason(): SeasonEntity {
         val currentSeasonYear = getCurrentSeasonYear()
         val out = seasonRepository.findByYear(getCurrentSeasonYear())
         return out ?: createSeason(currentSeasonYear)
@@ -48,20 +52,20 @@ class CalendarManager(
             else currentDate.year -1
     }
 
-    fun createSeason(year: Int): Season {
-        val season = Season(year)
+    private fun createSeason(year: Int): SeasonEntity {
+        val season = SeasonEntity(year)
         seasonRepository.save(season)
         val rounds = generateRounds(season)
         roundRepository.saveAll(rounds)
         return season
     }
 
-    fun generateRounds(season: Season): List<Round> {
+    private fun generateRounds(season: SeasonEntity): List<RoundEntity> {
         val sundays = getRoundDatesForYear(season.year.toLong())
         return sundays
             .map { it.atStartOfDay() }
             .mapIndexed { index, date ->
-                Round(
+                RoundEntity(
                     index = index,
                     startTime = date.plus(ROUND_START_OFFSET),
                     endTime = date.plus(ROUND_END_OFFSET),
@@ -83,14 +87,14 @@ class CalendarManager(
         return beforeChristmas + afterChristmas
     }
 
-    fun generateSundaysInInterval(start: LocalDate, end: LocalDate): List<LocalDate> {
+    private fun generateSundaysInInterval(start: LocalDate, end: LocalDate): List<LocalDate> {
         return start
             .with(nextOrSame(SUNDAY))
             .datesUntil(end, Period.ofDays(7))
             .toList()
     }
 
-    fun getPreviousRound(round: Round): Round {
+    fun getPreviousRound(round: RoundEntity): RoundEntity {
         if (round.index == 0)
             throw IllegalStateException("No previous round")
 
@@ -109,7 +113,7 @@ class CalendarManager(
         return roundRepository.findByEndTimeAfterAndResultTimeBefore(current, current) != null
     }
 
-    fun getNextStartingRound(): Round? {
+    fun getNextStartingRound(): RoundEntity? {
         // TODO cache
         val current = LocalDateTime.now()
         return roundRepository.findTopByStartTimeAfterOrderByStartTime(current)
@@ -119,7 +123,7 @@ class CalendarManager(
      * get the round not yet started (assumes that the rounds
      * from the next season are not in the database)
      */
-    fun getRemainingRounds(): List<Round> {
+    fun getRemainingRounds(): List<RoundEntity> {
         // TODO cache
         val current = LocalDateTime.now()
         return roundRepository.findAllByStartTimeAfterOrderByIndex(current)
