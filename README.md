@@ -1,43 +1,129 @@
-# Fantasy tabletennis
-One project, one monorepo, 3 modules, 3 build system
+# {{project_name}}
 
-> [!IMPORTANT]  
-> Very WIP, just an idea for now.
+{{project_description}}
 
-[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+AI-assisted development project template with OpenRouter integration,
+multi-language support (Rust, Python, Node.js), and Nix-managed tooling.
 
-## info
+## Features
 
-read the docs (in /docs).
+- Multi-language support - Rust, Python, Node.js behind per-language flake options
+- Reproducible dev shell and packages via Nix (flake-parts)
+- Python environment built by uv2nix from `uv.lock`
+- Pre-commit hooks via git-hooks.nix (nix-managed, run with prek)
+- Security tooling - semgrep, trivy, git-secrets, bandit, cargo-audit
+- CI pipelines for GitHub Actions and GitLab
+- Keep a Changelog (maintained manually)
+- AI agent skeletons (OpenRouter client) in `src/` for each language
 
-## A simple scraper for the fitet result portal
-Not so simple in the end, features:
-- multithreading (more than 20 threads takes down the website)
-- persistency (data are saved in a general 
-relational db, for a complete list of the choices just look 
-at [sqlalchemy](https://sqlalchemy.org))
-- db update operation optimization
-- cli utility
-- json saving option ([here](https://github.com/SamueleFacenda/Python-scripts/commits/13be8f5def93a9322ecd51e21679c25aa3a48a82))
+## Quick Start
 
-![db scheme](assets/db_scheme.jpg)
+### Create a new project
 
-TODO:
-- [ ] web ui for fantasy tabletennis
-- [ ] player auction
-- [ ] formation management (choose 3 players) 
-- [ ] score assignment (should think about something smart)
-- [ ] match simulation (A-X and score comparison)
-- [x] update fitet parser request discharging (some tournaments are present 
-but not completely updated)
+```bash
+nix flake init -t /nixos-config#ai
+```
 
-## CONTRIBUTING
-I don't really think there is someone out there
-interested in contributing to this project,
-but if you are (awesome), just open an issue or a PR.
-Every contribution is welcome, and also 
-we can discuss the game rules together.
+### Replace placeholders
 
- 
-https://github.com/NixOS/nixpkgs/blob/c1f0be03736e6d5ab4d19e867e6684686203eee8/pkgs/games/mindustry/default.nix#L127
-https://www.baeldung.com/spring-mvc-static-resources
+```bash
+grep -rl --exclude-dir=.git '{{' . | xargs sed -i \
+  -e "s/{{project_name}}/my-project/g" \
+  -e "s/{{project_description}}/My project/g" \
+  -e "s/{{author_name}}/John Doe/g" \
+  -e "s/{{author_email}}/john@example.com/g" \
+  -e "s/{{github_user}}/johndoe/g"
+```
+
+Package names in `Cargo.toml`, `pyproject.toml`, and `package.json` stay
+`ai-project` so the lockfiles remain valid. Rename them and regenerate the
+locks when you want your own package name:
+
+```bash
+# after renaming, in the dev shell:
+cargo update && uv lock && npm install
+```
+
+### Enter the development shell
+
+```bash
+direnv allow   # or: nix develop
+```
+
+### Enable languages
+
+All languages are off by default. Edit the `config` block in `flake.nix`:
+
+```nix
+config = {
+  rust = true;
+  python = true;
+  nodejs = true;
+  docker = true;   # adds the dockerImage package
+};
+```
+
+### OpenRouter API key
+
+Export `OPENROUTER_API_KEY` in your environment. With direnv, add it to a
+`.env` file in the project root (gitignored, loaded by `dotenv_if_exists`).
+
+## Commands
+
+Inside the dev shell:
+
+```bash
+nix flake check        # all checks incl. pre-commit
+pre-commit-run         # format via pre-commit hooks
+just test              # tests for enabled languages
+just type-check        # mypy / tsc
+just build             # build enabled languages
+just security          # semgrep, trivy, bandit, cargo-audit, git-secrets
+just deps-update       # cargo update, uv lock --upgrade, npm update
+just build-docker      # nix build .#dockerImage (needs docker option)
+```
+
+Language-specific tools are added to the shell when the language is enabled:
+
+- Rust: cargo, clippy, rustfmt, cargo-nextest, cargo-audit, rust-analyzer
+- Python: uv2nix venv (pytest, mypy, ruff, bandit from lockfile), uv
+- Node.js: node, npm
+
+## Project Structure
+
+```
+├── .github/workflows/     # GitHub Actions CI
+├── .gitlab-ci.yml         # GitLab CI
+├── .claude/               # Claude project memory
+├── .opencode/            # OpenCode project memory
+├── src/
+│   ├── rust/             # Rust skeleton (OpenRouter client, config)
+│   ├── python/           # Python skeleton (typer CLI, env-based config)
+│   └── nodejs/           # TypeScript skeleton (commander CLI, TOML config)
+├── tests/unit/           # Unit tests per language
+├── flake.nix             # Dev shell, packages, checks, language options
+├── pyproject.toml        # Python project (uv.lock drives uv2nix)
+├── Cargo.toml            # Rust package
+├── package.json          # Node.js project (npm, package-lock.json)
+├── justfile              # Command runner
+├── CHANGELOG.md          # Keep a Changelog (manual)
+└── LICENSE               # EUPL-1.2
+```
+
+## Changelog
+
+Maintained manually in [CHANGELOG.md](CHANGELOG.md) following
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Add entries to the
+`[Unreleased]` section with each change.
+
+## CI
+
+- **GitHub Actions** (`.github/workflows/ci.yml`): flake checks, tests, and a
+  security scan on push/PR to `main`/`develop`. The docker job is manual
+  (`workflow_dispatch`) and needs the `docker` option enabled.
+- **GitLab CI** (`.gitlab-ci.yml`): same stages; the docker job publishes the
+  image tarball as an artifact on `main` and tags.
+
+## License
+
+EUPL-1.2 - see [LICENSE](LICENSE).

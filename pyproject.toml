@@ -1,29 +1,132 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "fantatt"
-dynamic = ["version"]
-description = "Fantasy tabletennis"
-requires-python = ">=3.8"
-keywords = ["python"]
-authors = [
-    {name = "Samuele Facenda", email = "samuele.facenda@gmail.com"},
+name = "ai-project"
+version = "0.1.0"
+description = "{{project_description}}"
+readme = "README.md"
+license = {text = "EUPL-1.2"}
+authors = [{name = "{{author_name}}", email = "{{author_email}}"}]
+maintainers = [{name = "{{author_name}}", email = "{{author_email}}"}]
+keywords = ["ai", "llm", "development", "agent"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+requires-python = ">=3.11"
 dependencies = [
-   "requests",
-   "beautifulsoup4",
-   "icecream",
-   "sqlalchemy",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "rich>=13.0",
+    "typer>=0.12",
+    "loguru>=0.7",
 ]
 
-[project.scripts]
-fitet-runner = "fitet.__main__:main"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "pytest-mock>=3.14",
+    "hypothesis>=6.100",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "bandit>=1.7",
+]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "pytest-mock>=3.14",
+    "hypothesis>=6.100",
+]
 
-[tool.setuptools]
-packages = ["fitet"]
+[project.urls]
+Homepage = "https://github.com/{{github_user}}/{{project_name}}"
+Repository = "https://github.com/{{github_user}}/{{project_name}}"
+Documentation = "https://github.com/{{github_user}}/{{project_name}}/blob/main/docs"
+Issues = "https://github.com/{{github_user}}/{{project_name}}/issues"
 
-[tool.setuptools.dynamic]
-# Set by nix
-version = {file = "VERSION"}
+[tool.hatch.build.targets.wheel]
+packages = ["src/python"]
+
+# WHY: the nix dev shell and nix build create store symlinks here,
+# which cannot be packed into an sdist
+[tool.hatch.build.targets.sdist]
+exclude = [".pre-commit-config.yaml", "result", "result-*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+indent-style = "space"
+indent-width = 4
+quote-style = "double"
+docstring-code-format = true
+extend-select = ["I", "UP", "PTH", "TRY", "SIM", "TID", "ARG", "FLY", "PD", "RUF", "TCH", "QF"]
+ignore = ["E501", "B008"]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "PTH", "TRY", "SIM", "TID", "ARG", "FLY", "PD", "RUF", "TCH", "QF"]
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["main"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+indent-width = 4
+line-length = 100
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+show_error_codes = true
+pretty = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers --cov=src --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[tool.bandit]
+targets = ["src"]
+exclude_dirs = ["tests"]
+severity_level = "medium"
+confidence_level = "medium"
