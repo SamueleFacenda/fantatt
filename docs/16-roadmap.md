@@ -1,5 +1,10 @@
 # Roadmap
 
+Phase-level plan. The atomic, agent-executable decomposition lives in
+[18-execution-roadmap.md](18-execution-roadmap.md), which extends this document with
+goal cards, verification, client checkpoints, audits, and an explicit deferral of the
+exclusive-ownership auction mode.
+
 ## Phase 0 — Foundation (weeks 1–3)
 
 **Goal:** an empty but complete skeleton that builds, tests, and deploys.
