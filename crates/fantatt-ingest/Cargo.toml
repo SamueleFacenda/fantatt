@@ -9,3 +9,6 @@ repository.workspace = true
 reqwest.workspace = true
 serde.workspace = true
 tokio.workspace = true
+
+[lints]
+workspace = true

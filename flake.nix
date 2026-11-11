@@ -60,6 +60,8 @@
             fileset = pkgs.lib.fileset.unions [
               (craneLib.fileset.commonCargoSources ./.)
               (craneLib.fileset.cargoTomlAndLock ./.)
+              # Clippy reads its thresholds from the workspace root.
+              (pkgs.lib.fileset.fromRoot "clippy.toml")
             ];
           };
 

@@ -60,6 +60,14 @@ lettre = { version = "0.11.23", default-features = false, features = ["tokio1", 
 config = "0.14"
 toml = "0.8"
 
+# Engineering gates. Every crate opts in via `[lints] workspace = true`.
+[workspace.lints.clippy]
+too_many_arguments = "deny"
+too_many_lines = "deny"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
 [profile.release]
 lto = true
 codegen-units = 1

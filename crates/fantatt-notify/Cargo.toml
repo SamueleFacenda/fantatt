@@ -9,3 +9,6 @@ repository.workspace = true
 lettre.workspace = true
 reqwest.workspace = true
 serde.workspace = true
+
+[lints]
+workspace = true

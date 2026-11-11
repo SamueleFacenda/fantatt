@@ -1,0 +1,4 @@
+# Clippy thresholds implementing the complexity limits in the coding rules:
+# functions take at most 3 arguments and span at most 20 lines.
+too-many-arguments-threshold = 3
+too-many-lines-threshold = 20
