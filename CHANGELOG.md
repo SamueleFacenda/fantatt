@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Monorepo directory trees for `web/`, `nix/`, `deploy/`, `tests/{e2e,nixos,conformance}`, and `rules/`.
 - Cargo-based `justfile` and a CI workflow gating on `nix flake check` plus a dependency audit.
 ### Changed
+- Documented workspace pins: `rudof` corrected to 0.1.12 (0.3.39 does not exist) and the `reqwest` 0.13 feature list to `rustls`/`h2`, matching the pinned `Cargo.toml`.
 ### Deprecated
 ### Removed
 ### Fixed
