@@ -16,8 +16,8 @@ build:
 test:
     cargo nextest run --workspace
 
-# Full local gate suite: format, clippy, tests, comment lint.
-check: fmt-check lint test comment-lint
+# Full local gate suite: format, clippy, tests, comment lint, secret scan.
+check: fmt-check lint test comment-lint secrets
 
 # Lint with clippy, failing on any warning.
 lint:
@@ -34,6 +34,11 @@ fmt:
 # Reject forbidden comment leads (why-only comments per the coding rules).
 comment-lint:
     scripts/comment-lint
+
+# Secret scan over staged changes. CI scans the full history with gitleaks
+# directly, which is stronger than the staged-only hook.
+secrets:
+    gitleaks git --staged --no-banner
 
 # Validate conventional-commit headers. The commit-msg hook passes the message
 # file; CI passes a commit range.

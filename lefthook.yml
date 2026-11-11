@@ -6,6 +6,8 @@ pre-commit:
   commands:
     comment-lint:
       run: just comment-lint
+    secrets:
+      run: just secrets
 
 commit-msg:
   commands:
