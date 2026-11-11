@@ -38,8 +38,10 @@ openidconnect = "4.1.0"
 sqlx = { version = "0.9.0", features = ["runtime-tokio", "postgres", "migrate", "macros"] }
 
 # Knowledge graph and reasoning engine (fantatt-reasoning).
+# rudof is not pinned yet: the 0.1.12 release does not compile against the
+# current releases of its shacl_ast/shacl_validation/srdf family, so it lands
+# with G1.9 together with the pinned family (see docs/adr/0002).
 oxigraph = "0.5.13"
-rudof = "0.1.12"
 eyeron = "0.9.2"
 
 # Outbound HTTP (fantatt-ingest, fantatt-notify).
@@ -49,7 +51,10 @@ reqwest = { version = "0.13", default-features = false, features = ["rustls", "g
 tokio-cron-scheduler = "0.15.1"
 
 # Email (fantatt-notify).
-lettre = "0.11.23"
+# Email facade (fantatt-notify). The default feature set pulls native-tls,
+# which needs a system OpenSSL; the rustls features match the rest of the stack
+# and keep the build hermetic.
+lettre = { version = "0.11.23", default-features = false, features = ["tokio1", "tokio1-rustls-tls", "builder", "smtp-transport", "pool", "hostname"] }
 
 # Configuration (fantatt-config).
 config = "0.14"

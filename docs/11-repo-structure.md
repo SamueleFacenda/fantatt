@@ -17,7 +17,7 @@ fantatt/
 │
 ├── crates/
 │   ├── fantatt-core/             # domain types, invariants, ports
-│   ├── fantatt-reasoning/        # rule engine + Oxigraph + rudof + eyeron integration
+│   ├── fantatt-reasoning/        # rule engine + Oxigraph + eyeron integration (rudof arrives with G1.9)
 │   ├── fantatt-scoring/          # pure scoring functions
 │   ├── fantatt-ingest/           # FITET scraper and parsers
 │   ├── fantatt-api/              # axum handlers, middleware, OpenAPI
@@ -76,8 +76,11 @@ axum = "0.8.9"
 tokio = { version = "1", features = ["full"] }
 sqlx = { version = "0.9.0", features = ["runtime-tokio", "postgres", "migrate", "macros"] }
 oxigraph = "0.5.13"
-rudof = "0.1.12"
 eyeron = "0.9.2"
+# rudof 0.1.12 is deferred to G1.9: it does not compile against the current
+# releases of its shacl_ast/shacl_validation/srdf family (APIs it imports were
+# removed), and pinning the whole family to 2024 releases would be dependency
+# drift. It returns with the family pinned and a SHACL conformance test.
 utoipa = "6.0.0"
 webauthn-rs = "0.6.2"
 oauth2 = "5.0.0"

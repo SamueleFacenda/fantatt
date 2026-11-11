@@ -8,4 +8,3 @@ repository.workspace = true
 [dependencies]
 eyeron.workspace = true
 oxigraph.workspace = true
-rudof.workspace = true

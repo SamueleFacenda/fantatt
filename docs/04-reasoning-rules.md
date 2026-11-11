@@ -22,7 +22,7 @@ independently checked.
 | Concern | Tool | Version | Role |
 | --- | --- | --- | --- |
 | RDF store | `oxigraph` | 0.5.13 (2026-10-22) | SPARQL 1.1 query/update, atomic writes |
-| Shape validation | `rudof` | 0.1.12 (2024-08-13) | SHACL/ShEx validation of asserted facts |
+| Shape validation | `rudof` | 0.1.12 (2024-08-13) | SHACL/ShEx validation of asserted facts (workspace dependency arrives with G1.9) |
 | Closure | `reasonable` | 0.5.0-a1 / 0.4.4 | RDFS + OWL 2 RL materialisation |
 | Rules + proofs | `eyeron` | 0.9.2 (2026-11-09) | N3 rules with **checkable proof certificates** |
 | Rule language (authored) | N3 / SPARQL CONSTRUCT | — | Declarative, reviewable |

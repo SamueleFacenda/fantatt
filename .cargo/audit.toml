@@ -1,10 +1,10 @@
 # cargo-audit configuration for the fantatt workspace.
 #
-# Every ignored advisory is an upstream-blocked finding: the patched version is
-# outside the semver range of a direct dependency that is already at its latest
-# release. Each entry names the blocking crate, the accepted risk, and the
-# trigger that reopens it. The dependency watchdog (G0.8) and SA-1 re-check this
-# file; a resolved entry is deleted, never left stale.
+# Every ignored advisory is an upstream-blocked finding: the patched version
+# sits outside the semver range of a direct dependency that is already at its
+# latest release. Each entry names the blocking crate, the accepted risk, and
+# the trigger that reopens it. The dependency watchdog (G0.8) and SA-1 re-check
+# this file; a resolved entry is deleted, never left stale.
 #
 # Phase 0 builds on x86_64-linux only (see flake.nix systems). Rustsec scans
 # Cargo.lock across every target, so findings whose crate is absent from the
@@ -12,20 +12,12 @@
 
 [advisories]
 ignore = [
-  # pyo3 0.22.6 is pinned by rudof 0.1.12, the latest rudof release. Both
-  # advisories are patched only in pyo3 >= 0.24.1 (buffer overflow in
-  # PyString::from_object) and >= 0.29.0 (missing Sync bound). rudof is the
-  # SHACL/ShEx engine for the G1.9 quarantine flow; revisit on the next rudof
-  # release that accepts a patched pyo3.
-  "RUSTSEC-2025-0020",
-  "RUSTSEC-2026-0177",
-
-  # quick-xml 0.37.5 is pinned by oxrdfxml 0.2.5 (oxigraph 0.5.13) and by
-  # rudof's RDF/XML reader. Both advisories (quadratic attribute scan and
-  # unbounded namespace allocation in NsReader) are patched only in
-  # quick-xml >= 0.41.0. The RDF/XML surface is not reachable from the FITET
-  # ingest path, which parses HTML; revisit on oxigraph >= 0.6 or a rudof
-  # release that vendors a patched oxrdfxml.
+  # quick-xml 0.37.5 is pinned by oxrdfxml 0.2.5 (oxigraph 0.5.13, the latest
+  # oxigraph release) and by oxigraph's SPARQL result reader. Both advisories
+  # (quadratic attribute scan and unbounded namespace allocation in NsReader)
+  # are patched only in quick-xml >= 0.41.0. The RDF/XML surface is not
+  # reachable from the FITET ingest path, which parses HTML, and G1.2 bounds
+  # every fetched document; revisit on oxigraph >= 0.6.
   "RUSTSEC-2026-0194",
   "RUSTSEC-2026-0195",
 
