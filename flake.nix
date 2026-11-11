@@ -78,7 +78,8 @@
 
           # The dependency tree links native code: aws-lc-sys (reqwest's
           # rustls provider) and any bindgen codegen need a C toolchain and
-          # cmake; bindgenHook provides LIBCLANG_PATH from libclang.lib.
+          # cmake; bindgenHook provides LIBCLANG_PATH from libclang.lib. TLS is
+          # rustls-only (lettre uses tokio1-rustls-tls), so no OpenSSL.
           nativeBuildInputs = with pkgs; [
             pkg-config
             cmake
@@ -144,7 +145,6 @@
               binutils
               clang
               libclang.lib
-              openssl
               jq
               git
               ripgrep
