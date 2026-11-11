@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-11-10
-- **Verified:** oxigraph 0.5.13 (2026-10-22, MIT/Apache-2.0), rudof 0.3.39, eyeron 0.9.2, reasonable 0.5.0-a1
+- **Verified:** oxigraph 0.5.13 (2026-10-22, MIT/Apache-2.0), rudof 0.1.12 (2024-08-13), eyeron 0.9.2, reasonable 0.5.0-a1
 
 ## Context
 
@@ -17,7 +17,7 @@ Use **Oxigraph 0.5.13** as the RDF store, a Rust library embedded in the API
 process, with the RocksDB on-disk backend for production and the in-memory
 backend for auctions. Compose it with:
 
-- **rudof 0.3.39** for SHACL/ShEx validation on ingest,
+- **rudof 0.1.12** for SHACL/ShEx validation on ingest,
 - **eyeron 0.9.2** for N3 game rules with checkable proof certificates,
 - **reasonable** for RDFS/OWL-2-RL closure of the taxonomy.
 

@@ -76,14 +76,14 @@ axum = "0.8.9"
 tokio = { version = "1", features = ["full"] }
 sqlx = { version = "0.9.0", features = ["runtime-tokio", "postgres", "migrate", "macros"] }
 oxigraph = "0.5.13"
-rudof = "0.3.39"
+rudof = "0.1.12"
 eyeron = "0.9.2"
 utoipa = "6.0.0"
 webauthn-rs = "0.6.2"
 oauth2 = "5.0.0"
 openidconnect = "4.1.0"
 tower-sessions = "0.15.0"
-reqwest = { version = "0.13", default-features = false, features = ["rustls-tls", "gzip", "http2"] }
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "gzip", "h2"] }
 tracing = "0.1"
 tracing-opentelemetry = "0.34.0"
 governor = "0.10.4"
