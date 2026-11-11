@@ -1,0 +1,20 @@
+[package]
+name = "fantatt-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+axum.workspace = true
+governor.workspace = true
+oauth2.workspace = true
+openidconnect.workspace = true
+serde.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+tower-sessions.workspace = true
+tower-sessions-sqlx-store.workspace = true
+utoipa.workspace = true
+validator.workspace = true
+webauthn-rs.workspace = true

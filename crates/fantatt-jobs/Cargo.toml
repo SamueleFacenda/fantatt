@@ -1,0 +1,12 @@
+[package]
+name = "fantatt-jobs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+serde.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+tokio-cron-scheduler.workspace = true

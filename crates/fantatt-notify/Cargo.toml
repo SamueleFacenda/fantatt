@@ -1,0 +1,11 @@
+[package]
+name = "fantatt-notify"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+lettre.workspace = true
+reqwest.workspace = true
+serde.workspace = true

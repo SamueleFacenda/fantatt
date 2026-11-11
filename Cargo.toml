@@ -1,56 +1,60 @@
-[package]
-name = "ai-project"
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 license = "EUPL-1.2"
-description = "AI-assisted development project"
-repository = "https://github.com/user/ai-project"
-authors = ["User <user@example.com>"]
-categories = ["ai", "development-tools"]
-keywords = ["ai", "llm", "development", "agent"]
-readme = "README.md"
-homepage = "https://github.com/user/ai-project"
-documentation = "https://docs.rs/ai-project"
+repository = "https://github.com/SamueleFacenda/fantatt"
 
-[lib]
-name = "ai_project"
-path = "src/rust/lib.rs"
-
-[dependencies]
-# Core
-tokio = { version = "1", features = ["full"] }
-anyhow = "1"
-thiserror = "1"
+[workspace.dependencies]
+# Domain core deps. fantatt-core is limited to these (docs/11-repo-structure.md §2).
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+thiserror = "1"
+time = "0.3"
+
+# Async runtime and utilities.
+tokio = { version = "1", features = ["full"] }
+tower = "0.5.3"
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-subscriber = "0.3"
 
-# AI/OpenRouter
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
-async-openai = "0.20"
+# HTTP surface (fantatt-api).
+axum = "0.8.9"
+tower-sessions = "0.15.0"
+tower-sessions-sqlx-store = "0.15.1"
+utoipa = "6.0.0"
+governor = "0.10.4"
+validator = "0.21.0"
 
-# Config
+# Authentication (fantatt-api; passkeys + Google OIDC).
+webauthn-rs = "0.6.2"
+oauth2 = "5.0.0"
+openidconnect = "4.1.0"
+
+# Database (fantatt-jobs, fantatt-api).
+sqlx = { version = "0.9.0", features = ["runtime-tokio", "postgres", "migrate", "macros"] }
+
+# Knowledge graph and reasoning engine (fantatt-reasoning).
+oxigraph = "0.5.13"
+rudof = "0.1.12"
+eyeron = "0.9.2"
+
+# Outbound HTTP (fantatt-ingest, fantatt-notify).
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "gzip", "h2"] }
+
+# Scheduling (fantatt-jobs).
+tokio-cron-scheduler = "0.15.1"
+
+# Email (fantatt-notify).
+lettre = "0.11.23"
+
+# Configuration (fantatt-config).
 config = "0.14"
 toml = "0.8"
-
-# CLI
-clap = { version = "4", features = ["derive", "env"] }
-
-[dev-dependencies]
-tokio-test = "0.4"
-mockito = "1"
-tempfile = "3"
-predicates = "3"
 
 [profile.release]
 lto = true
 codegen-units = 1
-panic = "abort"
-
-[profile.dev]
-debug = true
-
-[[bin]]
-name = "ai-project"
-path = "src/rust/main.rs"
