@@ -1,0 +1,29 @@
+#!/bin/sh
+# Reject forbidden comment leads. Coding rules allow only why/algorithm/todo/
+# fixme/hack/note/legal/license tags; a comment that opens with what, how,
+# obvious, redundant, mumbling, or noise adds no information.
+set -eu
+
+pattern='^[[:space:]]*(///?|//!|/\*\*?|\*|#)[[:space:]]*(what|how|obvious|redundant|mumbling|noise)([[:space:]]|$)'
+
+# xargs turns ripgrep's exit 1 (no matches, clean) into 123 and keeps 0 (matches
+# found, a violation) as 0; anything else is a real failure.
+set +e
+git ls-files --cached --others --exclude-standard -z -- crates nix scripts tests web rules deploy |
+    xargs -0 -r rg --no-heading --line-number --color never -e "$pattern"
+status=$?
+set -e
+
+case $status in
+    0)
+        printf 'comment-lint: forbidden comment leads (see matches above)\n' >&2
+        exit 1
+        ;;
+    123)
+        exit 0
+        ;;
+    *)
+        printf 'comment-lint: ripgrep failed with status %s\n' "$status" >&2
+        exit 1
+        ;;
+esac

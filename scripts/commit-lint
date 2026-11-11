@@ -1,0 +1,38 @@
+#!/bin/sh
+# Validate conventional-commit headers. Accepts commit-message files (git
+# commit-msg hook) and/or A..B ranges (CI). Merge, fixup, and squash commits
+# are exempt: git generates them, not the author.
+set -eu
+
+header_pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9][a-z0-9/._-]*\))?!?: .{1,100}$'
+
+headers=$(mktemp)
+trap 'rm -f "$headers"' EXIT
+
+for argument in "$@"; do
+    case $argument in
+        *..*)
+            git log --format='%s' "$argument" >>"$headers"
+            ;;
+        *)
+            sed -n '1p' "$argument" >>"$headers"
+            ;;
+    esac
+done
+
+validated=0
+while IFS= read -r header; do
+    [ -n "$header" ] || continue
+    case $header in
+        Merge\ * | fixup!* | squash!* | Revert\ \"*)
+            continue
+            ;;
+    esac
+    if ! printf '%s\n' "$header" | grep -Eq "$header_pattern"; then
+        printf 'commit-lint: invalid conventional commit: %s\n' "$header" >&2
+        exit 1
+    fi
+    validated=$((validated + 1))
+done <"$headers"
+
+printf 'commit-lint: %s valid commit header(s)\n' "$validated"
