@@ -34,117 +34,130 @@
       rust-overlay,
       ...
     }:
-    flake-parts.lib.mkFlake { inherit inputs; }
-      {
-        # Phase 0 evaluates and builds on Linux x86_64. Additional systems (and
-        # Darwin) are declared once remote builders are available.
-        systems = [
-          "x86_64-linux"
-        ];
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      # Phase 0 evaluates and builds on Linux x86_64. Additional systems (and
+      # Darwin) are declared once remote builders are available.
+      systems = [
+        "x86_64-linux"
+      ];
 
-        perSystem =
-          { system, ... }:
-          let
-            pkgs = import inputs.nixpkgs {
-              inherit system;
-              overlays = [ rust-overlay.overlays.default ];
-            };
+      perSystem =
+        { system, ... }:
+        let
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [ rust-overlay.overlays.default ];
+          };
 
-            rustToolchain = pkgs.rust-bin.stable."1.99.1".default;
+          rustToolchain = pkgs.rust-bin.stable."1.99.1".default;
 
-            craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
+          craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
 
-            # Filter crate sources (drops .git, target/, node_modules) for
-            # stable dependency hashing.
-            src = pkgs.lib.fileset.toSource {
-              root = ./.;
-              fileset = pkgs.lib.fileset.unions [
-                (craneLib.fileset.commonCargoSources ./.)
-                (craneLib.fileset.cargoTomlAndLock ./.)
-              ];
-            };
+          # Filter crate sources (drops .git, target/, node_modules) for
+          # stable dependency hashing.
+          src = pkgs.lib.fileset.toSource {
+            root = ./.;
+            fileset = pkgs.lib.fileset.unions [
+              (craneLib.fileset.commonCargoSources ./.)
+              (craneLib.fileset.cargoTomlAndLock ./.)
+            ];
+          };
 
-            pname = "fantatt";
-            version = "0.1.0";
+          pname = "fantatt";
+          version = "0.1.0";
 
-            cargoArtifacts = craneLib.buildDepsOnly {
-              inherit src pname version nativeBuildInputs buildInputs;
-            };
+          cargoArtifacts = craneLib.buildDepsOnly {
+            inherit
+              src
+              pname
+              version
+              nativeBuildInputs
+              buildInputs
+              ;
+          };
 
-            # The dependency tree links native code: aws-lc-sys (reqwest's
-            # rustls provider) and any bindgen codegen need a C toolchain and
-            # cmake; libclang + bindgenHook provide LIBCLANG_PATH.
-            nativeBuildInputs = with pkgs; [
+          # The dependency tree links native code: aws-lc-sys (reqwest's
+          # rustls provider) and any bindgen codegen need a C toolchain and
+          # cmake; bindgenHook provides LIBCLANG_PATH from libclang.lib.
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+            cmake
+            perl
+            binutils
+            clang
+            rustPlatform.bindgenHook
+          ];
+
+          buildInputs = with pkgs; [
+            libclang.lib
+            openssl
+          ];
+
+          craneConf = {
+            inherit
+              src
+              cargoArtifacts
+              nativeBuildInputs
+              buildInputs
+              pname
+              version
+              ;
+          };
+        in
+        {
+          packages = {
+            default = craneLib.buildPackage craneConf;
+
+            fantatt-core = craneLib.buildPackage (
+              craneConf
+              // {
+                pname = "fantatt-core";
+                cargoExtraArgs = "-p fantatt-core";
+              }
+            );
+          };
+
+          checks = {
+            cargo-test = craneLib.cargoTest craneConf;
+
+            cargo-clippy = craneLib.cargoClippy (
+              craneConf
+              // {
+                cargoClippyExtraArgs = "-- --deny warnings --deny clippy::all";
+              }
+            );
+
+            rustfmt = craneLib.cargoFmt (craneConf // { cargoFmtCommand = "cargo fmt --all -- --check"; });
+          };
+
+          devShells.default = pkgs.mkShell {
+            packages = [
+              rustToolchain
+            ]
+            ++ (with pkgs; [
+              just
+              cargo-nextest
+              cargo-audit
               pkg-config
               cmake
               perl
               binutils
               clang
-              rustPlatform.bindgenHook
-            ];
-
-            buildInputs = with pkgs; [
-              libclang
+              libclang.lib
               openssl
-            ];
+              jq
+              git
+              ripgrep
+            ]);
 
-            craneConf = {
-              inherit src cargoArtifacts nativeBuildInputs buildInputs pname version;
-            };
-          in
-          {
-            packages = {
-              default = craneLib.buildPackage craneConf;
-
-              fantatt-core = craneLib.buildPackage (
-                craneConf // {
-                  pname = "fantatt-core";
-                  cargoExtraArgs = "-p fantatt-core";
-                }
-              );
-            };
-
-            checks = {
-              cargo-test = craneLib.cargoTest craneConf;
-
-              cargo-clippy = craneLib.cargoClippy (
-                craneConf // {
-                  cargoClippyExtraArgs = "-- --deny warnings --deny clippy::all";
-                }
-              );
-
-              rustfmt = craneLib.cargoFmt (
-                craneConf // { cargoFmtCommand = "cargo fmt --all -- --check"; }
-              );
-            };
-
-            devShells.default = pkgs.mkShell {
-              packages = [
-                rustToolchain
-              ] ++ (with pkgs; [
-                just
-                cargo-nextest
-                cargo-audit
-                pkg-config
-                cmake
-                perl
-                binutils
-                clang
-                libclang
-                openssl
-                jq
-                git
-                ripgrep
-              ]);
-
-              shellHook = ''
-                export LIBCLANG_PATH="${pkgs.libclang}/lib"
-                export RUST_BACKTRACE=1
-                echo "fantatt dev shell — $(rustc --version)"
-              '';
-            };
-
-            formatter = pkgs.nixfmt;
+            shellHook = ''
+              export LIBCLANG_PATH="${pkgs.libclang.lib}/lib"
+              export RUST_BACKTRACE=1
+              echo "fantatt dev shell — $(rustc --version)"
+            '';
           };
-      };
+
+          formatter = pkgs.nixfmt;
+        };
+    };
 }
