@@ -173,7 +173,7 @@ facade is selected in config; code never branches on provider names.
 | --- | --- |
 | `EmailSender` | `smtp` (lettre), `http-api` (Resend / Postmark / Mailgun / SES v2), `log` (development) |
 | `ObjectStore` | `s3`, `filesystem` |
-| `ReasoningEngine` | embedded Oxigraph + rudof + eyeron |
+| `ReasoningEngine` | embedded Oxigraph + eyeron (rudof joins with G1.9) |
 | `Leadership` | single-node (in-process) / Postgres advisory lock |
 | `Queue` | Postgres LISTEN/NOTIFY, optional NATS |
 | `MetricsBackend` | OTLP |

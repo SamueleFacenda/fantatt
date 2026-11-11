@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Nix workspace (flake-parts + crane + rust-overlay) pinning the Rust 1.99.1 toolchain.
-- Nine-crate backend skeleton (`fantatt-core`, `-scoring`, `-reasoning`, `-ingest`, `-api`, `-jobs`, `-notify`, `-obs`, `-config`) with their end-state dependencies pinned.
+- Nine-crate backend skeleton (`fantatt-core`, `-scoring`, `-reasoning`, `-ingest`, `-api`, `-jobs`, `-notify`, `-obs`, `-config`) with their end-state dependencies pinned. `rudof` defers to G1.9: its 0.1.12 release does not compile against the current releases of its `shacl_ast`/`srdf` family.
 - Monorepo directory trees for `web/`, `nix/`, `deploy/`, `tests/{e2e,nixos,conformance}`, and `rules/`.
 - Cargo-based `justfile` and a CI workflow gating on `nix flake check` plus a dependency audit.
 ### Changed

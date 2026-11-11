@@ -144,8 +144,10 @@ High-level walkthrough: [`docs/01-architecture.md`](docs/01-architecture.md).
 oauth2 5.0.0, utoipa 6.0.0, governor, validator, tracing + OpenTelemetry.
 
 **Knowledge graph and reasoning** — Oxigraph 0.5.13 (RDF/SPARQL store),
-rudof 0.1.12 (SHACL validation), eyeron 0.9.2 (N3 rules with checkable proofs),
-reasonable (RDFS/OWL 2 RL closure).
+eyeron 0.9.2 (N3 rules with checkable proofs), reasonable (RDFS/OWL 2 RL
+closure). SHACL validation adds rudof with G1.9: its 0.1.12 release does not
+compile against the current releases of its shacl_ast/srdf family, so it
+arrives with that family pinned.
 
 **Frontend** — React 19, TypeScript, Vite 8, Tailwind CSS v4, Radix primitives
 via shadcn, Workbox via vite-plugin-pwa, TanStack Query, EventSource.
