@@ -39,10 +39,10 @@ engine made, and it can be re-run and independently checked.
 ## Quick start
 
 ```bash
-nix develop            # complete toolchain: Rust, Node, browsers, test binaries
-nix flake check        # build, lint, audit, test, VM integration suite
-just test              # unit + integration
-just e2e               # browser flows against a local stack
+nix develop            # pinned Rust toolchain + build/test/lint tooling
+nix flake check        # build, clippy, and tests over the whole Rust workspace
+just test              # the full Cargo test suite
+just build             # compile every crate
 ```
 
 Deploy the whole stack on a NixOS machine:
@@ -144,7 +144,7 @@ High-level walkthrough: [`docs/01-architecture.md`](docs/01-architecture.md).
 oauth2 5.0.0, utoipa 6.0.0, governor, validator, tracing + OpenTelemetry.
 
 **Knowledge graph and reasoning** — Oxigraph 0.5.13 (RDF/SPARQL store),
-rudof 0.3.39 (SHACL validation), eyeron 0.9.2 (N3 rules with checkable proofs),
+rudof 0.1.12 (SHACL validation), eyeron 0.9.2 (N3 rules with checkable proofs),
 reasonable (RDFS/OWL 2 RL closure).
 
 **Frontend** — React 19, TypeScript, Vite 8, Tailwind CSS v4, Radix primitives
@@ -160,8 +160,9 @@ on 2026-11-10. Unmaintained dependencies are rejected explicitly (see
 
 ## Project status
 
-Design phase. This repository contains the complete specification and
-architecture; implementation follows [`docs/16-roadmap.md`](docs/16-roadmap.md).
+Phase 0 (foundation) is underway: the Nix/Crane workspace and the nine-crate
+backend skeleton are in place. Feature work follows
+[`docs/18-execution-roadmap.md`](docs/18-execution-roadmap.md).
 
 ## License
 
