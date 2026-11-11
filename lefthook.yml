@@ -1,0 +1,13 @@
+# Git hooks managed by lefthook (installed with `just install-hooks` inside the
+# dev shell). The slow gates (format, clippy, tests) stay in `just check`;
+# hooks carry the cheap deterministic checks so commits never reach CI broken.
+
+pre-commit:
+  commands:
+    comment-lint:
+      run: just comment-lint
+
+commit-msg:
+  commands:
+    commit-lint:
+      run: just commit-lint {1}

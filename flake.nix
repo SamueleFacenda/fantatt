@@ -139,6 +139,8 @@
             ]
             ++ (with pkgs; [
               just
+              lefthook
+              gitleaks
               cargo-nextest
               cargo-audit
               pkg-config
