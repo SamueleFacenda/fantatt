@@ -88,6 +88,9 @@ pub enum DomainError {
 
     #[error("manager {manager} is not an active member of the league")]
     MembershipNotActive { manager: Identifier },
+
+    #[error("appearance {appearance} does not describe a valid singles or doubles match")]
+    InvalidAppearance { appearance: Identifier },
 }
 
 impl DomainError {
@@ -111,6 +114,7 @@ impl DomainError {
             Self::RuleVersionMissing { .. } => "RULE_VERSION_MISSING",
             Self::PurgeWindowExceeded { .. } => "PURGE_WINDOW_EXCEEDED",
             Self::MembershipNotActive { .. } => "MEMBERSHIP_NOT_ACTIVE",
+            Self::InvalidAppearance { .. } => "INVALID_APPEARANCE",
         }
     }
 }

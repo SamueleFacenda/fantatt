@@ -4,12 +4,14 @@
 //! clock, or async runtime enters this crate (docs/11-repo-structure.md §3).
 #![forbid(unsafe_code)]
 
+pub mod appearance;
 pub mod calendar;
 pub mod division;
 pub mod error;
 pub mod identity;
 pub mod ids;
 pub mod league;
+pub mod matchday;
 pub mod membership;
 pub mod money;
 pub mod player;
