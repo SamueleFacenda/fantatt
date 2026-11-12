@@ -48,6 +48,19 @@ impl Money {
             })
     }
 
+    /// Subtracts a same-currency amount, failing on underflow.
+    pub fn checked_sub(&self, other: &Self) -> Option<Self> {
+        if self.currency != other.currency {
+            return None;
+        }
+        self.minor_units
+            .checked_sub(other.minor_units)
+            .map(|minor_units| Self {
+                currency: self.currency.clone(),
+                minor_units,
+            })
+    }
+
     fn from_wire(text: &str) -> Result<Self, MoneyParseError> {
         let (currency, minor_units) = text
             .split_once(' ')
@@ -131,6 +144,25 @@ mod tests {
         let max = Money::new("EUR", u64::MAX).expect("valid");
         assert!(
             max.checked_add(&Money::new("EUR", 1).expect("valid"))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn checked_sub_detects_underflow_and_currency_mismatch() {
+        let money = Money::new("EUR", 100).expect("valid");
+        assert_eq!(
+            money.checked_sub(&Money::new("EUR", 40).expect("valid")),
+            Some(Money::new("EUR", 60).expect("valid"))
+        );
+        assert!(
+            money
+                .checked_sub(&Money::new("EUR", 101).expect("valid"))
+                .is_none()
+        );
+        assert!(
+            money
+                .checked_sub(&Money::new("USD", 40).expect("valid"))
                 .is_none()
         );
     }
