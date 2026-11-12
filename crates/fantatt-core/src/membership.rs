@@ -153,6 +153,29 @@ mod tests {
     }
 
     #[test]
+    fn manager_membership_joins_active_with_getters() {
+        let membership = Membership::manager(
+            id(DomainPrefix::League, 'A'),
+            id(DomainPrefix::User, 'C'),
+            money(500),
+        );
+        assert_eq!(membership.role(), MembershipRole::Manager);
+        assert_eq!(membership.state(), MembershipState::Active);
+        assert_eq!(membership.league_id(), &id(DomainPrefix::League, 'A'));
+        assert_eq!(membership.manager_id(), &id(DomainPrefix::User, 'C'));
+        assert_eq!(membership.remaining_budget(), &money(500));
+    }
+
+    #[test]
+    fn inactive_membership_carries_the_not_active_code() {
+        let mut membership = membership();
+        membership.remove();
+        assert_eq!(membership.state(), MembershipState::Removed);
+        let error = membership.spend(money(10)).expect_err("removed");
+        assert_eq!(error.code(), "MEMBERSHIP_NOT_ACTIVE");
+    }
+
+    #[test]
     fn spending_within_budget_decrements_the_remainder() {
         let mut membership = membership();
         membership.spend(money(400)).expect("within budget");
