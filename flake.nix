@@ -61,7 +61,7 @@
               (craneLib.fileset.commonCargoSources ./.)
               (craneLib.fileset.cargoTomlAndLock ./.)
               # Clippy reads its thresholds from the workspace root.
-              (pkgs.lib.fileset.fromRoot "clippy.toml")
+              (pkgs.lib.fileset.maybeMissing ./clippy.toml)
             ];
           };
 
