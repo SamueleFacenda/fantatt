@@ -7,15 +7,18 @@
 pub mod appearance;
 pub mod auction;
 pub mod calendar;
+pub mod derivation;
 pub mod division;
 pub mod error;
 pub mod identity;
+pub mod idempotency;
 pub mod ids;
 pub mod league;
 pub mod matchday;
 pub mod membership;
 pub mod money;
 pub mod player;
+pub mod purge;
 pub mod rating;
 pub mod squad;
 
