@@ -242,7 +242,10 @@ mod tests {
             DivisionTier::C1,
             id(DomainPrefix::Team, 'D'),
         );
-        assert_eq!(affiliation.competition(), &id(DomainPrefix::Competition, 'B'));
+        assert_eq!(
+            affiliation.competition(),
+            &id(DomainPrefix::Competition, 'B')
+        );
         assert_eq!(affiliation.tier(), DivisionTier::C1);
         assert_eq!(affiliation.team(), &id(DomainPrefix::Team, 'D'));
     }

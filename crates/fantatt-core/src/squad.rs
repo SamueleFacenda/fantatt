@@ -714,7 +714,9 @@ mod tests {
         let assignment = SlotAssignment::new(player('Z'), tier);
         assert_eq!(
             squad.assign(0, assignment),
-            Err(DomainError::DuplicatePlayerInSquad { player: player('Z') })
+            Err(DomainError::DuplicatePlayerInSquad {
+                player: player('Z')
+            })
         );
     }
 
@@ -817,13 +819,15 @@ mod tests {
     #[test]
     fn unlock_from_draft_is_rejected() {
         let mut squad = squad();
-        assert!(squad
-            .unlock(AdminUnlock::new(
-                identifier(DomainPrefix::User, 'C'),
-                "nothing to unlock",
-                0
-            ))
-            .is_err());
+        assert!(
+            squad
+                .unlock(AdminUnlock::new(
+                    identifier(DomainPrefix::User, 'C'),
+                    "nothing to unlock",
+                    0
+                ))
+                .is_err()
+        );
     }
 
     #[test]

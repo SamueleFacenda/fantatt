@@ -296,7 +296,11 @@ mod tests {
     fn evidence_from_classifica_entries_accumulates_once() {
         let mut identity = PlayerIdentity::unresolved(id(), Alias::new("Bendoni Lorenzo"));
         let competition = competition();
-        let evidence = Evidence::new(ClassificaEntry::new("2026-C2", 2400, "TRENTINO"), competition.clone(), 12);
+        let evidence = Evidence::new(
+            ClassificaEntry::new("2026-C2", 2400, "TRENTINO"),
+            competition.clone(),
+            12,
+        );
         identity.add_evidence(evidence.clone());
         identity.add_evidence(evidence);
         assert_eq!(identity.internal_id(), &id());
@@ -310,7 +314,10 @@ mod tests {
             "01ARZ3XK7M0C4V6B8N2QWE9RTB",
         )
         .expect("valid id");
-        let audit = MergeAudit::new(survivor.clone(), Date::from_ordinal_date(2026, 100).expect("date"));
+        let audit = MergeAudit::new(
+            survivor.clone(),
+            Date::from_ordinal_date(2026, 100).expect("date"),
+        );
         let merge = IdentityMerge::new(id(), survivor.clone(), audit);
         assert_eq!(merge.absorbed(), &id());
         assert_eq!(merge.survivor(), &survivor);

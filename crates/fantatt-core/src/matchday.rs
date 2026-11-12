@@ -257,7 +257,10 @@ mod tests {
     fn matchday_exposes_its_identity() {
         let mut matchday = matchday(3);
         assert_eq!(matchday.matchday_id(), &id(DomainPrefix::Matchday, 'A'));
-        assert_eq!(matchday.competition_id(), &id(DomainPrefix::Competition, 'B'));
+        assert_eq!(
+            matchday.competition_id(),
+            &id(DomainPrefix::Competition, 'B')
+        );
         assert_eq!(matchday.number(), 7);
         assert_eq!(matchday.status(), MatchdayStatus::Scheduled);
         let tie = matchday.scheduled_ties()[0].tie_id().clone();
