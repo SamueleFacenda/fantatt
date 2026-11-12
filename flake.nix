@@ -51,6 +51,11 @@
 
           rustToolchain = pkgs.rust-bin.stable."1.99.1".default;
 
+          # why: cargo-llvm-cov needs llvm-profdata/llvm-cov whose profile
+          # format matches the LLVM inside rustc 1.99.1 (LLVM 23); the default
+          # nixpkgs `llvm` attribute lags it and rejects the raw profile.
+          coverageLlvm = pkgs.llvmPackages_23.llvm;
+
           craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
 
           # Filter crate sources (drops .git, target/, node_modules) for
@@ -136,6 +141,7 @@
           devShells.default = pkgs.mkShell {
             packages = [
               rustToolchain
+              coverageLlvm
             ]
             ++ (with pkgs; [
               just
@@ -157,6 +163,8 @@
 
             shellHook = ''
               export LIBCLANG_PATH="${pkgs.libclang.lib}/lib"
+              export LLVM_COV="${coverageLlvm}/bin/llvm-cov"
+              export LLVM_PROFDATA="${coverageLlvm}/bin/llvm-profdata"
               export RUST_BACKTRACE=1
               echo "fantatt dev shell — $(rustc --version)"
             '';
