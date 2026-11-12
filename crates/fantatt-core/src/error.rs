@@ -85,6 +85,9 @@ pub enum DomainError {
         manager: Identifier,
         days_retained: u16,
     },
+
+    #[error("manager {manager} is not an active member of the league")]
+    MembershipNotActive { manager: Identifier },
 }
 
 impl DomainError {
@@ -92,23 +95,22 @@ impl DomainError {
     pub fn code(&self) -> &'static str {
         match self {
             Self::DuplicateRatingForDate { .. } => "DUPLICATE_RATING_FOR_DATE",
-            Self::InvalidSquadComposition { .. } | Self::UnknownSlot { .. } => {
-                "INVALID_SQUAD_COMPOSITION"
-            }
-            Self::IneligiblePlayer { .. } | Self::BenchSubstitutionOutsideTier { .. } => {
-                "INELIGIBLE_PLAYER"
-            }
+            Self::InvalidSquadComposition { .. } => "INVALID_SQUAD_COMPOSITION",
+            Self::UnknownSlot { .. } => "UNKNOWN_SLOT",
+            Self::IneligiblePlayer { .. } => "INELIGIBLE_PLAYER",
             Self::PlayerAlreadyOwnedInMonth { .. } => "PLAYER_ALREADY_OWNED_IN_MONTH",
             Self::DuplicatePlayerInSquad { .. } => "DUPLICATE_PLAYER_IN_SQUAD",
             Self::SquadLocked { .. } => "SQUAD_LOCKED",
             Self::WeekOnePointsNotZero { .. } => "WEEK_ONE_POINTS_NOT_ZERO",
+            Self::BenchSubstitutionOutsideTier { .. } => "BENCH_SUBSTITUTION_OUTSIDE_TIER",
             Self::MatchdayIncomplete { .. } => "MATCHDAY_INCOMPLETE",
-            Self::OfferNotHighest { .. } | Self::AuctionWindowClosed { .. } => "AUCTION_VIOLATION",
+            Self::OfferNotHighest { .. } => "OFFER_NOT_HIGHEST",
+            Self::AuctionWindowClosed { .. } => "AUCTION_WINDOW_CLOSED",
             Self::BudgetExceeded { .. } => "BUDGET_EXCEEDED",
-            Self::ScoreWithoutDerivation { .. } | Self::RuleVersionMissing { .. } => {
-                "DERIVATION_RECORD_MISSING"
-            }
+            Self::ScoreWithoutDerivation { .. } => "SCORE_WITHOUT_DERIVATION",
+            Self::RuleVersionMissing { .. } => "RULE_VERSION_MISSING",
             Self::PurgeWindowExceeded { .. } => "PURGE_WINDOW_EXCEEDED",
+            Self::MembershipNotActive { .. } => "MEMBERSHIP_NOT_ACTIVE",
         }
     }
 }
@@ -193,7 +195,7 @@ mod tests {
                 from_tier: DivisionTier::C1,
                 to_tier: DivisionTier::D1,
             },
-            "INELIGIBLE_PLAYER",
+            "BENCH_SUBSTITUTION_OUTSIDE_TIER",
         );
         assert_code(
             DomainError::WeekOnePointsNotZero {
@@ -225,11 +227,11 @@ mod tests {
                 offered: money(100),
                 best: money(200),
             },
-            "AUCTION_VIOLATION",
+            "OFFER_NOT_HIGHEST",
         );
         assert_code(
             DomainError::AuctionWindowClosed { lot },
-            "AUCTION_VIOLATION",
+            "AUCTION_WINDOW_CLOSED",
         );
         assert_code(
             DomainError::BudgetExceeded {
@@ -244,11 +246,11 @@ mod tests {
     fn derivation_and_purge_codes() {
         assert_code(
             DomainError::ScoreWithoutDerivation { player: player() },
-            "DERIVATION_RECORD_MISSING",
+            "SCORE_WITHOUT_DERIVATION",
         );
         assert_code(
             DomainError::RuleVersionMissing { player: player() },
-            "DERIVATION_RECORD_MISSING",
+            "RULE_VERSION_MISSING",
         );
         assert_code(
             DomainError::PurgeWindowExceeded {

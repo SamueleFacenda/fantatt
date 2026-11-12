@@ -9,6 +9,8 @@ pub mod division;
 pub mod error;
 pub mod identity;
 pub mod ids;
+pub mod league;
+pub mod membership;
 pub mod money;
 pub mod player;
 pub mod rating;
