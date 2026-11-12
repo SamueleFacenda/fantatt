@@ -60,6 +60,10 @@ lettre = { version = "0.11.23", default-features = false, features = ["tokio1", 
 config = "0.14"
 toml = "0.8"
 
+# Property-based testing (dev-only; mandated for rosters, budgets, and
+# idempotency keys by docs/15-testing.md §2 and goal G0.3).
+proptest = "1.12.0"
+
 # Engineering gates. Every crate opts in via `[lints] workspace = true`.
 [workspace.lints.clippy]
 too_many_arguments = "deny"
