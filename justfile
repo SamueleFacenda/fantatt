@@ -16,6 +16,14 @@ build:
 test:
     cargo nextest run --workspace
 
+# Line coverage for the domain core. The invariant code of fantatt-core must
+# stay fully covered; the workspace gate is 80% lines (docs/15-testing.md).
+# Needs llvm-tools matching the pinned toolchain's LLVM version: either
+# rustup component add llvm-tools-preview or LLVM_COV/LLVM_PROFDATA pointing at
+# that exact LLVM release (a different llvm-cov rejects the raw profile).
+coverage:
+    cargo llvm-cov -p fantatt-core --summary-only
+
 # Full local gate suite: format, clippy, tests, comment lint, secret scan.
 check: fmt-check lint test comment-lint secrets
 

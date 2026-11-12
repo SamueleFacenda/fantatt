@@ -143,6 +143,7 @@
               gitleaks
               cargo-nextest
               cargo-audit
+              cargo-llvm-cov
               pkg-config
               cmake
               perl

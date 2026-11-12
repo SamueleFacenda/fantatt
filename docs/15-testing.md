@@ -30,6 +30,13 @@ opponent rating), money arithmetic (no negative budgets), and pagination cursors
 
 Coverage gate: 80% lines, 100% of rules and invariants.
 
+`just coverage` reports the line coverage of `fantatt-core`. It needs
+`llvm-tools` matching the LLVM version of the pinned toolchain: either
+`rustup component add llvm-tools-preview` inside the dev shell or the
+`LLVM_COV`/`LLVM_PROFDATA` variables pointing at that exact LLVM release. A
+toolchain whose LLVM version predates the profile format written by the
+pinned `rustc` fails with a raw-profile version mismatch.
+
 ## 3. Rule conformance
 
 Every rule bundle ships tests inside it:
