@@ -5,6 +5,7 @@
 #![forbid(unsafe_code)]
 
 pub mod appearance;
+pub mod auction;
 pub mod calendar;
 pub mod division;
 pub mod error;
