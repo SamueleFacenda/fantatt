@@ -6,8 +6,8 @@ use time::Date;
 use crate::division::DivisionTier;
 use crate::error::DomainError;
 use crate::identity::{Alias, PlayerIdentity};
-use crate::rating::{Rating, PROVISIONAL_RATING};
 use crate::ids::Identifier;
+use crate::rating::{PROVISIONAL_RATING, Rating};
 
 /// Gender band of a FITET competition.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
@@ -159,7 +159,8 @@ mod tests {
     }
 
     fn rating(points: i64, day: u8) -> Rating {
-        let date = time::Date::from_calendar_date(2026, time::Month::June, day).expect("valid date");
+        let date =
+            time::Date::from_calendar_date(2026, time::Month::June, day).expect("valid date");
         let provenance = RatingProvenance::new("classifica", RatingConfidence::High);
         Rating::confirmed(points, date, provenance).expect("valid rating")
     }
@@ -167,7 +168,10 @@ mod tests {
     #[test]
     fn provisional_player_starts_unresolved() {
         let player = player();
-        assert_eq!(player.identity().state(), crate::identity::IdentityState::Unresolved);
+        assert_eq!(
+            player.identity().state(),
+            crate::identity::IdentityState::Unresolved
+        );
         assert_eq!(player.current_rating(), None);
         assert_eq!(provisional_rating_value(), 2000);
     }
@@ -207,7 +211,11 @@ mod tests {
         let competition = id(DomainPrefix::Competition, 'B');
         let other = id(DomainPrefix::Competition, 'C');
         let team = id(DomainPrefix::Team, 'D');
-        player.add_affiliation(Affiliation::new(competition.clone(), DivisionTier::C2, team.clone()));
+        player.add_affiliation(Affiliation::new(
+            competition.clone(),
+            DivisionTier::C2,
+            team.clone(),
+        ));
         player.add_affiliation(Affiliation::new(other, DivisionTier::D1, team));
         assert_eq!(
             player

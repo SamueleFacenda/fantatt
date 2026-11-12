@@ -371,7 +371,10 @@ impl Squad {
             });
         }
         // why: the two slots exchange occupants; slot positions stay put
-        let bench_player = self.slots[bench_index].player.take().expect("checked above");
+        let bench_player = self.slots[bench_index]
+            .player
+            .take()
+            .expect("checked above");
         let starter_player = self.slots[starter_index].player.replace(bench_player);
         self.slots[bench_index].player = starter_player;
         Ok(())
@@ -735,7 +738,7 @@ mod tests {
         let error = squad
             .substitute(14, 1)
             .expect_err("cross-tier substitution is illegal");
-        assert_eq!(error.code(), "INELIGIBLE_PLAYER");
+        assert_eq!(error.code(), "BENCH_SUBSTITUTION_OUTSIDE_TIER");
     }
 
     #[test]
