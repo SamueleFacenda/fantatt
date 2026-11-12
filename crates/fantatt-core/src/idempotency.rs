@@ -129,6 +129,16 @@ mod tests {
         assert_eq!(back, key);
     }
 
+    #[test]
+    fn keys_parse_from_str_and_string() {
+        let raw = "01ARZ3XK7M0C4V6B8N2QWE9RTA";
+        let parsed: IdempotencyKey = raw.parse().expect("parse");
+        assert_eq!(parsed.as_str(), raw);
+        let converted: IdempotencyKey = raw.to_owned().try_into().expect("try_from");
+        assert_eq!(converted, parsed);
+        assert_eq!(String::from(converted), raw.to_owned());
+    }
+
     proptest! {
         #[test]
         fn keys_in_range_with_a_safe_alphabet_parse(

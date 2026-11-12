@@ -314,6 +314,10 @@ mod tests {
             appearance.appearance_id().prefix(),
             DomainPrefix::Appearance
         );
+        assert_eq!(
+            appearance.player_id(),
+            &id(DomainPrefix::Player, 'B')
+        );
     }
 
     #[test]

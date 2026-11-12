@@ -226,6 +226,27 @@ mod tests {
         assert!(player.active_tier(None).is_some());
     }
 
+    #[test]
+    fn player_exposes_its_record() {
+        let player = player();
+        assert_eq!(player.player_id(), &id(DomainPrefix::Player, 'A'));
+        assert_eq!(player.full_name(), "Bendoni Lorenzo");
+        assert_eq!(player.gender(), Gender::Male);
+        assert_eq!(player.identity().internal_id(), player.player_id());
+    }
+
+    #[test]
+    fn affiliation_exposes_competition_tier_and_team() {
+        let affiliation = Affiliation::new(
+            id(DomainPrefix::Competition, 'B'),
+            DivisionTier::C1,
+            id(DomainPrefix::Team, 'D'),
+        );
+        assert_eq!(affiliation.competition(), &id(DomainPrefix::Competition, 'B'));
+        assert_eq!(affiliation.tier(), DivisionTier::C1);
+        assert_eq!(affiliation.team(), &id(DomainPrefix::Team, 'D'));
+    }
+
     proptest! {
         #[test]
         fn ratings_stay_unique_per_date(points_a in 0i64..4000, points_b in 0i64..4000, day in 1u8..28) {

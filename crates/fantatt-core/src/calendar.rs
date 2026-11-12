@@ -88,6 +88,13 @@ mod tests {
     }
 
     #[test]
+    fn month_year_exposes_year_and_month() {
+        let month_year = MonthYear::new(2026, 11).expect("valid");
+        assert_eq!(month_year.year(), 2026);
+        assert_eq!(month_year.month(), 11);
+    }
+
+    #[test]
     fn month_year_rolls_over_year_boundaries() {
         let december = MonthYear::new(2026, 12).expect("valid");
         assert_eq!(december.next(), MonthYear::new(2027, 1).expect("valid"));

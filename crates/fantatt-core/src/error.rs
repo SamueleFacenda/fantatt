@@ -264,4 +264,27 @@ mod tests {
             "PURGE_WINDOW_EXCEEDED",
         );
     }
+
+    #[test]
+    fn membership_and_slot_codes() {
+        assert_code(
+            DomainError::UnknownSlot {
+                index: 99,
+                total: 15,
+            },
+            "UNKNOWN_SLOT",
+        );
+        assert_code(
+            DomainError::MembershipNotActive {
+                manager: identifier(crate::ids::DomainPrefix::User, 'H'),
+            },
+            "MEMBERSHIP_NOT_ACTIVE",
+        );
+        assert_code(
+            DomainError::InvalidAppearance {
+                appearance: identifier(crate::ids::DomainPrefix::Appearance, 'J'),
+            },
+            "INVALID_APPEARANCE",
+        );
+    }
 }

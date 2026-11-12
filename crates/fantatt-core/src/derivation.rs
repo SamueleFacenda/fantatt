@@ -126,6 +126,8 @@ mod tests {
         let score = DerivedScore::new(key(), 42, record("1.2.0")).expect("valid derivation");
         assert_eq!(score.points(), 42);
         assert_eq!(score.ruleset_version(), "1.2.0");
+        assert_eq!(score.player(), &id(DomainPrefix::Player, 'A'));
+        assert_eq!(score.matchday(), &id(DomainPrefix::Matchday, 'B'));
     }
 
     #[test]
@@ -138,6 +140,11 @@ mod tests {
     fn derivation_records_carry_their_input_revision() {
         let record = record("2.0.0");
         assert_eq!(record.input_revision(), 7);
+        assert_eq!(record.ruleset_version(), "2.0.0");
+        assert_eq!(
+            record.computed_at(),
+            Date::from_ordinal_date(2026, 100).expect("valid date")
+        );
     }
 
     proptest! {

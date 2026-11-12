@@ -157,6 +157,15 @@ mod tests {
         assert!(strong > weak);
     }
 
+    #[test]
+    fn display_renders_value_date_and_source() {
+        let rating = Rating::provisional(date(), "unresolved");
+        assert_eq!(
+            rating.to_string(),
+            format!("{} @ {} ({})", PROVISIONAL_RATING, date(), "unresolved")
+        );
+    }
+
     proptest! {
         #[test]
         fn any_non_negative_integer_is_a_valid_rating(points in 0i64..i64::MAX) {
