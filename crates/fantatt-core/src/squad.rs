@@ -675,6 +675,52 @@ mod tests {
     }
 
     #[test]
+    fn restore_accepts_a_partially_filled_squad() {
+        let mut stored_source = squad();
+        fill_squad(&mut stored_source);
+        let mut slots = stored_source.slots().to_vec();
+        slots[14].player = None;
+        let stored = StoredSquad {
+            spec: spec(),
+            slots,
+        };
+        let restored = Squad::restore(stored).expect("empty slots keep the shape");
+        assert!(!restored.is_full());
+        assert!(restored.slot(14).expect("slot").player().is_none());
+    }
+
+    #[test]
+    fn restore_rejects_a_slot_that_belongs_to_another_tier() {
+        let mut slots = squad().slots().to_vec();
+        slots[0] = Slot::new(DivisionTier::D1, Position::Starter, None);
+        let stored = StoredSquad {
+            spec: spec(),
+            slots,
+        };
+        assert_eq!(
+            Squad::restore(stored),
+            Err(DomainError::InvalidSquadComposition {
+                expected: 15,
+                actual: 15,
+            })
+        );
+    }
+
+    #[test]
+    fn assigning_over_a_filled_slot_is_rejected() {
+        let mut squad = squad();
+        fill_squad(&mut squad);
+        let tier = squad.slot(0).expect("slot").tier();
+        let assignment = SlotAssignment::new(player('Z'), tier);
+        assert_eq!(
+            squad.assign(0, assignment),
+            Err(DomainError::DuplicatePlayerInSquad {
+                player: player('Z')
+            })
+        );
+    }
+
+    #[test]
     fn locked_squad_rejects_assignments() {
         let mut squad = squad();
         fill_squad(&mut squad);
@@ -748,6 +794,117 @@ mod tests {
         fill_squad(&mut squad);
         squad.submit().expect("submit full squad");
         assert_eq!(squad.status(), SquadStatus::Submitted);
+    }
+
+    #[test]
+    fn assign_outside_the_squad_is_an_unknown_slot() {
+        let mut squad = squad();
+        let error = squad
+            .assign(99, SlotAssignment::new(player('A'), DivisionTier::B2))
+            .expect_err("index 99 is outside the squad");
+        assert_eq!(error.code(), "UNKNOWN_SLOT");
+    }
+
+    #[test]
+    fn lock_from_draft_is_rejected() {
+        let mut squad = squad();
+        assert_eq!(
+            squad.lock(),
+            Err(DomainError::SquadLocked {
+                squad: squad.squad_id().clone()
+            })
+        );
+    }
+
+    #[test]
+    fn unlock_from_draft_is_rejected() {
+        let mut squad = squad();
+        assert!(
+            squad
+                .unlock(AdminUnlock::new(
+                    identifier(DomainPrefix::User, 'C'),
+                    "nothing to unlock",
+                    0
+                ))
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn submitting_twice_is_rejected() {
+        let mut squad = squad();
+        fill_squad(&mut squad);
+        squad.submit().expect("submit");
+        assert_eq!(
+            squad.submit(),
+            Err(DomainError::SquadLocked {
+                squad: squad.squad_id().clone()
+            })
+        );
+    }
+
+    #[test]
+    fn restore_accepts_a_well_formed_squad() {
+        let mut original = squad();
+        fill_squad(&mut original);
+        let stored = StoredSquad {
+            spec: spec(),
+            slots: original.slots().to_vec(),
+        };
+        let restored = Squad::restore(stored).expect("well-formed slots restore");
+        assert_eq!(restored.squad_id(), original.squad_id());
+        assert_eq!(restored.league_id(), original.league_id());
+        assert_eq!(restored.manager_id(), original.manager_id());
+        assert_eq!(restored.month(), original.month());
+        assert_eq!(restored.composition(), SquadComposition::REGULATION);
+        assert_eq!(restored.status(), SquadStatus::Draft);
+        assert!(restored.is_full());
+        assert_eq!(restored.slot(0), original.slot(0));
+    }
+
+    #[test]
+    fn filled_slot_wire_round_trips() {
+        let filled = Slot::new(DivisionTier::B2, Position::Starter, Some(player('A')));
+        let text = filled.to_string();
+        assert_eq!(text, format!("B2|starter|{}", player('A')));
+        assert_eq!(text.parse::<Slot>(), Ok(filled.clone()));
+        assert_eq!(Slot::try_from(text.clone()), Ok(filled.clone()));
+        assert_eq!(String::from(filled), text);
+    }
+
+    #[test]
+    fn empty_slot_wires_without_a_player() {
+        let slot = Slot::new(DivisionTier::D2, Position::Bench, None);
+        assert_eq!(slot.to_string(), "D2|bench|");
+        assert!(!slot.is_filled());
+        assert_eq!("D2|bench|".parse::<Slot>(), Ok(slot.clone()));
+        assert_eq!(slot.tier(), DivisionTier::D2);
+        assert_eq!(slot.position(), Position::Bench);
+    }
+
+    #[test]
+    fn malformed_slot_wires_are_rejected() {
+        assert_eq!(
+            "C3|starter|".parse::<Slot>(),
+            Err(SlotParseError::InvalidPosition)
+        );
+        assert_eq!(
+            "C2|coach|".parse::<Slot>(),
+            Err(SlotParseError::InvalidPosition)
+        );
+        assert_eq!(
+            "C2|starter|not-an-id".parse::<Slot>(),
+            Err(SlotParseError::InvalidPlayer)
+        );
+    }
+
+    #[test]
+    fn custom_compositions_expose_their_shape() {
+        let composition = SquadComposition::new(3, 2);
+        assert_eq!(composition.starters_per_tier(), 3);
+        assert_eq!(composition.bench_per_tier(), 2);
+        assert_eq!(composition.slots_per_tier(), 5);
+        assert_eq!(composition.total_slots(), 25);
     }
 
     proptest! {

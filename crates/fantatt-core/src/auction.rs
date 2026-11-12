@@ -282,6 +282,21 @@ mod tests {
         assert_eq!(lot.status(), LotStatus::Unsold);
     }
 
+    #[test]
+    fn lots_and_offers_expose_their_identity() {
+        let mut lot = lot();
+        assert_eq!(lot.lot_id(), &id(DomainPrefix::Lot, 'A'));
+        assert_eq!(lot.player_id(), &id(DomainPrefix::Player, 'C'));
+        assert!(lot.is_open_at(deadline()));
+        lot.place_offer(offer('A', 100), deadline())
+            .expect("first offer");
+        let best = lot.current_best().expect("best");
+        assert_eq!(best.offer_id(), &id(DomainPrefix::Offer, 'A'));
+        assert_eq!(best.bidder(), &id(DomainPrefix::User, 'A'));
+        assert_eq!(best.amount(), &money(100));
+        assert_eq!(lot.offers.len(), 1);
+    }
+
     proptest! {
         #[test]
         fn only_strictly_higher_offers_win(

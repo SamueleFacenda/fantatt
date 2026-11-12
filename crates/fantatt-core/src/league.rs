@@ -408,6 +408,49 @@ mod tests {
         );
     }
 
+    #[test]
+    fn league_state_displays_documented_labels() {
+        assert_eq!(LeagueState::Draft.to_string(), "DRAFT");
+        assert_eq!(LeagueState::Open.to_string(), "OPEN");
+        assert_eq!(LeagueState::Auction.to_string(), "AUCTION");
+        assert_eq!(LeagueState::Rostering.to_string(), "ROSTERING");
+        assert_eq!(LeagueState::Active.to_string(), "ACTIVE");
+        assert_eq!(LeagueState::Archived.to_string(), "ARCHIVED");
+    }
+
+    #[test]
+    fn league_exposes_its_identity_and_rules() {
+        let league = league(OwnershipMode::Shared);
+        assert_eq!(league.league_id(), &id(DomainPrefix::League, 'A'));
+        assert_eq!(league.owner_id(), &id(DomainPrefix::User, 'B'));
+        assert_eq!(league.ownership_mode(), OwnershipMode::Shared);
+        let rules = RosterRules::new(SquadComposition::new(2, 1), 15, "3.1.0");
+        assert_eq!(rules.composition().total_slots(), 15);
+        assert_eq!(rules.ruleset_version(), "3.1.0");
+    }
+
+    #[test]
+    fn competitions_are_registered_once() {
+        let mut league = league(OwnershipMode::Exclusive);
+        let competition = id(DomainPrefix::Competition, 'C');
+        league.add_competition(competition.clone());
+        league.add_competition(competition);
+        assert_eq!(league.competitions.len(), 1);
+    }
+
+    #[test]
+    fn exclusive_leagues_cannot_roster_before_the_auction() {
+        let mut league = league(OwnershipMode::Exclusive);
+        league.open().expect("open");
+        assert_eq!(
+            league.start_rostering(),
+            Err(LeagueTransitionError {
+                from: LeagueState::Open,
+                to: LeagueState::Rostering,
+            })
+        );
+    }
+
     proptest! {
         #[test]
         fn exclusive_claims_are_unique_per_month(

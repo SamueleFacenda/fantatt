@@ -253,6 +253,42 @@ mod tests {
         assert_eq!(matchday.scheduled_ties().len(), 2);
     }
 
+    #[test]
+    fn matchday_exposes_its_identity() {
+        let mut matchday = matchday(3);
+        assert_eq!(matchday.matchday_id(), &id(DomainPrefix::Matchday, 'A'));
+        assert_eq!(
+            matchday.competition_id(),
+            &id(DomainPrefix::Competition, 'B')
+        );
+        assert_eq!(matchday.number(), 7);
+        assert_eq!(matchday.status(), MatchdayStatus::Scheduled);
+        let tie = matchday.scheduled_ties()[0].tie_id().clone();
+        assert!(!matchday.is_partial());
+        matchday.record_tie_result(&id(DomainPrefix::Tie, 'Z'));
+        assert_eq!(matchday.status(), MatchdayStatus::Scheduled);
+        matchday.record_tie_result(&tie);
+        assert!(matchday.is_partial());
+    }
+
+    #[test]
+    fn a_result_without_scheduled_ties_stays_scheduled() {
+        let mut matchday = matchday(0);
+        assert_eq!(matchday.scheduled_ties().len(), 0);
+        matchday.record_tie_result(&id(DomainPrefix::Tie, 'A'));
+        assert_eq!(matchday.status(), MatchdayStatus::Scheduled);
+    }
+
+    #[test]
+    fn added_ties_report_their_state() {
+        let mut matchday = matchday(1);
+        let tie = matchday.scheduled_ties()[0].clone();
+        assert!(!tie.is_decided());
+        assert_eq!(tie.tie_id(), &id(DomainPrefix::Tie, '0'));
+        matchday.record_tie_result(tie.tie_id());
+        assert!(matchday.scheduled_ties()[0].is_decided());
+    }
+
     proptest! {
         #[test]
         fn completion_holds_only_for_full_result_sets(

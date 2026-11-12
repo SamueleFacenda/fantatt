@@ -177,6 +177,13 @@ mod tests {
         assert_eq!(back, money);
     }
 
+    #[test]
+    fn malformed_wire_forms_are_rejected() {
+        assert!("EURno-space".parse::<Money>().is_err());
+        assert!("EUR not-a-number".parse::<Money>().is_err());
+        assert!("eur 100".parse::<Money>().is_err());
+    }
+
     proptest! {
         #[test]
         fn only_three_uppercase_letters_form_currencies(candidate in "[A-Za-z0-9]{1,5}") {
@@ -185,11 +192,13 @@ mod tests {
         }
 
         #[test]
-        fn minor_units_survive_add_without_overflow(a in 0u64..u64::MAX / 2, b in 0u64..u64::MAX / 2) {
+        fn minor_units_add_either_sums_or_reports_overflow(a in 0u64..=u64::MAX, b in 0u64..=u64::MAX) {
             let left = Money::new("EUR", a)?;
             let right = Money::new("EUR", b)?;
-            let sum = left.checked_add(&right).ok_or_else(|| TestCaseError::fail("overflow"))?;
-            prop_assert_eq!(sum.minor_units(), a + b);
+            match left.checked_add(&right) {
+                Some(sum) => prop_assert_eq!(sum.minor_units(), a + b),
+                None => prop_assert!(a.checked_add(b).is_none()),
+            }
         }
     }
 }

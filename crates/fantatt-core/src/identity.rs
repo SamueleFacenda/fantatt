@@ -58,18 +58,23 @@ impl Alias {
 /// matching the same players (docs/02-domain-model.md section 4).
 pub fn normalise_name(name: &str) -> String {
     name.split_whitespace()
-        .map(|word| {
-            let mut chars = word.chars();
-            match chars.next() {
-                Some(first) => first
-                    .to_uppercase()
-                    .chain(chars.flat_map(char::to_lowercase))
-                    .collect(),
-                None => String::new(),
-            }
-        })
+        .map(capitalise_word)
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+/// why: split_whitespace never yields empty words, so the head of a word always
+/// exists and no fallback branch is needed.
+fn capitalise_word(word: &str) -> String {
+    let mut cased = String::with_capacity(word.len());
+    for (index, character) in word.chars().enumerate() {
+        if index == 0 {
+            cased.extend(character.to_uppercase());
+        } else {
+            cased.extend(character.to_lowercase());
+        }
+    }
+    cased
 }
 
 /// One row of the published classifica a match was checked against.
@@ -226,6 +231,14 @@ mod tests {
         .expect("valid id")
     }
 
+    fn competition() -> Identifier {
+        Identifier::new(
+            crate::ids::DomainPrefix::Competition,
+            "01ARZ3XK7M0C4V6B8N2QWE9RTC",
+        )
+        .expect("valid id")
+    }
+
     #[test]
     fn identity_starts_unresolved() {
         let identity = PlayerIdentity::unresolved(id(), Alias::new("bendoni lorenzo"));
@@ -256,6 +269,58 @@ mod tests {
         identity.add_alias(Alias::new("BENDONI   LORENZO"));
         identity.add_alias(Alias::new("Bendoni Lorenzo"));
         assert_eq!(identity.aliases.len(), 1);
+    }
+
+    #[test]
+    fn identity_state_displays_documented_labels() {
+        assert_eq!(IdentityState::Resolved.to_string(), "RESOLVED");
+        assert_eq!(IdentityState::Ambiguous.to_string(), "AMBIGUOUS");
+        assert_eq!(IdentityState::Unresolved.to_string(), "UNRESOLVED");
+    }
+
+    #[test]
+    fn aliases_keep_the_raw_and_normalised_forms() {
+        let alias = Alias::new("  BENDONI   lorenzo ");
+        assert_eq!(alias.name(), "  BENDONI   lorenzo ");
+        assert_eq!(alias.normalised(), "Bendoni Lorenzo");
+    }
+
+    #[test]
+    fn distinct_aliases_accumulate() {
+        let mut identity = PlayerIdentity::unresolved(id(), Alias::new("Bendoni"));
+        identity.add_alias(Alias::new("Lorenzo Bendoni"));
+        assert_eq!(identity.aliases.len(), 2);
+    }
+
+    #[test]
+    fn evidence_from_classifica_entries_accumulates_once() {
+        let mut identity = PlayerIdentity::unresolved(id(), Alias::new("Bendoni Lorenzo"));
+        let competition = competition();
+        let evidence = Evidence::new(
+            ClassificaEntry::new("2026-C2", 2400, "TRENTINO"),
+            competition.clone(),
+            12,
+        );
+        identity.add_evidence(evidence.clone());
+        identity.add_evidence(evidence);
+        assert_eq!(identity.internal_id(), &id());
+        assert_eq!(identity.evidence.len(), 1);
+    }
+
+    #[test]
+    fn merges_record_both_sides_and_the_actor() {
+        let survivor = Identifier::new(
+            crate::ids::DomainPrefix::Player,
+            "01ARZ3XK7M0C4V6B8N2QWE9RTB",
+        )
+        .expect("valid id");
+        let audit = MergeAudit::new(
+            survivor.clone(),
+            Date::from_ordinal_date(2026, 100).expect("date"),
+        );
+        let merge = IdentityMerge::new(id(), survivor.clone(), audit);
+        assert_eq!(merge.absorbed(), &id());
+        assert_eq!(merge.survivor(), &survivor);
     }
 
     proptest! {

@@ -121,6 +121,7 @@ mod tests {
     #[test]
     fn the_purge_window_is_thirty_days() {
         let request = request();
+        assert_eq!(request.manager(), &id());
         assert_eq!(request.due_by(), day(1 + PURGE_WINDOW_DAYS as i32));
         assert_eq!(PURGE_WINDOW_DAYS, 30);
     }
