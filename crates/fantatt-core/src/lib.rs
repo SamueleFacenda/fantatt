@@ -4,6 +4,8 @@
 //! clock, or async runtime enters this crate (docs/11-repo-structure.md §3).
 #![forbid(unsafe_code)]
 
+pub mod ids;
+
 #[cfg(test)]
 mod tests {
     #[test]
