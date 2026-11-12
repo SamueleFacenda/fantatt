@@ -20,6 +20,9 @@ pub enum DomainError {
     #[error("squad must hold {expected} slots, got {actual}")]
     InvalidSquadComposition { expected: u16, actual: u16 },
 
+    #[error("slot index {index} is outside the {total}-slot squad")]
+    UnknownSlot { index: usize, total: u16 },
+
     #[error("player {player} plays in {player_tier} and cannot fill a {slot_tier} slot")]
     IneligiblePlayer {
         player: Identifier,
@@ -89,7 +92,9 @@ impl DomainError {
     pub fn code(&self) -> &'static str {
         match self {
             Self::DuplicateRatingForDate { .. } => "DUPLICATE_RATING_FOR_DATE",
-            Self::InvalidSquadComposition { .. } => "INVALID_SQUAD_COMPOSITION",
+            Self::InvalidSquadComposition { .. } | Self::UnknownSlot { .. } => {
+                "INVALID_SQUAD_COMPOSITION"
+            }
             Self::IneligiblePlayer { .. } | Self::BenchSubstitutionOutsideTier { .. } => {
                 "INELIGIBLE_PLAYER"
             }

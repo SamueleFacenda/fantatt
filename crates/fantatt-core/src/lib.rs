@@ -10,6 +10,7 @@ pub mod error;
 pub mod ids;
 pub mod money;
 pub mod rating;
+pub mod squad;
 
 #[cfg(test)]
 mod tests {
