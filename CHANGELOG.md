@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Local gate suite in the `justfile`: rustfmt check, clippy with complexity limits (functions ≤20 lines and ≤3 arguments via `clippy.toml`, `unsafe_code` denied workspace-wide), workspace tests, a comment-lead lint, and a gitleaks secret scan over staged changes. Bare `just` runs the whole suite.
+- Git hooks managed by lefthook (from the pinned nixpkgs input): comment lint and secret scan on pre-commit, Conventional Commits validation on commit-msg, installed with `just install-hooks`.
+- CI split into three jobs: PR gates (gate suite, full-history secret scan, commit-range validation), dependency audit, and artifact build on pushes to `main`.
+- `CONTRIBUTING.md`: development setup, gate reference, commit format, and the branch and merge protocol.
 - Nix workspace (flake-parts + crane + rust-overlay) pinning the Rust 1.99.1 toolchain.
 - Nine-crate backend skeleton (`fantatt-core`, `-scoring`, `-reasoning`, `-ingest`, `-api`, `-jobs`, `-notify`, `-obs`, `-config`) with their end-state dependencies pinned. `rudof` defers to G1.9: its 0.1.12 release does not compile against the current releases of its `shacl_ast`/`srdf` family.
 - Monorepo directory trees for `web/`, `nix/`, `deploy/`, `tests/{e2e,nixos,conformance}`, and `rules/`.

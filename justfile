@@ -1,8 +1,8 @@
 # Fantatt command runner. Run inside the dev shell:
 #   nix develop -c just <recipe>
 
-default:
-    @just --list
+# Every local gate. Run this before pushing a branch.
+default: check
 
 # Enter the Nix dev shell.
 dev:
@@ -16,8 +16,8 @@ build:
 test:
     cargo nextest run --workspace
 
-# Pre-merge gate: format check + clippy + tests.
-check: fmt-check lint test
+# Full local gate suite: format, clippy, tests, comment lint, secret scan.
+check: fmt-check lint test comment-lint secrets
 
 # Lint with clippy, failing on any warning.
 lint:
@@ -30,6 +30,24 @@ fmt-check:
 # Apply formatting.
 fmt:
     cargo fmt --all
+
+# Reject forbidden comment leads (why-only comments per the coding rules).
+comment-lint:
+    scripts/comment-lint
+
+# Secret scan over staged changes. CI scans the full history with gitleaks
+# directly, which is stronger than the staged-only hook.
+secrets:
+    gitleaks git --staged --no-banner
+
+# Validate conventional-commit headers. The commit-msg hook passes the message
+# file; CI passes a commit range.
+commit-lint +args:
+    scripts/commit-lint {{args}}
+
+# Install the lefthook git hooks (once, inside the dev shell).
+install-hooks:
+    lefthook install
 
 # Dependency advisory scan (requires network).
 security:

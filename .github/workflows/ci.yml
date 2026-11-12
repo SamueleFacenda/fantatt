@@ -11,26 +11,35 @@ env:
   NIX_CONFIG: "experimental-features = nix-command flakes"
 
 jobs:
-  checks:
-    name: Nix flake checks
+  gates:
+    name: PR gates
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          # Commit-range validation needs the full history.
+          fetch-depth: 0
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v23
 
-      # Evaluates and builds cargo-test / cargo-clippy / rustfmt.
-      - name: Run flake checks
-        run: nix flake check --show-trace
+      - name: Run local gate suite
+        run: nix develop -c just check
+
+      - name: Scan full history for secrets
+        run: nix develop -c gitleaks git . --no-banner
+
+      - name: Validate commit messages
+        run: nix develop -c just commit-lint "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
 
   audit:
     name: Dependency audit
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [checks]
+    needs: [gates]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -40,3 +49,18 @@ jobs:
 
       - name: Run dependency audit
         run: nix develop -c just security
+
+  build:
+    name: Build workspace
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v23
+
+      - name: Build default package
+        run: nix build .#default
