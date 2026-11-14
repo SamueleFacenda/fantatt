@@ -8,26 +8,44 @@ and endpoint is configuration, validated at startup and reloadable at runtime.
 ```mermaid
 flowchart LR
     A["Defaults<br/>(compiled in)"] --> B["Config file"]
-    B --> C["Environment variables"]
-    C --> D["Runtime overrides<br/>/admin/config or per-league settings"]
+    B --> C["Environment<br/>FANTATT__SECTION__KEY"]
+    C --> D["CLI<br/>--set section.key=value"]
     D --> E["Validated typed config"]
 ```
 
-Precedence: environment > file > default. Runtime overrides are highest but
-require an entitlement, and every change is audited.
+Precedence, highest first: CLI, environment, file, defaults. The two later
+layers of this document — runtime overrides through the admin API and
+per-league settings — land with the gates that own them and sit above all four.
 
 | Layer | Format | Used for |
 | --- | --- | --- |
-| Defaults | Rust `Default` impls | Safe fallbacks, documented in the schema |
+| Defaults | compiled-in TOML (`src/defaults.toml`) | Safe fallbacks for every key |
 | File | TOML | Deployment profile |
 | Environment | `FANTATT__SECTION__KEY` | Secrets and per-environment values |
+| CLI | `--set section.key=value` | One-shot overrides in a deploy script |
 | Runtime | Admin API / league settings | Lifecycle parameters without a deploy |
 | Per-league | League settings table | Budget, lock mode, competitions, resell day |
 
+Two environment variables steer the boot itself and are never settings:
+`FANTATT__CONFIG_FILE` names the TOML file to read, and `FANTATT__ENV_FILE`
+names a file of `KEY=VALUE` lines to load before anything else. Both are set
+by a deployment; every other `FANTATT__` variable becomes a settings override,
+with the section as the path and `__` as the separator (`FANTATT__SERVER__PORT`
+sets `server.port`). An environment variable that names a secret field is
+ignored by the loader, because a secret reaches the process only through a
+literal in the environment.
+
+The loader is the CLI front-end of the service:
+`fantatt --config /etc/fantatt.toml --set server.port=8080`. An explicitly
+named config file must exist, the default `fantatt.toml` is optional, and an
+unreadable file or a malformed env-file line aborts the boot naming the file
+and the line.
+
 ## 2. Schema
 
-The configuration has a generated JSON Schema so editors validate it and the
-server rejects it early. Key sections:
+Every section of §2 below is a typed struct in `fantatt-config`, so a
+deployment file is rejected while it is parsed rather than at first use. A
+generated JSON Schema for editor validation is not produced yet. Key sections:
 
 ```toml
 # Example deployment config
@@ -130,17 +148,27 @@ heartbeat_seconds = 30
 
 ## 3. Secrets by reference
 
-Any value prefixed `env:` is resolved from the environment at startup. Missing
-required values abort startup with a message naming the exact key.
+A value prefixed `env:` is resolved from the environment at startup, so a
+config file carries only the name of the variable that holds the value. Every
+field of the table below is typed as a reference: writing a literal into it is
+a configuration error, and the abort names the key so the offending value can
+be moved into the environment. Environment variables and the CLI may not set
+these keys at all, which keeps the resolved value out of every layer that can
+be printed or logged.
 
-| Secret | Purpose |
-| --- | --- |
-| `database.url` | Postgres connection |
-| `auth.google.client_secret` | OAuth2 |
-| `notifications.vapid_private_key` | Web push signing |
-| `storage.secret_key` | Object storage |
-| `observability.otlp_headers` | Telemetry auth |
-| `crypto.session_secret` | Session cookie / CSRF signing |
+| Secret | Purpose | Required when |
+| --- | --- | --- |
+| `database.url` | Postgres connection | Always |
+| `crypto.session_secret` | Session cookie / CSRF signing | Always |
+| `auth.google.client_secret` | OAuth2 | `auth.google.enabled` |
+| `notifications.vapid_private_key` | Web push signing | `notifications.push_enabled` |
+| `storage.secret_key` | Object storage | `storage.provider = "s3"` |
+| `observability.otlp_headers` | Telemetry auth | `observability.otlp_endpoint` is set |
+
+Startup resolves every required reference and collects all the absent ones, so
+one abort lists each missing key together with the variable that should hold
+it. A resolved secret is a `Secret` value: it prints redacted, and only an
+explicit `expose()` hands the material to the code that needs it.
 
 Session and CSRF secrets are either random per boot (single node) or provided
 (multi node, so nodes can validate each other's cookies).
