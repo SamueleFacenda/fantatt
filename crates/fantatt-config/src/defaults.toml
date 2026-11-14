@@ -1,0 +1,113 @@
+# Compiled-in defaults for every module (docs/12-configuration.md §2).
+#
+# Every value here is safe to ship: secrets appear as `env:VARIABLE` references
+# only and are resolved from the process environment at startup. A deployment
+# overrides any of these with a config file, `FANTATT__SECTION__KEY` variables,
+# or `--set section.key=value` flags.
+#
+# Blank strings mean "unset": a deployment fills them in, or keeps the feature
+# disabled. Every key below must stay present so environment and CLI overrides
+# can be typed without a second copy of the schema.
+
+[app]
+name = "Fantatt"
+environment = "production"
+locale = "it"
+base_url = "https://fantatt.example.org"
+
+[server]
+bind = "0.0.0.0"
+port = 8080
+public_port = 443
+request_body_limit_bytes = 1048576
+
+[database]
+url = "env:FANTATT__DATABASE__URL"
+max_connections = 20
+min_connections = 2
+connect_timeout_seconds = 10
+
+[knowledge_graph]
+mode = "embedded-rocksdb"
+path = "/var/lib/fantatt/kg"
+snapshot_interval_seconds = 300
+snapshot_target = ""
+# snapshot_target = "s3://fantatt-snapshots/kg"
+
+[session]
+idle_seconds = 2592000
+absolute_seconds = 43200
+cookie_name = "__Host-session"
+
+[auth.google]
+enabled = false
+client_id = ""
+client_secret = "env:FANTATT__AUTH__GOOGLE__CLIENT_SECRET"
+scopes = ["openid", "email", "profile"]
+redirect_uri = ""
+
+[auth.passkey]
+enabled = true
+rp_id = "fantatt.example.org"
+rp_origin = "https://fantatt.example.org"
+
+[csrf]
+enabled = true
+header = "X-CSRF-Token"
+
+[rate_limit]
+store = "redis"
+rules = { auth = "10/min per ip", bid = "20/min per user", search = "60/min per user" }
+
+[ingest]
+enabled = true
+concurrency = 4
+min_request_interval_ms = 750
+source_base_url = "https://portale.fitet.org/"
+regions = ["Trentino"]
+discovery_interval_minutes = 30
+matchday_interval_minutes = 5
+classifica_interval_hours = 24
+respect_robots = true
+
+[email]
+provider = "log"
+from = "Fantatt <noreply@fantatt.example.org>"
+
+[storage]
+provider = "filesystem"
+bucket = ""
+endpoint = ""
+region = "us-east-1"
+secret_key = "env:FANTATT__STORAGE__SECRET_KEY"
+
+[notifications]
+push_enabled = false
+vapid_public_key = ""
+vapid_private_key = "env:FANTATT__NOTIFICATIONS__VAPID_PRIVATE_KEY"
+
+[observability]
+# An empty endpoint means telemetry export is off; set one to export.
+otlp_endpoint = ""
+service_name = "fantatt-api"
+log_level = "info"
+log_format = "json"
+otlp_headers = "env:FANTATT__OBSERVABILITY__OTLP_HEADERS"
+
+[rules]
+active_bundle = "fantatt-core/1.4.0"
+bundle_path = "/var/lib/fantatt/rules"
+verify_proofs = true
+
+[privacy]
+policy_version = "2026-11-10"
+cookie_notice_version = "2026-11-10"
+deletion_grace_days = 30
+minimum_age = 16
+
+[live]
+sse_enabled = true
+heartbeat_seconds = 30
+
+[crypto]
+session_secret = "env:FANTATT__CRYPTO__SESSION_SECRET"
