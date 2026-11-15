@@ -3,8 +3,11 @@
 //! Loads defaults, file, environment, and CLI layers into typed settings and
 //! fails fast on missing secrets or invalid combinations.
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn crate_compiles() {}
-}
+pub mod cli;
+pub mod environment;
+pub mod error;
+pub mod loader;
+pub mod overrides;
+pub mod secret;
+pub mod settings;
+pub mod validation;

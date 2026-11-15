@@ -1333,8 +1333,9 @@ version = "0.1.0"
 dependencies = [
  "config",
  "serde",
+ "serde_json",
+ "thiserror 1.0.69",
  "toml",
- "validator",
 ]
 
 [[package]]
