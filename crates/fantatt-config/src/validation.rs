@@ -149,7 +149,7 @@ pub fn collect(settings: &Settings) -> Vec<ValidationError> {
     violations.extend(check_email(&settings.email));
     violations.extend(check_storage(&settings.storage));
     violations.extend(check_notifications(&settings.notifications));
-    violations.extend(check_observability(&settings.observability));
+    violations.extend(check_observability(&settings.observability, &settings.app));
     violations.extend(check_rules(&settings.rules));
     violations.extend(check_privacy(&settings.privacy));
     violations.extend(check_live(&settings.live));
@@ -317,12 +317,22 @@ fn check_notifications(
 
 fn check_observability(
     observability: &crate::settings::observability::Observability,
+    app: &crate::settings::app::App,
 ) -> Vec<ValidationError> {
-    if !observability.service_name.trim().is_empty() {
-        Vec::new()
-    } else {
-        vec![ValidationError::ServiceNameEmpty]
+    let mut violations = Vec::new();
+    if observability.service_name.trim().is_empty() {
+        violations.push(ValidationError::ServiceNameEmpty);
     }
+    if observability.exports_telemetry()
+        && app.is_production()
+        && !uses_tls(&observability.otlp_endpoint)
+    {
+        violations.push(ValidationError::InsecureEndpoint {
+            key: "observability.otlp_endpoint",
+            value: observability.otlp_endpoint.clone(),
+        });
+    }
+    violations
 }
 
 fn check_rules(rules: &crate::settings::rules::Rules) -> Vec<ValidationError> {
@@ -355,4 +365,199 @@ fn check_live(live: &crate::settings::live::Live) -> Vec<ValidationError> {
 
 fn uses_tls(endpoint: &str) -> bool {
     endpoint.starts_with("https://")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::settings::app::DeploymentEnvironment;
+
+    const EXPECTED_TOGGLE_CODES: [&str; 6] = [
+        "CSRF_HEADER_EMPTY",
+        "RATE_LIMIT_RULES_EMPTY",
+        "EMAIL_SENDER_EMPTY",
+        "SERVICE_NAME_EMPTY",
+        "RULE_BUNDLE_INCOMPLETE",
+        "HEARTBEAT_ZERO",
+    ];
+
+    fn invalid_after(edit: impl Fn(&mut Settings)) -> Vec<ValidationError> {
+        let mut settings = Settings::default();
+        edit(&mut settings);
+        collect(&settings)
+    }
+
+    fn codes(violations: &[ValidationError]) -> Vec<&'static str> {
+        violations.iter().map(ValidationError::code).collect()
+    }
+
+    fn only_code(violations: &[ValidationError]) -> &'static str {
+        codes(violations).first().copied().unwrap_or("NONE")
+    }
+
+    #[test]
+    fn the_compiled_in_defaults_are_valid() {
+        assert!(collect(&Settings::default()).is_empty());
+    }
+
+    #[test]
+    fn a_bad_bind_port_is_rejected() {
+        assert_eq!(
+            only_code(&invalid_after(|settings| settings.server.port = 0)),
+            "BIND_PORT_RESERVED"
+        );
+    }
+
+    #[test]
+    fn a_missing_public_port_is_rejected() {
+        assert_eq!(
+            only_code(&invalid_after(|settings| settings.server.public_port = 0)),
+            "PUBLIC_PORT_MISSING"
+        );
+    }
+
+    #[test]
+    fn a_zero_concurrency_is_rejected() {
+        assert_eq!(
+            invalid_after(|settings| settings.ingest.concurrency = 0),
+            vec![ValidationError::IngestConcurrencyZero { concurrency: 0 }]
+        );
+    }
+
+    #[test]
+    fn an_unthrottled_scrape_is_rejected() {
+        assert_eq!(
+            invalid_after(|settings| settings.ingest.min_request_interval_ms = 0),
+            vec![ValidationError::IngestUnthrottled { interval_ms: 0 }]
+        );
+    }
+
+    #[test]
+    fn the_cookie_rule_binds_session_and_server_together() {
+        let plain_cookie_on_tls =
+            invalid_after(|settings| settings.session.cookie_name = "session".to_owned());
+        assert_eq!(plain_cookie_on_tls.len(), 1);
+        assert!(matches!(
+            plain_cookie_on_tls[0],
+            ValidationError::HostCookieRequired { .. }
+        ));
+        assert!(invalid_after(|settings| settings.server.public_port = 8443).is_empty());
+        assert!(
+            invalid_after(|settings| settings.session.cookie_name = "__Host-s".to_owned())
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn the_grace_window_must_keep_the_purge_promise() {
+        assert_eq!(
+            only_code(&invalid_after(|settings| settings
+                .privacy
+                .deletion_grace_days = 7)),
+            "GRACE_WINDOW_TOO_SHORT"
+        );
+    }
+
+    #[test]
+    fn production_requires_tls_endpoints() {
+        let violations = invalid_after(|settings| {
+            settings.observability.otlp_endpoint = "http://127.0.0.1:4317".to_owned();
+        });
+        assert_eq!(
+            violations,
+            vec![ValidationError::InsecureEndpoint {
+                key: "observability.otlp_endpoint",
+                value: "http://127.0.0.1:4317".to_owned(),
+            }]
+        );
+    }
+
+    #[test]
+    fn development_tolerates_a_plain_http_endpoint() {
+        assert!(
+            invalid_after(|settings| {
+                settings.app.environment = DeploymentEnvironment::Development;
+                settings.observability.otlp_endpoint = "http://127.0.0.1:4317".to_owned();
+            })
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn an_embedded_graph_needs_a_path() {
+        assert_eq!(
+            only_code(&invalid_after(|settings| {
+                settings.knowledge_graph.path = String::new();
+            })),
+            "KNOWLEDGE_GRAPH_PATH_MISSING"
+        );
+    }
+
+    #[test]
+    fn an_inverted_pool_is_rejected() {
+        assert_eq!(
+            invalid_after(|settings| settings.database.min_connections = 99),
+            vec![ValidationError::PoolShapeInvalid { min: 99, max: 20 }]
+        );
+    }
+
+    /// why: each facade is broken by one empty field, so the table pairs that
+    /// field with the violation it must raise.
+    type FacadeCase = (&'static str, fn(&mut Settings));
+
+    fn facade_cases() -> Vec<FacadeCase> {
+        vec![
+            ("STORAGE_INCOMPLETE", |settings: &mut Settings| {
+                settings.storage.provider = crate::settings::storage::StorageProvider::S3;
+                settings.storage.bucket = String::new();
+            }),
+            ("PUSH_INCOMPLETE", |settings: &mut Settings| {
+                settings.notifications.push_enabled = true;
+                settings.notifications.vapid_public_key = String::new();
+            }),
+            ("GOOGLE_INCOMPLETE", |settings: &mut Settings| {
+                settings.auth.google.client_id = String::new();
+                settings.auth.google.enabled = true;
+            }),
+            ("PASSKEY_INCOMPLETE", |settings: &mut Settings| {
+                settings.auth.passkey.rp_id = String::new();
+                settings.auth.passkey.enabled = true;
+            }),
+        ]
+    }
+
+    #[test]
+    fn incomplete_facades_are_named() {
+        for (expected, edit) in facade_cases() {
+            assert_eq!(only_code(&invalid_after(edit)), expected, "{expected}");
+        }
+    }
+
+    #[test]
+    fn empty_toggles_are_collected_together() {
+        let violations = invalid_after(|settings| {
+            settings.ingest.enabled = false;
+            settings.csrf.header = String::new();
+            settings.rate_limit.rules.clear();
+            settings.email.from = String::new();
+            settings.rules.active_bundle = String::new();
+            settings.rules.bundle_path = String::new();
+            settings.observability.service_name = String::new();
+            settings.live.heartbeat_seconds = 0;
+        });
+
+        assert_eq!(codes(&violations), EXPECTED_TOGGLE_CODES);
+    }
+
+    #[test]
+    fn a_disabled_ingest_keeps_its_scrape_rules_silent() {
+        assert!(
+            invalid_after(|settings| {
+                settings.ingest.enabled = false;
+                settings.ingest.concurrency = 0;
+                settings.ingest.regions.clear();
+            })
+            .is_empty()
+        );
+    }
 }
