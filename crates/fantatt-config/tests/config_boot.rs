@@ -154,6 +154,22 @@ fn invalid_combinations_are_listed_together_in_one_abort() {
 }
 
 #[test]
+fn a_negative_concurrency_is_rejected_naming_the_key() {
+    let root = workspace("negative-concurrency");
+    let config = root.join("fantatt.toml");
+    write(&config, "[ingest]\nconcurrency = -1\n");
+    let cli = Cli::parse(["--config", config.to_str().expect("utf-8 path")]).expect("cli");
+
+    let error = loader::load(&Environment::default(), &cli).expect_err("must abort");
+
+    assert!(
+        error.to_string().contains("ingest.concurrency"),
+        "the abort names the offending key: {error}"
+    );
+    fs::remove_dir_all(&root).ok();
+}
+
+#[test]
 fn a_configured_config_file_that_does_not_exist_is_named() {
     let root = workspace("absent-file");
     let absent = root.join("nowhere.toml").display().to_string();
