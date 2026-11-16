@@ -67,6 +67,11 @@
               (craneLib.fileset.cargoTomlAndLock ./.)
               # Clippy reads its thresholds from the workspace root.
               (pkgs.lib.fileset.maybeMissing ./clippy.toml)
+              # why: the harness embeds migrations at compile time via
+              # sqlx::migrate!, and the query macros resolve offline data
+              # from .sqlx/, so both must reach the build sandbox.
+              (pkgs.lib.fileset.maybeMissing ./migrations)
+              (pkgs.lib.fileset.maybeMissing ./.sqlx)
             ];
           };
 
@@ -150,6 +155,12 @@
               cargo-nextest
               cargo-audit
               cargo-llvm-cov
+              # why: G0.5 — the dev shell provisions the local Postgres and the
+              # sqlx CLI so `just db-*` and the ephemeral test harness run
+              # without any system services. sqlx-cli is pinned to the workspace
+              # sqlx version so the committed offline query data stays valid.
+              postgresql
+              sqlx-cli
               pkg-config
               cmake
               perl

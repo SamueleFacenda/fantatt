@@ -12,6 +12,9 @@ __pycache__/
 node_modules/
 *.tsbuildinfo
 
+# Local dev Postgres data directory (just db-start)
+/.dev/
+
 # Nix
 .result*
 /result*
