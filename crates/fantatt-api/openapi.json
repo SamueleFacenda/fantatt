@@ -1,0 +1,273 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fantatt API",
+    "description": "Fantatt fantasy table tennis",
+    "license": {
+      "name": "EUPL-1.2",
+      "identifier": "EUPL-1.2"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/csp-report": {
+      "post": {
+        "tags": [
+          "crate::routes::csp_report"
+        ],
+        "summary": "Receives a browser CSP violation report. Reports arrive from browsers\nwithout a CSRF token and change no state, so the mutating-route CSRF guard\ndoes not apply here.",
+        "operationId": "report_violation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CspReport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The report is accepted"
+          },
+          "400": {
+            "description": "The report is malformed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/csrf": {
+      "get": {
+        "tags": [
+          "crate::routes::auth"
+        ],
+        "summary": "Issues a CSRF token bound to the session, creating the session when the\nrequest carries none.",
+        "operationId": "issue_csrf_token",
+        "responses": {
+          "200": {
+            "description": "A token bound to the session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsrfToken"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The session layer is unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/session": {
+      "delete": {
+        "tags": [
+          "crate::routes::auth"
+        ],
+        "summary": "Logout: destroys the session and its CSRF token.",
+        "operationId": "revoke_session",
+        "responses": {
+          "204": {
+            "description": "The session is revoked"
+          },
+          "403": {
+            "description": "The CSRF token is missing or wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The session layer is unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "tags": [
+          "crate::routes::health"
+        ],
+        "summary": "Liveness probe: the hardened shell answers this and nothing else without\ncredentials.",
+        "operationId": "healthz",
+        "responses": {
+          "200": {
+            "description": "The service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": [],
+        "summary": "The document itself, served as JSON.",
+        "operationId": "openapi_document",
+        "responses": {
+          "200": {
+            "description": "The OpenAPI 3.1 document"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CspReport": {
+        "type": "object",
+        "required": [
+          "csp-report"
+        ],
+        "properties": {
+          "csp-report": {
+            "$ref": "#/components/schemas/ViolationReport"
+          }
+        }
+      },
+      "CsrfToken": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "HealthStatus": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Problem": {
+        "allOf": [
+          {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProblemExtras"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "title",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "description": "A problem detail with the fields every error response carries; `code`,\n`rule`, and `details` stay absent until a rule verdict needs them\n(docs/07-api-spec.md §6)."
+      },
+      "ProblemExtras": {
+        "type": "object",
+        "description": "The extra fields a rule verdict adds to an error response\n(docs/07-api-spec.md §6).",
+        "properties": {
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "details": {},
+          "rule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "ViolationReport": {
+        "type": "object",
+        "properties": {
+          "blocked-uri": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "document-uri": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effective-directive": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original-policy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "violated-directive": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

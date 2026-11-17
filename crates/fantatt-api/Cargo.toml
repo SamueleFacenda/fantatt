@@ -33,3 +33,4 @@ workspace = true
 
 [dev-dependencies]
 fantatt-test-support = { path = "../fantatt-test-support" }
+reqwest = { workspace = true, features = ["json"] }
