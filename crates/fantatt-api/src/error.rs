@@ -4,6 +4,7 @@ use axum::Json;
 use axum::http::{HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
+use utoipa::ToSchema;
 
 pub const PROBLEM_MEDIA_TYPE: &str = "application/problem+json";
 const PROBLEM_TYPE_URI_PREFIX: &str = "https://fantatt.org/problems/";
@@ -78,21 +79,26 @@ impl ProblemType {
     }
 }
 
+/// The extra fields a rule verdict adds to an error response
+/// (docs/07-api-spec.md §6).
+#[derive(Debug, Clone, Default, Serialize, ToSchema)]
+pub struct ProblemExtras {
+    pub code: Option<String>,
+    pub rule: Option<String>,
+    pub details: Option<serde_json::Value>,
+}
+
 /// A problem detail with the fields every error response carries; `code`,
 /// `rule`, and `details` stay absent until a rule verdict needs them
 /// (docs/07-api-spec.md §6).
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, ToSchema)]
 pub struct Problem {
     #[serde(rename = "type")]
     pub type_uri: String,
     pub title: String,
     pub status: u16,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub code: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub rule: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub details: Option<serde_json::Value>,
+    #[serde(flatten, skip_serializing_if = "Option::is_none")]
+    pub extras: Option<Box<ProblemExtras>>,
 }
 
 impl Problem {
@@ -101,9 +107,7 @@ impl Problem {
             type_uri: format!("{PROBLEM_TYPE_URI_PREFIX}{}", problem_type.slug()),
             title: problem_type.title().to_owned(),
             status: problem_type.status().as_u16(),
-            code: None,
-            rule: None,
-            details: None,
+            extras: None,
         }
     }
 
@@ -114,18 +118,22 @@ impl Problem {
     }
 
     pub fn with_code(mut self, code: impl Into<String>) -> Self {
-        self.code = Some(code.into());
+        self.extras_mut().code = Some(code.into());
         self
     }
 
     pub fn with_rule(mut self, rule: impl Into<String>) -> Self {
-        self.rule = Some(rule.into());
+        self.extras_mut().rule = Some(rule.into());
         self
     }
 
     pub fn with_details(mut self, details: serde_json::Value) -> Self {
-        self.details = Some(details);
+        self.extras_mut().details = Some(details);
         self
+    }
+
+    fn extras_mut(&mut self) -> &mut ProblemExtras {
+        self.extras.get_or_insert_with(Box::default)
     }
 }
 

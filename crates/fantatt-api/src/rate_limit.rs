@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use std::num::NonZeroU32;
 use std::time::Duration;
 
-use axum::extract::Request;
+use axum::extract::{Request, State};
 use axum::http::{HeaderValue, header};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
@@ -128,7 +128,11 @@ pub fn rules_for_path(path: &str, query: Option<&str>) -> &'static [&'static str
     }
 }
 
-pub async fn enforce_rate_limits(state: AppState, request: Request, next: Next) -> Response {
+pub async fn enforce_rate_limits(
+    State(state): State<AppState>,
+    request: Request,
+    next: Next,
+) -> Response {
     let path = request.uri().path().to_owned();
     let query = request.uri().query().map(str::to_owned);
     let session_id = session_key(&request);
