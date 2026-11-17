@@ -37,6 +37,14 @@ the tools are always available. A toolchain whose LLVM version predates the
 profile format written by the pinned `rustc` fails with a raw-profile version
 mismatch.
 
+Database-backed tests use `fantatt-test-support`: each test boots a private
+`initdb` instance on a unix socket in a temp directory and migrates it, so no
+test ever touches the developer's local database or needs a running service.
+The harness needs the dev shell (`initdb`/`postgres` from the pinned nixpkgs)
+and runs identically in CI. The committed offline query data in `.sqlx/` keeps
+`cargo check` hermetic; `just db-offline-check` (part of `just check`) fails
+when it drifts from `migrations/`.
+
 ## 3. Rule conformance
 
 Every rule bundle ships tests inside it:
