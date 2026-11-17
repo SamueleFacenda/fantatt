@@ -8,6 +8,7 @@ repository.workspace = true
 [dependencies]
 axum.workspace = true
 async-trait.workspace = true
+fantatt-config = { path = "../fantatt-config" }
 governor.workspace = true
 hmac.workspace = true
 oauth2.workspace = true
@@ -17,10 +18,10 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlx.workspace = true
+time.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 tower-sessions.workspace = true
-tower-sessions-sqlx-store.workspace = true
 utoipa.workspace = true
 validator.workspace = true
 webauthn-rs.workspace = true

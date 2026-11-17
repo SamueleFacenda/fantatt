@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO tower_sessions.session (id, data, expiry_date) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Bytea",
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "304cd500debe62250f7abd1ed3dc8b33853f3ee72dc9a9cdbc4717581a8bd69a"
+}
