@@ -96,7 +96,7 @@ header = "X-CSRF-Token"
 
 [rate_limit]
 store = "redis"                  # redis | memory
-rules = { auth = "10/min per ip", bid = "20/min per user", search = "60/min per user" }
+rules = { auth = "10/min per ip", auth-account = "5/min per account", bid = "20/min per user", search = "60/min per user", reads = "300/min per session" }
 
 [ingest]
 enabled = true

@@ -48,4 +48,15 @@ mod tests {
         assert!(limit().covers("auth"));
         assert!(!limit().covers("unknown-route"));
     }
+
+    #[test]
+    fn defaults_carry_every_documented_budget() {
+        let defaults = include_str!("../defaults.toml");
+        for budget in ["auth", "auth-account", "bid", "search", "reads"] {
+            assert!(
+                defaults.contains(&format!("{budget} = \"")),
+                "the defaults miss the {budget} budget of docs/07-api-spec.md §14"
+            );
+        }
+    }
 }

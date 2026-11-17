@@ -5,6 +5,7 @@
 
 pub mod error;
 pub mod middleware;
+pub mod rate_limit;
 pub mod sessions;
 pub mod state;
 
