@@ -47,7 +47,7 @@ tests need no service, container, or network port.
 | Area | Tables | Notes |
 |---|---|---|
 | Accounts | `users`, `credentials`, `preferences`, `invitations` | Passkeys and Google live in `credentials`; `invitations` carries a token hash, never the token |
-| Sessions | `tower_sessions.session` | DDL mirrors `tower-sessions-sqlx-store` (ADR-009) |
+| Sessions | `tower_sessions.session` | DDL mirrors the tower-sessions session table; the store is implemented in `fantatt-api` on the workspace sqlx (ADR-010) |
 | Identity | `players`, `player_ratings`, `identity_aliases`, `identity_ambiguity_queue` | Ratings are bitemporal; ambiguous identities are queued, never auto-merged |
 | Competitions | `teams`, `competitions`, `matchdays`, `ties`, `appearances` | `appearances` is the input surface of the scoring engine (INV-13) |
 | Leagues | `leagues`, `memberships`, `squads`, `slots`, `submissions` | `submissions` stores the rule trace and proof reference of each commit |

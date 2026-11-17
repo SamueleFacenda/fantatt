@@ -16,13 +16,14 @@ build:
 test:
     cargo nextest run --workspace
 
-# Line coverage for the domain core. The invariant code of fantatt-core must
-# stay fully covered; the workspace gate is 80% lines (docs/15-testing.md).
-# Needs llvm-tools matching the pinned toolchain's LLVM version: either
-# rustup component add llvm-tools-preview or LLVM_COV/LLVM_PROFDATA pointing at
-# that exact LLVM release (a different llvm-cov rejects the raw profile).
+# Line coverage for the domain core and the API shell. The invariant code of
+# fantatt-core must stay fully covered; the workspace gate is 80% lines
+# (docs/15-testing.md). Needs llvm-tools matching the pinned toolchain's LLVM
+# version: either rustup component add llvm-tools-preview or
+# LLVM_COV/LLVM_PROFDATA pointing at that exact LLVM release (a different
+# llvm-cov rejects the raw profile).
 coverage:
-    cargo llvm-cov -p fantatt-core --summary-only
+    cargo llvm-cov -p fantatt-core -p fantatt-api --summary-only
 
 # Full local gate suite: format, clippy, tests, comment lint, secret scan,
 # offline query data freshness.
@@ -122,3 +123,36 @@ db-offline-check: db-migrate
 # Remove build artifacts.
 clean:
     cargo clean
+
+# Serve the API shell (G0.6) against the dev database. The CSRF secret falls
+# back to a dev-only value when the environment does not carry one; a
+# deployment always sets FANTATT__CRYPTO__SESSION_SECRET.
+api-serve: db-migrate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export FANTATT__DATABASE__URL="{{db-url}}"
+    export FANTATT__CRYPTO__SESSION_SECRET="${FANTATT__CRYPTO__SESSION_SECRET:-dev-only-insecure-secret}"
+    cargo run --bin fantatt-api
+
+# Demo the API shell (G0.6): the health check, a CSRF-rejected logout, a fresh
+# session with its CSRF token, and the OpenAPI document.
+api-demo: db-migrate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export FANTATT__DATABASE__URL="{{db-url}}"
+    export FANTATT__CRYPTO__SESSION_SECRET="demo-only-insecure-secret"
+    cargo run --bin fantatt-api &
+    server=$!
+    trap 'kill "$server" 2>/dev/null || true' EXIT
+    sleep 3
+    echo "== GET /healthz =="
+    curl -sS http://127.0.0.1:8080/healthz
+    echo
+    echo "== DELETE /auth/session without a CSRF token =="
+    curl -sS -X DELETE http://127.0.0.1:8080/auth/session
+    echo
+    echo "== GET /auth/csrf (a fresh session and its token) =="
+    curl -sS -c "$(pwd)/.dev/demo-cookies.txt" http://127.0.0.1:8080/auth/csrf
+    echo
+    echo "== GET /openapi.json (first lines) =="
+    curl -sS http://127.0.0.1:8080/openapi.json | head -8
