@@ -141,6 +141,12 @@ pub async fn enforce_rate_limits(
         let Some(rule) = state.rate_limits().rule(name) else {
             continue;
         };
+        // why: a session-scoped budget needs an identity to key on; binding
+        // every anonymous visitor to one bucket would let a single client
+        // exhaust the limit for all of them.
+        if rule.key == LimitKey::Session && session_id.is_none() {
+            continue;
+        }
         let key = limit_key_for(rule.key, &session_id, &peer_ip);
         if let Some(not_until) = state.rate_limits().check(name, &key) {
             return too_many_requests(not_until);

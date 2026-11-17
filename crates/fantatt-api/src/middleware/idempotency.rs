@@ -33,7 +33,10 @@ pub async fn normalize_idempotency_key(mut request: Request, next: Next) -> Resp
 
 fn is_well_formed(value: &str) -> bool {
     let trimmed = value.trim();
-    trimmed == value && !trimmed.is_empty() && trimmed.len() <= MAXIMUM_LENGTH
+    trimmed == value
+        && !trimmed.is_empty()
+        && trimmed.len() <= MAXIMUM_LENGTH
+        && !trimmed.chars().any(char::is_whitespace)
 }
 
 #[cfg(test)]
@@ -51,6 +54,7 @@ mod tests {
         assert!(!is_well_formed(""));
         assert!(!is_well_formed("  "));
         assert!(!is_well_formed(" padded "));
+        assert!(!is_well_formed("has space"));
         assert!(!is_well_formed(&"k".repeat(MAXIMUM_LENGTH + 1)));
     }
 }
