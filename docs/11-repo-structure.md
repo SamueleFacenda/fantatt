@@ -24,7 +24,10 @@ fantatt/
 │   ├── fantatt-jobs/             # scheduler and queue workers
 │   ├── fantatt-notify/           # push and email fanout
 │   ├── fantatt-obs/              # OTel wiring, metric registry
-│   └── fantatt-config/           # layered config + validation
+│   ├── fantatt-config/           # layered config + validation
+│   └── fantatt-test-support/     # ephemeral Postgres harness (dev dependency, never shipped)
+│
+├── migrations/                   # sqlx migrations: <version>_<name>.{up,down}.sql
 │
 ├── rules/                        # versioned rule bundles
 │   ├── fantatt-core/1.4.0/...
@@ -172,6 +175,10 @@ is atomic and instant.
 | `just security` | Security scans |
 | `just docs` | Validate diagrams and OpenAPI |
 | `just db-migrate` | Apply migrations |
+| `just db-start` / `just db-stop` | Run/stop the local dev Postgres (`.dev/postgres`, loopback:5433, trust auth) |
+| `just db-reset` | Rebuild the dev database from scratch and migrate |
+| `just db-prepare` | Regenerate the committed offline query data (`.sqlx/`) |
+| `just db-offline-check` | Fail when the committed offline query data is stale (part of `just check`) |
 
 ## 7. Documentation discipline
 

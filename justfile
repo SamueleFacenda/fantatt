@@ -24,8 +24,9 @@ test:
 coverage:
     cargo llvm-cov -p fantatt-core --summary-only
 
-# Full local gate suite: format, clippy, tests, comment lint, secret scan.
-check: fmt-check lint test comment-lint secrets
+# Full local gate suite: format, clippy, tests, comment lint, secret scan,
+# offline query data freshness.
+check: fmt-check lint test comment-lint secrets db-offline-check
 
 # Lint with clippy, failing on any warning.
 lint:
@@ -60,6 +61,63 @@ install-hooks:
 # Dependency advisory scan (requires network).
 security:
     cargo audit
+
+# Local Postgres for development and gates. The dev database lives in
+# .dev/postgres and listens on 5433 on loopback with trust auth; nothing but
+# the local gates ever reach it. Integration tests do not use it: they spawn
+# their own ephemeral instance (crates/fantatt-test-support).
+db-data := ".dev/postgres"
+db-port := "5433"
+db-name := "fantatt_dev"
+db-url := "postgres://postgres@127.0.0.1:" + db-port + "/" + db-name
+
+# Start the local dev Postgres (idempotent) and print its DATABASE_URL.
+db-start:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    data="$(pwd)/{{db-data}}"
+    if [ ! -f "$data/PG_VERSION" ]; then
+        mkdir -p "$data"
+        initdb -D "$data" -U postgres --auth=trust --encoding=UTF8 >/dev/null
+    fi
+    # why: Postgres resolves unix_socket_directories against its own working
+    # directory, so the recipe passes absolute paths only.
+    pg_ctl -D "$data" -l "$(pwd)/.dev/postgres.log" \
+        -o "-p {{db-port}} -c listen_addresses=127.0.0.1 -c unix_socket_directories=$data" \
+        start >/dev/null 2>&1 || echo "postgres already running"
+    createdb -h 127.0.0.1 -p {{db-port}} -U postgres {{db-name}} 2>/dev/null || true
+    echo "DATABASE_URL={{db-url}}"
+
+# Stop the local dev Postgres.
+db-stop:
+    #!/usr/bin/env bash
+    pg_ctl -D "$(pwd)/{{db-data}}" stop -m fast
+
+# Apply all migrations to the dev database.
+db-migrate: db-start
+    #!/usr/bin/env bash
+    export DATABASE_URL="{{db-url}}"
+    sqlx migrate run --source migrations
+
+# Rebuild the dev database from scratch and apply all migrations.
+db-reset: db-start
+    #!/usr/bin/env bash
+    export DATABASE_URL="{{db-url}}"
+    dropdb -h 127.0.0.1 -p {{db-port}} -U postgres --if-exists {{db-name}}
+    createdb -h 127.0.0.1 -p {{db-port}} -U postgres {{db-name}}
+    sqlx migrate run --source migrations
+
+# Regenerate the committed offline query data (.sqlx) from the dev database.
+db-prepare: db-migrate
+    #!/usr/bin/env bash
+    export DATABASE_URL="{{db-url}}"
+    cargo sqlx prepare --workspace -- --all-targets
+
+# Fail when the committed offline query data no longer matches the schema.
+db-offline-check: db-migrate
+    #!/usr/bin/env bash
+    export DATABASE_URL="{{db-url}}"
+    cargo sqlx prepare --check --workspace -- --all-targets
 
 # Remove build artifacts.
 clean:

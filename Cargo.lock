@@ -1314,6 +1314,7 @@ name = "fantatt-api"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "fantatt-test-support",
  "governor",
  "oauth2",
  "openidconnect",
@@ -1400,6 +1401,15 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "time",
+]
+
+[[package]]
+name = "fantatt-test-support"
+version = "0.1.0"
+dependencies = [
+ "sqlx 0.9.0",
+ "thiserror 1.0.69",
+ "tokio",
 ]
 
 [[package]]
