@@ -131,7 +131,12 @@
           };
 
           checks = {
-            cargo-test = craneLib.cargoTest craneConf;
+            # why: the database-backed tests boot their own ephemeral Postgres,
+            # so the sandboxed cargo-test check needs the server binaries on
+            # PATH just like the dev shell does.
+            cargo-test = craneLib.cargoTest (craneConf // {
+              nativeBuildInputs = nativeBuildInputs ++ [ pkgs.postgresql ];
+            });
 
             cargo-clippy = craneLib.cargoClippy (
               craneConf
