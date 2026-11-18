@@ -89,6 +89,9 @@ pub enum ValidationError {
 
     #[error("auth.passkey.enabled needs auth.passkey.rp_id and rp_origin")]
     PasskeyIncomplete,
+
+    #[error("authz.superadmins must name user ids, got '{value}'")]
+    SuperadminIdInvalid { value: String },
 }
 
 impl ValidationError {
@@ -104,6 +107,7 @@ impl ValidationError {
             Self::CookieNameEmpty => "COOKIE_NAME_EMPTY",
             Self::SessionLifetimesInvalid { .. } => "SESSION_LIFETIMES_INVALID",
             Self::KnowledgeGraphPathMissing { .. } => "KNOWLEDGE_GRAPH_PATH_MISSING",
+            Self::SuperadminIdInvalid { .. } => "SUPERADMIN_ID_INVALID",
             violation => violation.ingest_and_facade_code(),
         }
     }
@@ -143,6 +147,7 @@ pub fn collect(settings: &Settings) -> Vec<ValidationError> {
     violations.extend(check_knowledge_graph(&settings.knowledge_graph));
     violations.extend(check_session(&settings.session, &settings.server));
     violations.extend(check_auth(&settings.auth));
+    violations.extend(check_authz(&settings.authz));
     violations.extend(check_csrf(&settings.csrf));
     violations.extend(check_rate_limit(&settings.rate_limit));
     violations.extend(check_ingest(&settings.ingest));
@@ -241,6 +246,19 @@ fn check_csrf(csrf: &crate::settings::csrf::Csrf) -> Vec<ValidationError> {
         vec![ValidationError::CsrfHeaderEmpty]
     } else {
         Vec::new()
+    }
+}
+
+fn check_authz(authz: &crate::settings::authz::Authz) -> Vec<ValidationError> {
+    let invalid = authz
+        .superadmins
+        .iter()
+        .find(|entry| !crate::settings::authz::Authz::names_a_user_id(entry));
+    match invalid {
+        Some(value) => vec![ValidationError::SuperadminIdInvalid {
+            value: value.clone(),
+        }],
+        None => Vec::new(),
     }
 }
 
@@ -504,6 +522,16 @@ mod tests {
     /// why: each facade is broken by one empty field, so the table pairs that
     /// field with the violation it must raise.
     type FacadeCase = (&'static str, fn(&mut Settings));
+
+    #[test]
+    fn a_malformed_superadmin_grant_is_rejected() {
+        assert_eq!(
+            only_code(&invalid_after(|settings| {
+                settings.authz.superadmins = vec!["not-a-user".to_owned()];
+            })),
+            "SUPERADMIN_ID_INVALID"
+        );
+    }
 
     fn facade_cases() -> Vec<FacadeCase> {
         vec![

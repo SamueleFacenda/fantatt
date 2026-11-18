@@ -1,5 +1,6 @@
 pub mod app;
 pub mod auth;
+pub mod authz;
 pub mod crypto;
 pub mod csrf;
 pub mod database;
@@ -24,6 +25,7 @@ use crate::secret;
 
 use app::App;
 use auth::Auth;
+use authz::Authz;
 use crypto::Crypto;
 use csrf::Csrf;
 use database::Database;
@@ -64,6 +66,7 @@ pub struct Settings {
     pub knowledge_graph: KnowledgeGraph,
     pub session: Session,
     pub auth: Auth,
+    pub authz: Authz,
     pub csrf: Csrf,
     pub rate_limit: RateLimit,
     pub ingest: Ingest,
@@ -189,6 +192,7 @@ mod tests {
         assert_eq!(settings.ingest.concurrency, 4);
         assert_eq!(settings.privacy.deletion_grace_days, 30);
         assert_eq!(settings.session.cookie_name, "__Host-session");
+        assert!(settings.authz.superadmins.is_empty());
         assert_eq!(
             settings.crypto.session_secret.variable_name(),
             "FANTATT__CRYPTO__SESSION_SECRET"
