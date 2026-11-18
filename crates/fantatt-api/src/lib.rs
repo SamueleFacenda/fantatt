@@ -3,6 +3,7 @@
 //! This crate (with fantatt-jobs and fantatt-notify) is the only place that
 //! knows about HTTP, the database, and the wall clock.
 
+pub mod authz;
 pub mod error;
 pub mod middleware;
 pub mod openapi;

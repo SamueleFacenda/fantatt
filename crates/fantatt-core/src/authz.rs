@@ -4,7 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::ids::Identifier;
+pub use crate::ids::Identifier;
 
 /// A role in the capability model of docs/10-security.md §4.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]

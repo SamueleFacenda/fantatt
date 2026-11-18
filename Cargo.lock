@@ -1305,6 +1305,7 @@ dependencies = [
  "async-trait",
  "axum",
  "fantatt-config",
+ "fantatt-core",
  "fantatt-test-support",
  "governor",
  "hmac 0.13.0",

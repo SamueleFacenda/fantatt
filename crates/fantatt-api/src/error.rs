@@ -24,6 +24,7 @@ pub enum ProblemType {
     CsrfTokenMismatch,
     TooManyRequests,
     SessionExpired,
+    CapabilityMissing,
     Internal,
 }
 
@@ -41,6 +42,7 @@ impl ProblemType {
             Self::CsrfTokenMismatch => "csrf-token-mismatch",
             Self::TooManyRequests => "too-many-requests",
             Self::SessionExpired => "session-expired",
+            Self::CapabilityMissing => "capability-missing",
             Self::Internal => "internal",
         }
     }
@@ -58,6 +60,7 @@ impl ProblemType {
             Self::CsrfTokenMismatch => "The CSRF token does not match the session",
             Self::TooManyRequests => "The rate limit for this route is exhausted",
             Self::SessionExpired => "The session reached its absolute lifetime",
+            Self::CapabilityMissing => "The session lacks the required capability",
             Self::Internal => "The server failed to handle the request",
         }
     }
@@ -74,6 +77,7 @@ impl ProblemType {
             Self::CsrfTokenMissing | Self::CsrfTokenMismatch => StatusCode::FORBIDDEN,
             Self::TooManyRequests => StatusCode::TOO_MANY_REQUESTS,
             Self::SessionExpired => StatusCode::UNAUTHORIZED,
+            Self::CapabilityMissing => StatusCode::FORBIDDEN,
             Self::Internal => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
@@ -154,6 +158,7 @@ fn problem_type_for_status(status: StatusCode) -> ProblemType {
         StatusCode::TOO_MANY_REQUESTS => ProblemType::TooManyRequests,
         StatusCode::BAD_REQUEST => ProblemType::BadRequest,
         StatusCode::UNAUTHORIZED => ProblemType::SessionExpired,
+        StatusCode::FORBIDDEN => ProblemType::CapabilityMissing,
         _ if status.is_server_error() => ProblemType::Internal,
         _ => ProblemType::InvalidRequest,
     }
@@ -163,7 +168,7 @@ fn problem_type_for_status(status: StatusCode) -> ProblemType {
 mod tests {
     use super::*;
 
-    fn all_kinds() -> [ProblemType; 12] {
+    fn all_kinds() -> [ProblemType; 13] {
         [
             ProblemType::RouteNotFound,
             ProblemType::MethodNotAllowed,
@@ -176,6 +181,7 @@ mod tests {
             ProblemType::CsrfTokenMismatch,
             ProblemType::TooManyRequests,
             ProblemType::SessionExpired,
+            ProblemType::CapabilityMissing,
             ProblemType::Internal,
         ]
     }
@@ -224,6 +230,7 @@ mod tests {
             (StatusCode::TOO_MANY_REQUESTS, ProblemType::TooManyRequests),
             (StatusCode::BAD_REQUEST, ProblemType::BadRequest),
             (StatusCode::UNAUTHORIZED, ProblemType::SessionExpired),
+            (StatusCode::FORBIDDEN, ProblemType::CapabilityMissing),
             (StatusCode::INTERNAL_SERVER_ERROR, ProblemType::Internal),
             (StatusCode::CONFLICT, ProblemType::InvalidRequest),
         ];
