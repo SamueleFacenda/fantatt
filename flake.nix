@@ -123,13 +123,17 @@
         in
         {
           packages = {
-            default = craneLib.buildPackage craneConf;
+            # why: the suite runs in CI's gate job and in the cargo-test check;
+            # a second run inside the artifact build repeats it and would need
+            # the database and the CA bundle in this sandbox a second time.
+            default = craneLib.buildPackage (craneConf // { doCheck = false; });
 
             fantatt-core = craneLib.buildPackage (
               craneConf
               // {
                 pname = "fantatt-core";
                 cargoExtraArgs = "-p fantatt-core";
+                doCheck = false;
               }
             );
           };
