@@ -72,6 +72,10 @@
               # from .sqlx/, so both must reach the build sandbox.
               (pkgs.lib.fileset.maybeMissing ./migrations)
               (pkgs.lib.fileset.maybeMissing ./.sqlx)
+              # why: the OpenAPI snapshot test reads the committed document
+              # via include_str!, and it sits at the crate root, outside the
+              # sources the default fileset carries.
+              (pkgs.lib.fileset.maybeMissing ./crates/fantatt-api/openapi.json)
             ];
           };
 
