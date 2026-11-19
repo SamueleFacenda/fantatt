@@ -72,6 +72,10 @@
               # from .sqlx/, so both must reach the build sandbox.
               (pkgs.lib.fileset.maybeMissing ./migrations)
               (pkgs.lib.fileset.maybeMissing ./.sqlx)
+              # why: the OpenAPI snapshot test reads the committed document
+              # via include_str!, and it sits at the crate root, outside the
+              # sources the default fileset carries.
+              (pkgs.lib.fileset.maybeMissing ./crates/fantatt-api/openapi.json)
             ];
           };
 
@@ -119,13 +123,17 @@
         in
         {
           packages = {
-            default = craneLib.buildPackage craneConf;
+            # why: the suite runs in CI's gate job and in the cargo-test check;
+            # a second run inside the artifact build repeats it and would need
+            # the database and the CA bundle in this sandbox a second time.
+            default = craneLib.buildPackage (craneConf // { doCheck = false; });
 
             fantatt-core = craneLib.buildPackage (
               craneConf
               // {
                 pname = "fantatt-core";
                 cargoExtraArgs = "-p fantatt-core";
+                doCheck = false;
               }
             );
           };
@@ -134,8 +142,12 @@
             # why: the database-backed tests boot their own ephemeral Postgres,
             # so the sandboxed cargo-test check needs the server binaries on
             # PATH just like the dev shell does.
+            # why: reqwest builds a TLS verifier inside Client::new even for
+            # plain HTTP calls, so the sandbox needs the CA bundle on disk and
+            # SSL_CERT_FILE pointing at it.
             cargo-test = craneLib.cargoTest (craneConf // {
-              nativeBuildInputs = nativeBuildInputs ++ [ pkgs.postgresql ];
+              nativeBuildInputs = nativeBuildInputs ++ [ pkgs.postgresql pkgs.cacert ];
+              SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
             });
 
             cargo-clippy = craneLib.cargoClippy (

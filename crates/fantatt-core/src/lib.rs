@@ -6,6 +6,7 @@
 
 pub mod appearance;
 pub mod auction;
+pub mod authz;
 pub mod calendar;
 pub mod derivation;
 pub mod division;

@@ -90,6 +90,10 @@ enabled = true
 rp_id = "fantatt.example.org"
 rp_origin = "https://fantatt.example.org"
 
+[authz]
+superadmins = []
+# User ids (usr_ plus a 26-character ULID) holding the platform grant.
+
 [csrf]
 enabled = true
 header = "X-CSRF-Token"

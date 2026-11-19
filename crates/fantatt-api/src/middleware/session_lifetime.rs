@@ -40,7 +40,7 @@ pub async fn enforce_absolute_lifetime(
 
 /// why: a session without an id belongs to a first-time visitor; acting on it
 /// would mint a server-side session for every anonymous request.
-fn live_session(request: &Request) -> Option<tower_sessions::Session> {
+pub(crate) fn live_session(request: &Request) -> Option<tower_sessions::Session> {
     let session = request
         .extensions()
         .get::<tower_sessions::Session>()

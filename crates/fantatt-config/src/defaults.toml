@@ -51,6 +51,10 @@ enabled = true
 rp_id = "fantatt.example.org"
 rp_origin = "https://fantatt.example.org"
 
+# Superadmin is an explicit grant list of user ids; account creation grants nothing.
+[authz]
+superadmins = []
+
 [csrf]
 enabled = true
 header = "X-CSRF-Token"
