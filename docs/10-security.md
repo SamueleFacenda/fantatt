@@ -100,6 +100,14 @@ flowchart LR
 | Privilege escalation | Only `superadmin` may grant `league_admin`; the list is config |
 | Admin actions | Audited with actor, before/after, and reason |
 
+The implemented model — the capability table, the route declaration format,
+the authorize middleware, and the seeded role × route test — lives in
+[docs/21-authorization-matrix.md](21-authorization-matrix.md), with the
+design decisions in [docs/adr/0011-authorization-model.md](adr/0011-authorization-model.md).
+A denial answers the 403 problem+json and logs a structured event naming the
+problem code; the audit-log rows of the diagram land with the audit chain
+(G2.4).
+
 ## 5. Input and data validation
 
 | Layer | Mechanism |
