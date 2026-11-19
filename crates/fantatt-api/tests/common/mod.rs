@@ -12,39 +12,72 @@ use fantatt_api::routes;
 use fantatt_api::state::AppState;
 use fantatt_config::{cli::Cli, environment::Environment, loader::load};
 use fantatt_test_support::TestDatabase;
+use sqlx::PgPool;
 
 pub struct Shell {
     pub base_url: String,
+    pub pool: PgPool,
 }
 
 pub async fn spawn_shell() -> Shell {
+    spawn_with_router(routes::build_router).await
+}
+
+/// Boots a shell around a caller-built router, for suites that exercise a
+/// route table of their own declarations.
+pub async fn spawn_with_router<F>(build: F) -> Shell
+where
+    F: FnOnce(AppState) -> axum::Router + Send + 'static,
+{
+    spawn_with_env(&[], build).await
+}
+
+/// Boots a shell whose settings carry extra environment pairs on top of the
+/// shared test pairs.
+pub async fn spawn_with_env<F>(pairs: &[(&str, &str)], build: F) -> Shell
+where
+    F: FnOnce(AppState) -> axum::Router + Send + 'static,
+{
     let database = TestDatabase::new().await.expect("boot");
-    let state = build_state(&database);
-    let listener = tokio::net::TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], 0)))
-        .await
-        .expect("bind");
-    let address = listener.local_addr().expect("address");
+    let pool = database.pool().clone();
+    let state = build_state_with(&database, pairs);
+    let (listener, address) = bind_listener().await;
     tokio::spawn(async move {
         let server = axum::serve(
             listener,
-            routes::build_router(state).into_make_service_with_connect_info::<SocketAddr>(),
+            build(state).into_make_service_with_connect_info::<SocketAddr>(),
         );
         let _ = server.await;
         drop(database);
     });
     Shell {
         base_url: format!("http://{address}"),
+        pool,
     }
 }
 
-fn build_state(database: &TestDatabase) -> AppState {
-    let environment = Environment::from_pairs([
+async fn bind_listener() -> (tokio::net::TcpListener, SocketAddr) {
+    let listener = tokio::net::TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], 0)))
+        .await
+        .expect("bind");
+    let address = listener.local_addr().expect("address");
+    (listener, address)
+}
+
+pub fn build_state(database: &TestDatabase) -> AppState {
+    build_state_with(database, &[])
+}
+
+fn build_state_with(database: &TestDatabase, extra: &[(&str, &str)]) -> AppState {
+    let mut pairs = vec![
         (
             "FANTATT__DATABASE__URL",
             "postgres://postgres@127.0.0.1:5432/unused",
         ),
         ("FANTATT__CRYPTO__SESSION_SECRET", "test-session-secret"),
-    ]);
+    ];
+    pairs.extend_from_slice(extra);
+    let environment = Environment::from_pairs(pairs);
     let loaded = load(&environment, &Cli::default()).expect("the defaults and test pairs load");
     AppState::build(&loaded, database.pool().clone()).expect("the state builds")
 }
