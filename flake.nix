@@ -138,8 +138,12 @@
             # why: the database-backed tests boot their own ephemeral Postgres,
             # so the sandboxed cargo-test check needs the server binaries on
             # PATH just like the dev shell does.
+            # why: reqwest builds a TLS verifier inside Client::new even for
+            # plain HTTP calls, so the sandbox needs the CA bundle on disk and
+            # SSL_CERT_FILE pointing at it.
             cargo-test = craneLib.cargoTest (craneConf // {
-              nativeBuildInputs = nativeBuildInputs ++ [ pkgs.postgresql ];
+              nativeBuildInputs = nativeBuildInputs ++ [ pkgs.postgresql pkgs.cacert ];
+              SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
             });
 
             cargo-clippy = craneLib.cargoClippy (
