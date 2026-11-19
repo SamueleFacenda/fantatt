@@ -54,7 +54,7 @@ tokio-cron-scheduler = "0.15.1"
 # Email facade (fantatt-notify). The default feature set pulls native-tls,
 # which needs a system OpenSSL; the rustls features match the rest of the stack
 # and keep the build hermetic.
-lettre = { version = "0.11.23", default-features = false, features = ["tokio1", "tokio1-rustls-tls", "builder", "smtp-transport", "pool", "hostname"] }
+lettre = { version = "0.11.24", default-features = false, features = ["tokio1", "tokio1-rustls-tls", "builder", "smtp-transport", "pool", "hostname"] }
 
 # Configuration (fantatt-config).
 config = "0.14"
