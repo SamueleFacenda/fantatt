@@ -20,7 +20,7 @@ unnoticed.
 | rand | 0.9.5 | 2026-11-17 | 2026-11-15 (0.10.4) | 2 (1 user + `rust-random:maintainers` team) | 2206.5M total downloads; 0.10.4 is a newer major line deliberately not adopted — only the 0.9 series already resolved in the lockfile is used | 2027-02-15 |
 | hmac | 0.13.0 | 2026-11-17 | 2026-03-29 (0.13.0) | 2 (1 user + `rustcrypto:MACs` team) | 766.3M total downloads; last release 2026-03-29 | 2027-02-15 |
 | sha2 | 0.11.1 | 2026-11-17 | 2026-10-12 (0.11.1) | 3 (2 users + `rustcrypto:hashes` team) | 1246.6M total downloads; last release 2026-10-12 | 2027-02-15 |
-| async-trait | 0.1.92 | 2026-11-17 | 2026-08 (0.1.92, ~3 months before pinning) | 1 (dtolnay) | 855 SLoC, 1.3 KiB pinned crate; single owner, no team; download volume not captured at pinning | 2027-02-15 |
+| async-trait | 0.1.92 | 2026-11-17 | 2026-08-08 (0.1.92, ~3 months before pinning) | 1 (dtolnay) | 831.7M total, 217.6M recent downloads; single owner, no team; 1.3 KiB pinned crate | 2027-02-15 |
 | lettre | 0.11.24 | 2026-11-19 | 2026-11-17 (0.11.24) | 2 (1 user + `github:lettre:release` team) | 24.9M total downloads; 0.11.24 is a security patch closing six SMTP advisories, previous release 0.11.23 on 2026-08-03 | 2027-02-17 |
 | axum | 0.8.9 | 2026-11-11 | 2026-04-14 (0.8.9) | 4 (2 users + `tokio-rs:core`, `tokio-rs:axum-release` teams) | 605.9M total, 171.0M recent downloads; HTTP surface of the whole API | 2027-02-09 |
 | config | 0.14.1 | 2026-11-11 | 2026-09-30 (0.15.27) | 5 (3 users + `rust-cli:maintainers` team) | 131.5M total, 23.7M recent downloads; the 0.15 line is newer and not adopted | 2027-02-09 |

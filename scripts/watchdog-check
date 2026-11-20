@@ -1,0 +1,207 @@
+#!/bin/sh
+# why: a dependency table nobody reads drifts; this checker turns every row
+# into a gate. Reads only the manifests, the lockfile, and the table, so it
+# runs offline and deterministically.
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+table="$root/docs/dependency-watchdog.md"
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --file)
+            [ $# -ge 2 ] || {
+                printf 'watchdog: --file needs a path\n' >&2
+                exit 2
+            }
+            table=$2
+            shift 2
+            ;;
+        *)
+            printf 'watchdog: unknown argument: %s\n' "$1" >&2
+            exit 2
+            ;;
+    esac
+done
+
+today=$(date +%F)
+failures=0
+
+fail() {
+    printf 'watchdog: %s\n' "$1" >&2
+    failures=$((failures + 1))
+}
+
+# Direct dependencies: names declared through the workspace in some crate's
+# [dependencies] or [dev-dependencies], in either the plain or inline form.
+direct_dependencies() {
+    awk '
+        /^\[dependencies\]/ || /^\[dev-dependencies\]/ { section = 1; next }
+        /^\[/ { section = 0; next }
+        section && /^[A-Za-z0-9_-]+\.workspace = true$/ { sub(/\.workspace = true$/, "", $0); print }
+        section && /^[A-Za-z0-9_-]+ = \{ workspace = true/ { sub(/ = .*/, "", $0); print }
+    ' "$root"/crates/*/Cargo.toml | sort -u
+}
+
+# Version the workspace requires for one crate, from [workspace.dependencies].
+requirement_of() {
+    awk -v crate="$1" '
+        /^\[workspace\.dependencies\]/ { section = 1; next }
+        /^\[/ { section = 0; next }
+        section && $1 == crate {
+            line = $0
+            sub("^" crate " = ", "", line)
+            if (line ~ /^\{/) {
+                match(line, /version = "[^"]*"/)
+                print substr(line, RSTART + 11, RLENGTH - 12)
+            } else {
+                match(line, /"[^"]*"/)
+                print substr(line, RSTART + 1, RLENGTH - 2)
+            }
+            exit
+        }
+    ' "$root/Cargo.toml"
+}
+
+# Caret-compatible prefix of a requirement: keep major, plus minor when present.
+prefix_of() {
+    printf '%s' "$1" | awk -F. 'NF >= 2 { print $1 "." $2 } NF < 2 { print $1 }'
+}
+
+version_matches() {
+    case $1 in
+        "$2") return 0 ;;
+        "$2".*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# Every version Cargo.lock carries for one crate; the graph is multi-version.
+lock_versions() {
+    awk -v crate="$1" '
+        /^\[\[package\]\]/ { name = ""; next }
+        /^name = / { gsub(/"/, "", $3); name = $3; next }
+        /^version = / && name == crate { gsub(/"/, "", $3); print $3 }
+    ' "$root/Cargo.lock"
+}
+
+field() {
+    printf '%s' "$1" | awk -F'|' -v n="$2" '{
+        sub(/^ +/, "", $n)
+        sub(/ +$/, "", $n)
+        print $n
+    }'
+}
+
+table_crates() {
+    awk -F'|' '
+        $2 ~ /^ *[A-Za-z0-9_-]+ *$/ && $3 ~ /^ *[0-9]/ {
+            sub(/^ +/, "", $2)
+            sub(/ +$/, "", $2)
+            print $2
+        }
+    ' "$table"
+}
+
+row_of() {
+    awk -F'|' -v crate="$1" '
+        $2 ~ /^ *[A-Za-z0-9_-]+ *$/ && $3 ~ /^ *[0-9]/ {
+            name = $2
+            sub(/^ +/, "", name)
+            sub(/ +$/, "", name)
+            if (name == crate) print
+        }
+    ' "$table"
+}
+
+date_valid() {
+    case $1 in
+        [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+newer_than() {
+    awk -v a="$1" -v b="$2" 'BEGIN { exit !(a > b) }'
+}
+
+days_since() {
+    from=$(date -d "$1" +%s) || return 0
+    now=$(date +%s)
+    printf '%s\n' "$(( (now - from) / 86400 ))"
+}
+
+check_version() {
+    prefix=$(prefix_of "$(requirement_of "$1")")
+    prefix_resolved=0
+    row_resolved=0
+    for lock_version in $(lock_versions "$1"); do
+        if version_matches "$lock_version" "$prefix"; then
+            prefix_resolved=1
+            if [ "$lock_version" = "$2" ]; then
+                row_resolved=1
+            fi
+        fi
+    done
+    if [ "$row_resolved" -eq 1 ]; then
+        return 0
+    fi
+    if [ "$prefix_resolved" -eq 1 ]; then
+        fail "$1: row version $2 is not the version Cargo.lock resolves"
+    else
+        fail "$1: no Cargo.lock version satisfies the workspace requirement"
+    fi
+}
+
+check_row() {
+    row=$(row_of "$1")
+    if [ -z "$row" ]; then
+        fail "$1: no row in the dependency watchdog table"
+        return 0
+    fi
+    version=$(field "$row" 3)
+    pinned=$(field "$row" 4)
+    upstream=$(field "$row" 5)
+    upstream_date=${upstream%% *}
+    if ! date_valid "$pinned"; then
+        fail "$1: pinned date '$pinned' is not YYYY-MM-DD"
+        return 0
+    fi
+    if ! date_valid "$upstream_date"; then
+        fail "$1: upstream release date '$upstream' is not a YYYY-MM-DD date"
+        return 0
+    fi
+    check_version "$1" "$version"
+    if newer_than "$today" "$(date -d "$pinned + 90 days" +%F)" &&
+        newer_than "$upstream_date" "$pinned"; then
+        overdue=$(days_since "$(date -d "$pinned + 90 days" +%F)")
+        fail "$1: new upstream release ($upstream) unreviewed; \
+review was due $overdue day(s) ago"
+    fi
+}
+
+directs=$(direct_dependencies)
+checked=0
+for dep in $directs; do
+    check_row "$dep"
+    checked=$((checked + 1))
+done
+
+# why: word-splitting re-joins the newline-separated list into one
+# space-delimited string the case pattern can match against.
+directs_spaced=$(printf '%s ' $directs)
+for row_dep in $(table_crates); do
+    case " $directs_spaced" in
+        *" $row_dep "*) ;;
+        *) fail "$row_dep: row names a crate no workspace crate depends on" ;;
+    esac
+done
+
+if [ "$failures" -gt 0 ]; then
+    printf 'watchdog: %s check(s) failed across %s direct dependencies\n' \
+        "$failures" "$checked" >&2
+    exit 1
+fi
+
+printf 'watchdog: %s rows verified against %s direct dependencies\n' \
+    "$(printf '%s\n' $directs | wc -l)" "$checked"
