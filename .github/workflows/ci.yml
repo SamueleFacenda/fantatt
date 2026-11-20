@@ -50,6 +50,23 @@ jobs:
       - name: Run dependency audit
         run: nix develop -c just security
 
+  docs:
+    name: Docs and dependency watchdog
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v23
+
+      - name: Check markdown links including external targets
+        run: nix develop -c just docs-check --external
+
+      - name: Run the dependency watchdog
+        run: nix develop -c just watchdog
+
   build:
     name: Build workspace
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

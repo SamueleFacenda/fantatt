@@ -41,6 +41,7 @@ engine made, and it can be re-run and independently checked.
 ```bash
 nix develop            # pinned Rust toolchain + build/test/lint tooling
 nix flake check        # build, clippy, and tests over the whole Rust workspace
+just check             # the full local gate suite (format, lint, tests, docs, watchdog)
 just test              # the full Cargo test suite
 just build             # compile every crate
 ```

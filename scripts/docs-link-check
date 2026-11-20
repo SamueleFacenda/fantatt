@@ -1,0 +1,102 @@
+#!/bin/sh
+# why: a broken link in the docs is a wrong signpost for every reader; this
+# checker resolves every markdown link target in the repository.
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$root"
+
+external=0
+while [ $# -gt 0 ]; do
+    case $1 in
+        --external)
+            external=1
+            shift
+            ;;
+        *)
+            printf 'docs-link-check: unknown argument: %s\n' "$1" >&2
+            exit 2
+            ;;
+    esac
+done
+
+failures=0
+
+fail() {
+    printf 'docs-link-check: %s\n' "$1" >&2
+    failures=$((failures + 1))
+}
+
+# Link targets outside fenced code blocks; a fence may enclose documentation
+# examples that are not real links.
+links_of() {
+    awk '
+        /^```/ { fenced = !fenced; next }
+        !fenced {
+            while (match($0, /\]\([^)]+\)/)) {
+                print substr($0, RSTART + 2, RLENGTH - 3)
+                $0 = substr($0, RSTART + RLENGTH)
+            }
+        }
+    ' "$1"
+}
+
+fetch_url() {
+    curl -sS -o /dev/null -m 15 -L --retry 2 --retry-delay 1 \
+        -A 'fantatt-docs-link-check/1.0' -w '%{http_code}' "$1" 2>/dev/null
+}
+
+url_reachable() {
+    case $1 in
+        2* | 3*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+check_target() {
+    file=$1
+    target=${2%% *}
+    case $target in
+        '#'* | 'mailto:'* | 'tel:'* | '')
+            return 0
+            ;;
+        'http://'* | 'https://'*)
+            [ "$external" -eq 1 ] || return 0
+            if [ -z "${seen_urls:-}" ]; then
+                seen_urls="
+"
+            fi
+            case "$seen_urls" in
+                *"$target
+"*) return 0 ;;
+            esac
+            code=$(fetch_url "$target")
+            if url_reachable "$code"; then
+                seen_urls="$seen_urls$target
+"
+            else
+                fail "$file: unreachable link '$target' (HTTP $code)"
+            fi
+            ;;
+        *)
+            path=${target%%#*}
+            path=$(printf '%s' "$path" | sed 's/%20/ /g; s/[<>]//g')
+            if [ ! -e "$(dirname "$file")/$path" ]; then
+                fail "$file: broken link '$target'"
+            fi
+            ;;
+    esac
+}
+
+for file in $(git ls-files -- '*.md'); do
+    for target in $(links_of "$file"); do
+        check_target "$file" "$target"
+    done
+done
+
+if [ "$failures" -gt 0 ]; then
+    printf 'docs-link-check: %s broken link(s) found\n' "$failures" >&2
+    exit 1
+fi
+
+printf 'docs-link-check: every markdown link resolves\n'

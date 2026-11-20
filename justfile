@@ -26,8 +26,8 @@ coverage:
     cargo llvm-cov -p fantatt-core -p fantatt-api --summary-only
 
 # Full local gate suite: format, clippy, tests, comment lint, secret scan,
-# offline query data freshness.
-check: fmt-check lint test comment-lint secrets db-offline-check
+# offline query data freshness, docs links, dependency watchdog.
+check: fmt-check lint test comment-lint secrets db-offline-check docs-check watchdog watchdog-selftest
 
 # Lint with clippy, failing on any warning.
 lint:
@@ -62,6 +62,21 @@ install-hooks:
 # Dependency advisory scan (requires network).
 security:
     cargo audit
+
+# Fail when a direct dependency lacks a watchdog row, the row disagrees with
+# Cargo.lock, or a newer upstream release stayed unreviewed for 90 days
+# (docs/dependency-watchdog.md).
+watchdog:
+    scripts/watchdog-check
+
+# Prove the stale-row failure path on a throwaway copy of the table.
+watchdog-selftest:
+    scripts/watchdog-selftest
+
+# Markdown link check. Relative links resolve offline; --external also fetches
+# http(s) targets with curl.
+docs-check *args:
+    scripts/docs-link-check {{args}}
 
 # Local Postgres for development and gates. The dev database lives in
 # .dev/postgres and listens on 5433 on loopback with trust auth; nothing but

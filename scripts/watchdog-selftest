@@ -1,0 +1,51 @@
+#!/bin/sh
+# why: the stale-row failure is the watchdog's whole point; prove it on a
+# throwaway copy instead of waiting 90 days for the real table to trip.
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+table="$root/docs/dependency-watchdog.md"
+checker="$root/scripts/watchdog-check"
+
+# The axum row is the fixture: it is long-lived and its upstream release date
+# is old enough that backdating the pin by 30 days puts the review in the past.
+row=$(awk -F'|' '$2 ~ /^ *axum *$/ && $3 ~ /^ *[0-9]/ { print }' "$table")
+[ -n "$row" ] || {
+    printf 'watchdog-selftest: no axum row in the watchdog table\n' >&2
+    exit 1
+}
+
+upstream=$(printf '%s' "$row" | awk -F'|' '{
+    sub(/^ +/, "", $5)
+    sub(/ +$/, "", $5)
+    split($5, parts, " ")
+    print parts[1]
+}')
+
+backdated=$(date -d "$upstream - 30 days" +%F)
+
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+
+awk -F'|' -v OFS='|' -v pinned="$backdated" '
+    $2 ~ /^ *axum *$/ && $3 ~ /^ *[0-9]/ && !edited {
+        $4 = " "pinned" "
+        edited = 1
+    }
+    { print }
+' "$table" >"$work/stale.md"
+
+if "$checker" --file "$work/stale.md" >"$work/out" 2>&1; then
+    printf 'watchdog-selftest: a stale row was accepted\n' >&2
+    exit 1
+fi
+
+if ! grep -q 'axum' "$work/out"; then
+    printf 'watchdog-selftest: the failure did not name the crate\n' >&2
+    cat "$work/out" >&2
+    exit 1
+fi
+
+"$checker" >/dev/null
+
+printf 'watchdog-selftest: stale row rejected (axum), live table accepted\n'
