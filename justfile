@@ -27,7 +27,7 @@ coverage:
 
 # Full local gate suite: format, clippy, tests, comment lint, secret scan,
 # offline query data freshness, dependency watchdog.
-check: fmt-check lint test comment-lint secrets db-offline-check watchdog
+check: fmt-check lint test comment-lint secrets db-offline-check watchdog watchdog-selftest
 
 # Lint with clippy, failing on any warning.
 lint:
@@ -68,6 +68,10 @@ security:
 # (docs/dependency-watchdog.md).
 watchdog:
     scripts/watchdog-check
+
+# Prove the stale-row failure path on a throwaway copy of the table.
+watchdog-selftest:
+    scripts/watchdog-selftest
 
 # Local Postgres for development and gates. The dev database lives in
 # .dev/postgres and listens on 5433 on loopback with trust auth; nothing but
