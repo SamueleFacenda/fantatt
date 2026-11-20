@@ -32,6 +32,9 @@ The dev shell provides the whole toolchain from the pinned nixpkgs input: Rust 1
 | Tests | `just test` | the whole workspace test suite |
 | Comment lint | `just comment-lint` | no `what`/`how`/`obvious`/`redundant`/`mumbling`/`noise` comment leads |
 | Secret scan | `just secrets` | gitleaks over staged changes |
+| Docs link check | `just docs-check` | every markdown link resolves (relative targets offline; `just docs-check --external` also fetches http(s) targets) |
+| Dependency watchdog | `just watchdog` | every direct dependency has a current row in `docs/dependency-watchdog.md` |
+| Watchdog self-test | `just watchdog-selftest` | a deliberately stale row copy is rejected, so the failure path stays proven |
 | Audit | `just security` | `cargo audit` (needs network) |
 | Commit format | `just commit-lint` | Conventional Commits headers |
 
