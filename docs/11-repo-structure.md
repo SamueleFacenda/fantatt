@@ -25,6 +25,7 @@ fantatt/
 │   ├── fantatt-notify/           # push and email fanout
 │   ├── fantatt-obs/              # OTel wiring, metric registry
 │   ├── fantatt-config/           # layered config + validation
+│   ├── fantatt-fixtures/         # recorded FITET golden fixtures (dev dependency, never shipped)
 │   └── fantatt-test-support/     # ephemeral Postgres harness (dev dependency, never shipped)
 │
 ├── migrations/                   # sqlx migrations: <version>_<name>.{up,down}.sql
@@ -59,6 +60,8 @@ fantatt/
 │   └── compose/                  # optional Docker Compose for non-Nix hosts
 │
 └── tests/
+    ├── fixtures/
+    │   └── fitet/                # recorded FITET golden fixtures (G1.1)
     ├── e2e/                      # Playwright browser flows
     ├── nixos/                    # nixosTest integration tests
     └── conformance/              # API contract tests
