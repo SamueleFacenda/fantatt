@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "captured_on": "2026-11-20",
+  "surfaces": [
+    { "kind": "menu", "file": "html/menu.html", "url": "https://portale.fitet.org/menu.php" },
+    { "kind": "region-menu", "file": "html/default_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/default_reg.asp?REG=1" },
+    { "kind": "region-home", "file": "html/bianca_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/bianca.php?REG=1" },
+    { "kind": "region-header", "file": "html/testata_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/testata.php?REG=1" },
+    { "kind": "championship-index", "file": "html/visualizza_campionati_2.html", "url": "https://portale.fitet.org/risultati/campionati/visualizza_campionati.php?CID=2" },
+    { "kind": "championship-list", "file": "html/elenco_campionati_2.html", "url": "https://portale.fitet.org/risultati/campionati/elenco_campionati.php?ID_CAMP=2" },
+    { "kind": "championship-page", "file": "html/campionati_cam1.html", "url": "https://portale.fitet.org/risultati/campionati/campionati.php?CAM=1&CONC=0" },
+    { "kind": "championship-header", "file": "html/testa_campionati_cam1.html", "url": "https://portale.fitet.org/risultati/campionati/testa_campionati.php?CAM=1&CONC=0" },
+    { "kind": "calendar", "file": "html/Calendario_cam1_a41.html", "url": "https://portale.fitet.org/risultati/campionati/Calendario.asp?CAM=1&ANNO=41" },
+    { "kind": "giornata-home", "file": "html/giornata_home_370793.html", "url": "https://portale.fitet.org/risultati/campionati/giornata_home.php?INCONTRO=370793&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370793.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370793&CAM=1&FORMULA=17" },
+    { "kind": "match-detail", "file": "html/dettaglio_partita_1594362.html", "url": "https://portale.fitet.org/risultati/campionati/dettaglio_partita.php?ID=1594362" },
+    { "kind": "player-search", "file": "html/ajax_kozul.json", "url": "https://portale.fitet.org/risultati/new_rank/ajax.php?term=kozul" },
+    { "kind": "legacy-matches", "file": "matches.json", "url": "legacy prototype commit 444d843 (assets/matches.json, 1085 records)" }
+  ]
+}

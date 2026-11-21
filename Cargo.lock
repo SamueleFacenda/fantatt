@@ -1351,6 +1351,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "fantatt-fixtures"
+version = "0.1.0"
+dependencies = [
+ "proptest",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "thiserror 1.0.69",
+ "time",
+]
+
+[[package]]
 name = "fantatt-ingest"
 version = "0.1.0"
 dependencies = [
