@@ -25,9 +25,23 @@ test:
 coverage:
     cargo llvm-cov -p fantatt-core -p fantatt-api --summary-only
 
-# Full local gate suite: format, clippy, tests, comment lint, secret scan,
-# offline query data freshness, docs links, dependency watchdog.
-check: fmt-check lint test comment-lint secrets db-offline-check docs-check watchdog watchdog-selftest
+# Verify the recorded FITET fixture tree: every file against
+# manifest.sha256, every declared match array, and the record and surface
+# counts (tests/fixtures/fitet).
+fixtures-verify:
+    cargo run -q --bin fantatt-fixtures -- verify
+
+# Re-record the live FITET surfaces behind tests/fixtures/fitet/html, rewrite
+# capture.json and manifest.sha256, then verify the refreshed tree. Needs
+# network access to portale.fitet.org; a surface that fails to fetch fails the
+# recipe instead of writing a partial file.
+fixtures-capture:
+    scripts/fixtures-capture
+    cargo run -q --bin fantatt-fixtures -- verify
+
+# Full local gate suite: format, clippy, tests, fixture tree, comment lint,
+# secret scan, offline query data freshness, docs links, dependency watchdog.
+check: fmt-check lint test fixtures-verify comment-lint secrets db-offline-check docs-check watchdog watchdog-selftest
 
 # Lint with clippy, failing on any warning.
 lint:

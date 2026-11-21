@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Re-record the live FITET surfaces behind tests/fixtures/fitet/html and
+# rewrite capture.json plus manifest.sha256. Run from a nix develop shell; the
+# recipe `just fixtures-capture` chains the verify step after this script.
+# The legacy match corpus is never re-fetched here: matches.json is the
+# verbatim recovery of the prototype's assets/matches.json (git commit
+# 444d843), so this script only refreshes the HTML side of the golden set.
+set -euo pipefail
+
+base="https://portale.fitet.org"
+user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../tests/fixtures/fitet" && pwd)"
+html="$root/html"
+
+# kind|relative-url|file-name
+# why: the championship surfaces live under risultati/campionati/ (the
+# paths menu.php links and the frame srcs resolve against); the root-level
+# spellings of the same names answer 404
+entries=(
+  "menu|menu.php|menu.html"
+  "region-menu|risultati/regioni/default_reg.asp?REG=1|default_reg_1.html"
+  "region-home|risultati/regioni/bianca.php?REG=1|bianca_reg_1.html"
+  "region-header|risultati/regioni/testata.php?REG=1|testata_reg_1.html"
+  "championship-index|risultati/campionati/visualizza_campionati.php?CID=2|visualizza_campionati_2.html"
+  "championship-list|risultati/campionati/elenco_campionati.php?ID_CAMP=2|elenco_campionati_2.html"
+  "championship-page|risultati/campionati/campionati.php?CAM=1&CONC=0|campionati_cam1.html"
+  "championship-header|risultati/campionati/testa_campionati.php?CAM=1&CONC=0|testa_campionati_cam1.html"
+  "calendar|risultati/campionati/Calendario.asp?CAM=1&ANNO=41|Calendario_cam1_a41.html"
+  "giornata-home|risultati/campionati/giornata_home.php?INCONTRO=370793&CAM=1&FORMULA=17|giornata_home_370793.html"
+  "giornata|risultati/campionati/giornata.php?INCONTRO=370793&CAM=1&FORMULA=17|giornata_370793.html"
+  "match-detail|risultati/campionati/dettaglio_partita.php?ID=1594362|dettaglio_partita_1594362.html"
+  "player-search|risultati/new_rank/ajax.php?term=kozul|ajax_kozul.json"
+)
+
+[ -f "$root/matches.json" ] || {
+  printf 'matches.json missing from %s\n' "$root" >&2
+  exit 1
+}
+mkdir -p "$html"
+
+for entry in "${entries[@]}"; do
+  IFS='|' read -r kind relative file <<<"$entry"
+  target="$base/$relative"
+  extra=()
+  if [ "$kind" = "player-search" ]; then
+    # why: the ajax search surface answers only to an XHR request
+    extra+=(--header 'X-Requested-With: XMLHttpRequest')
+  fi
+  # why: a failed fetch must never truncate the committed fixture, so the
+  # capture lands on a partial name and moves into place on success
+  if ! curl --fail --silent --show-error --location --compressed \
+    --user-agent "$user_agent" \
+    --header 'Accept-Language: it' \
+    "${extra[@]}" \
+    --output "$html/$file.partial" "$target"; then
+    rm -f "$html/$file.partial"
+    printf 'capture failed: %s\n' "$target" >&2
+    exit 1
+  fi
+  mv "$html/$file.partial" "$html/$file"
+  [ -s "$html/$file" ] || {
+    printf 'empty capture: %s\n' "$target" >&2
+    exit 1
+  }
+  printf 'recorded %s\n' "$target"
+  # why: the portal is hand-maintained legacy PHP; a fixed gap keeps the
+  # capture polite
+  sleep $((2 + RANDOM % 2))
+done
+
+{
+  printf '{\n'
+  printf '  "version": 1,\n'
+  printf '  "captured_on": "%s",\n' "$(date -u +%F)"
+  printf '  "surfaces": [\n'
+  for entry in "${entries[@]}"; do
+    IFS='|' read -r kind relative file <<<"$entry"
+    printf '    { "kind": "%s", "file": "html/%s", "url": "%s/%s" },\n' "$kind" "$file" "$base" "$relative"
+  done
+  printf '    { "kind": "legacy-matches", "file": "matches.json", "url": "legacy prototype commit 444d843 (assets/matches.json, 1085 records)" }\n'
+  printf '  ]\n'
+  printf '}\n'
+} >"$root/capture.json"
+
+{
+  printf '# sha256 manifest of tests/fixtures/fitet (regenerate with: just fixtures-capture)\n'
+  find "$root" -type f ! -name manifest.sha256 ! -name README.md -printf '%P\n' |
+    LC_ALL=C sort |
+    while read -r file; do
+      printf 'sha256 %s %s\n' "$(sha256sum "$root/$file" | cut -d' ' -f1)" "$file"
+    done
+} >"$root/manifest.sha256"
+
+printf 'capture index and manifest rewritten under %s\n' "$root"

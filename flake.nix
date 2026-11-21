@@ -76,6 +76,9 @@
               # via include_str!, and it sits at the crate root, outside the
               # sources the default fileset carries.
               (pkgs.lib.fileset.maybeMissing ./crates/fantatt-api/openapi.json)
+              # why: fantatt-fixtures reads the recorded fixture tree from
+              # disk at test time, so it must reach the build sandbox.
+              (pkgs.lib.fileset.maybeMissing ./tests/fixtures)
             ];
           };
 
