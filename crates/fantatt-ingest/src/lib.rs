@@ -12,6 +12,8 @@
 pub mod error;
 pub mod policy;
 pub mod settings;
+pub mod transport;
 
 pub use error::FetchError;
 pub use settings::FetchSettings;
+pub use transport::Transport;
