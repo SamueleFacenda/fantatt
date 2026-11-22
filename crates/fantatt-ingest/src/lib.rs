@@ -9,7 +9,9 @@
 //! §3.3).
 #![forbid(unsafe_code)]
 
+pub mod archive;
 pub mod breaker;
+pub mod client;
 pub mod conditional;
 pub mod error;
 pub mod policy;
@@ -18,6 +20,7 @@ pub mod settings;
 pub mod throttle;
 pub mod transport;
 
+pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;
 pub use settings::FetchSettings;
 pub use transport::Transport;
