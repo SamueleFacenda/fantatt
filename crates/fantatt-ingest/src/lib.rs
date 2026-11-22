@@ -9,9 +9,13 @@
 //! §3.3).
 #![forbid(unsafe_code)]
 
+pub mod breaker;
+pub mod conditional;
 pub mod error;
 pub mod policy;
+pub mod retry;
 pub mod settings;
+pub mod throttle;
 pub mod transport;
 
 pub use error::FetchError;
