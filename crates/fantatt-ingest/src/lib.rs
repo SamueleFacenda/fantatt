@@ -13,6 +13,7 @@ pub mod archive;
 pub mod breaker;
 pub mod client;
 pub mod conditional;
+pub mod discover;
 pub mod error;
 pub mod html;
 pub mod policy;

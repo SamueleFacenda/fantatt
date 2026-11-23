@@ -92,6 +92,11 @@ impl Uri {
     pub fn as_url(&self) -> String {
         self.to_string()
     }
+
+    /// The normalized path, always starting at the root.
+    pub fn path(&self) -> &str {
+        &self.path
+    }
 }
 
 impl fmt::Display for Uri {
