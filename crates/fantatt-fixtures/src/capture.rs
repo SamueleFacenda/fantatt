@@ -8,9 +8,11 @@ use time::{Date, Month};
 #[serde(rename_all = "kebab-case")]
 pub enum SurfaceKind {
     Menu,
+    RegionFrameset,
     RegionMenu,
     RegionHome,
     RegionHeader,
+    TournamentMenu,
     ChampionshipIndex,
     ChampionshipList,
     ChampionshipPage,

@@ -18,7 +18,10 @@ html="$root/html"
 # spellings of the same names answer 404
 entries=(
   "menu|menu.php|menu.html"
-  "region-menu|risultati/regioni/default_reg.asp?REG=1|default_reg_1.html"
+  "region-frameset|risultati/regioni/default_reg.asp?REG=1|default_reg_1.html"
+  "region-menu|risultati/regioni/menu_reg.php?REG=1|menu_reg_1.html"
+  "region-menu|risultati/regioni/menu_reg.php?REG=2|menu_reg_2.html"
+  "tournament-menu|risultati/regioni/menu_tor.php?REG=1|menu_tor_1.html"
   "region-home|risultati/regioni/bianca.php?REG=1|bianca_reg_1.html"
   "region-header|risultati/regioni/testata.php?REG=1|testata_reg_1.html"
   "championship-index|risultati/campionati/visualizza_campionati.php?CID=2|visualizza_campionati_2.html"
