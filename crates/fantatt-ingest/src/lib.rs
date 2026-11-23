@@ -20,6 +20,7 @@ pub mod retry;
 pub mod settings;
 pub mod throttle;
 pub mod transport;
+pub mod uri;
 
 pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;
