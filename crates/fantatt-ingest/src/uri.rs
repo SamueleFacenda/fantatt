@@ -88,6 +88,11 @@ impl Uri {
             .map(|(_, value)| value.as_str())
     }
 
+    /// Every query parameter, in normalized order.
+    pub fn params(&self) -> Vec<(String, String)> {
+        self.query.clone()
+    }
+
     /// The normalized URL string.
     pub fn as_url(&self) -> String {
         self.to_string()

@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.ingest_jobs (job_id, job_type, source, source_id, payload)\n             VALUES ($1, $2, $3, $4, $5)\n             ON CONFLICT (job_type, source, source_id)\n             WHERE state IN ('PENDING', 'RUNNING')\n             DO NOTHING",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Jsonb"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6b9610c1c027f46b2413e88043b9f976ebad9bc999a7ab2f21b9904c4a187716"
+}

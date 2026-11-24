@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE fantatt.ingest_ledger\n             SET fetched_at = now()\n             WHERE source = $1 AND source_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b5b41399ea00dcb5459ab460c38f3f8e67e713f894ddda895640dbd8b33a1447"
+}

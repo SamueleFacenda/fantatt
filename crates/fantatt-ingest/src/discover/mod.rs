@@ -32,6 +32,15 @@ use crate::uri::{Uri, UriError};
 /// The ledger name every portal row carries.
 pub const SOURCE: &str = "fitet";
 
+/// The menu page a source base URL seeds.
+const MENU_PATH: &str = "menu.php";
+
+/// The seed URL of one portal: its base URL plus the menu page.
+pub fn seed(base_url: &str) -> Result<Uri, UriError> {
+    let trimmed = base_url.trim_end_matches('/');
+    Uri::parse(&format!("{trimmed}/{MENU_PATH}"))
+}
+
 /// The prototype's discovery cache window; the scheduler configures the real
 /// TTL (docs/06-data-pipeline.md §3.1).
 pub const DEFAULT_TTL: Duration = Duration::from_secs(7 * 24 * 60 * 60);
