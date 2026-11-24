@@ -14,6 +14,7 @@ pub mod breaker;
 pub mod client;
 pub mod conditional;
 pub mod error;
+pub mod html;
 pub mod policy;
 pub mod retry;
 pub mod settings;
