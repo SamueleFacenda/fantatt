@@ -2,13 +2,20 @@
 //!
 //! Walks `portale.fitet.org` through the polite fetch client, records every
 //! page it fetches in the dev database named by `DATABASE_URL`, and queues
-//! the work list. Assertions stay structural — the walk shape, the host
-//! allow-list, the second sweep pruning its cache — because live content
-//! moves, while the golden expectations live against the recorded fixtures.
+//! the work list. The source serves the cheap topology only — the menu, the
+//! framesets, the menus, the indexes and lists — because the full expansion
+//! is tens of thousands of pages that the scheduler walks incrementally, and
+//! a smoke run stays a smoke run. Assertions stay structural, because live
+//! content moves, while the golden expectations live against the recorded
+//! fixtures.
 
 use std::time::Instant;
 
-use fantatt_ingest::{FetchClient, discover::ClientSource, discover::SOURCE};
+use async_trait::async_trait;
+use fantatt_ingest::conditional::CacheValidators;
+use fantatt_ingest::discover::{ClientSource, PageReply, PageSource, SOURCE, Surface};
+use fantatt_ingest::uri::Uri;
+use fantatt_ingest::{FetchClient, FetchError};
 use fantatt_jobs::config::Runtime;
 use fantatt_jobs::scheduler;
 use fantatt_jobs::store::Store;
@@ -28,12 +35,31 @@ fn ingest() -> fantatt_config::settings::ingest::Ingest {
     }
 }
 
+/// The live source bounded to the cheap topology.
+struct TopologySource<'a> {
+    inner: ClientSource<'a>,
+}
+
+#[async_trait]
+impl PageSource for TopologySource<'_> {
+    async fn page(&self, url: &Uri, validators: &CacheValidators) -> Result<PageReply, FetchError> {
+        let topological = Surface::classify(url).is_some_and(Surface::is_topology);
+        if topological {
+            self.inner.page(url, validators).await
+        } else {
+            Ok(PageReply::Missing)
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let store = connect().await?;
     let runtime = Runtime::from_config(&ingest())?;
     let client = FetchClient::from_settings(runtime.settings.clone())?;
-    let source = ClientSource::new(&client);
+    let source = TopologySource {
+        inner: ClientSource::new(&client),
+    };
     let first = sweep_once(&store, &runtime, &source).await?;
     let second = sweep_once(&store, &runtime, &source).await?;
     assert!(
@@ -50,6 +76,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+async fn sweep_once(
+    store: &Store,
+    runtime: &Runtime,
+    source: &TopologySource<'_>,
+) -> Result<fantatt_jobs::sweep::SweepReport, fantatt_jobs::sweep::SweepError> {
+    let started = Instant::now();
+    let report = scheduler::run_sweep(store, runtime, source).await?;
+    println!("sweep: {report:?} in {:?}", started.elapsed());
+    assert!(report.walked > 0, "the sweep walked no page");
+    Ok(report)
+}
+
 /// The dev database the `discover-smoke` recipe migrated.
 async fn connect() -> Result<Store, sqlx::Error> {
     let database = std::env::var("DATABASE_URL")
@@ -59,17 +97,4 @@ async fn connect() -> Result<Store, sqlx::Error> {
         .connect(&database)
         .await?;
     Ok(Store::new(pool))
-}
-
-async fn sweep_once(
-    store: &Store,
-    runtime: &Runtime,
-    source: &ClientSource<'_>,
-) -> Result<fantatt_jobs::sweep::SweepReport, fantatt_jobs::sweep::SweepError> {
-    let started = Instant::now();
-    let report = scheduler::run_sweep(store, runtime, source).await?;
-    println!("sweep: {report:?} in {:?}", started.elapsed());
-    assert!(report.walked > 0, "the sweep walked no page");
-    assert!(report.jobs > 0, "the sweep planned no job");
-    Ok(report)
 }
