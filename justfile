@@ -36,10 +36,14 @@ fixtures-verify:
 # queue the work list. Needs network access; a second sweep follows to prove
 # the ledger cache prunes. Structural assertions only - the golden
 # expectations live against the recorded fixtures (G1.3).
+# why: the portal's edge resets non-browser TLS clients (rustls) with a
+# connection reset while the same client reads the plain-HTTP origin fine, so
+# the smoke walks over http:// until the edge accepts the rustls client.
 discover-smoke: db-migrate
     #!/usr/bin/env bash
     set -euo pipefail
     export DATABASE_URL="{{db-url}}"
+    export FANTATT_SMOKE_BASE_URL="http://portale.fitet.org/"
     cargo run -q --example live_sweep -p fantatt-jobs
 
 # Re-record the live FITET surfaces behind tests/fixtures/fitet/html, rewrite
