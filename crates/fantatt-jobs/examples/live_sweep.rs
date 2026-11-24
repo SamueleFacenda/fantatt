@@ -20,13 +20,24 @@ use fantatt_jobs::config::Runtime;
 use fantatt_jobs::scheduler;
 use fantatt_jobs::store::Store;
 
-/// The documented `[ingest]` defaults (docs/12-configuration.md §2).
-fn ingest() -> fantatt_config::settings::ingest::Ingest {
+/// The base URL the smoke walks: the documented default, or the plain-HTTP
+/// override the recipe points at. why: the portal's edge resets non-browser
+/// TLS clients with a connection reset (os error 104) before any HTTP
+/// exchange while the same client reads the plain-HTTP origin fine, so `just
+/// discover-smoke` walks over http:// until the edge accepts the rustls client.
+fn smoke_base_url() -> String {
+    std::env::var("FANTATT_SMOKE_BASE_URL")
+        .unwrap_or_else(|_| "https://portale.fitet.org/".to_owned())
+}
+
+/// The documented `[ingest]` defaults (docs/12-configuration.md §2) over the
+/// given base URL.
+fn ingest(base: String) -> fantatt_config::settings::ingest::Ingest {
     fantatt_config::settings::ingest::Ingest {
         enabled: true,
         concurrency: 4,
         min_request_interval_ms: 750,
-        source_base_url: "https://portale.fitet.org/".to_owned(),
+        source_base_url: base,
         regions: vec!["Trentino".to_owned()],
         discovery_interval_minutes: 30,
         matchday_interval_minutes: 5,
@@ -54,8 +65,10 @@ impl PageSource for TopologySource<'_> {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let base = smoke_base_url();
+    let allowed = Uri::parse(&base)?.as_url();
     let store = connect().await?;
-    let runtime = Runtime::from_config(&ingest())?;
+    let runtime = Runtime::from_config(&ingest(base))?;
     let client = FetchClient::from_settings(runtime.settings.clone())?;
     let source = TopologySource {
         inner: ClientSource::new(&client),
@@ -66,10 +79,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         second.walked <= first.walked,
         "the ledger cache did not prune the second sweep"
     );
+    check_host(&store, &allowed).await?;
+    Ok(())
+}
+
+/// The walk stayed on the configured portal origin, reporting the ledger size.
+async fn check_host(store: &Store, origin: &str) -> Result<(), sqlx::Error> {
     let ledger = store.ledger(SOURCE).await?;
-    let allowed = "https://portale.fitet.org/";
     assert!(
-        ledger.urls().iter().all(|url| url.starts_with(allowed)),
+        ledger.urls().iter().all(|url| url.starts_with(origin)),
         "the walk followed a host outside the allow-list"
     );
     println!("ledger holds {} portal urls", ledger.urls().len());
