@@ -58,7 +58,34 @@ flowchart LR
 Enumerates the source space: regions → championships → matchdays, and
 regions → tournament types → tournaments → tabelloni. Output is a **work
 manifest**: a deterministic list of fetch jobs with content keys. Discovery is
-cheap and cached aggressively (one week in the prototype; one configurable TTL).
+cheap and cached aggressively (one configurable TTL; the prototype used one
+week, and the default is seven days).
+
+The sweep (`fantatt-ingest::discover`) classifies every URL it meets by the
+page it names and walks a fixed edge table over that classifier: the menu
+points at the region framesets, the championship indexes, and the national
+tournament types; a region frameset frames the regional championship menu and
+the tournament menu; the championship list links the championship pages; and
+each championship frames down to its calendar, its matchday homes, and their
+referto and detail pages. Pages resolve and normalize before the walk stores
+anything: lower-case scheme and host, no fragment, no default port, sorted
+query pairs, dot segments removed. The normalized URL is the content key, so
+two spellings of one target are one target.
+
+Two cadences fall out of the walk. The cheap topology — the menu, the
+framesets, the menus, the indexes and lists — is re-read on every sweep,
+because its links are the only map the walk has. The expansion levels below a
+championship are cached: a page whose content hash matches the ledger is not
+re-expanded, so an unchanged portal yields an empty work list and a new or
+changed championship expands down to its leaves. The leaves — giornata
+pages, match details, tournament result pages — are the fetch jobs; discovery
+itself fetches only the pages it walks, and a walk archives its page behind
+the client. A leaf the ledger already holds fresh plans no job, because the
+worker re-checks it at its own cadence with the stored validators. A
+commented-out link is not a fetch target, and a page the source cannot
+deliver prunes its branch instead of failing the sweep. The plan sorts by
+surface then URL, so it is deterministic whatever order the walk reached
+pages in.
 
 ### 3.2 Diff
 
@@ -72,6 +99,13 @@ Each job compares the target against the ingest ledger:
 | Seen, marked incomplete | Skip until complete |
 
 Diffing by content hash is what allows scraping every few minutes safely.
+
+The ledger keeps one row per (source, url, content hash): a new hash appends
+history while a known hash refreshes its `fetched_at`, so the cache window
+never expires for a page that keeps answering 304, and the diff reads the
+newest row per URL. The queue dedupes by the partial unique index on the
+active states, so a sweep that re-plans an unchanged page inserts nothing,
+and a finished job frees its key.
 
 ### 3.3 Fetch
 
@@ -174,7 +208,10 @@ standings. Each derivation is a named-graph commit (see `04-reasoning-rules.md`)
 
 `tokio-cron-scheduler` (0.15.1) drives cadence. Job state lives in Postgres so a
 restart does not lose schedule; the queue is the same Postgres `LISTEN/NOTIFY`
-mechanism used elsewhere.
+mechanism used elsewhere. The sweep interval comes from
+`ingest.discovery_interval_minutes` (30 minutes by default), the politeness
+bounds from the same section, and a finished sweep notifies a listening worker
+on the `fantatt_jobs` channel.
 
 ## 5. Failure and fairness
 
