@@ -6,10 +6,22 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+async-trait.workspace = true
+fantatt-config = { path = "../fantatt-config" }
+fantatt-ingest = { path = "../fantatt-ingest" }
+rand.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 sqlx.workspace = true
+thiserror.workspace = true
+time.workspace = true
 tokio.workspace = true
 tokio-cron-scheduler.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+fantatt-fixtures = { path = "../fantatt-fixtures" }
+fantatt-test-support = { path = "../fantatt-test-support" }
 
 [lints]
 workspace = true

@@ -1433,6 +1433,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "axum",
+ "fantatt-fixtures",
  "rand 0.9.5",
  "reqwest 0.13.0",
  "scraper",
@@ -1440,6 +1441,7 @@ dependencies = [
  "serde_json",
  "sha2 0.11.1",
  "thiserror 1.0.69",
+ "time",
  "tokio",
  "tracing",
 ]
@@ -1448,10 +1450,20 @@ dependencies = [
 name = "fantatt-jobs"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
+ "fantatt-config",
+ "fantatt-fixtures",
+ "fantatt-ingest",
+ "fantatt-test-support",
+ "rand 0.9.5",
  "serde",
+ "serde_json",
  "sqlx",
+ "thiserror 1.0.69",
+ "time",
  "tokio",
  "tokio-cron-scheduler",
+ "tracing",
 ]
 
 [[package]]

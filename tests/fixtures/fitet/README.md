@@ -18,9 +18,12 @@ tests/fixtures/fitet/
 │                           # every recorded surface (fixtures are located by
 │                           # kind, not by hardcoded paths)
 ├── manifest.sha256         # one sha256 line per file (README excluded)
-└── html/                   # current-portal HTML surfaces, captured 2026-11-20
+└── html/                   # current-portal HTML surfaces, captured 2026-11-23
     ├── menu.html                          # menu.php: the frameset entry point
     ├── default_reg_1.html                 # default_reg.asp?REG=1: the Valle d'Aosta frameset
+    ├── menu_reg_1.html                    # menu_reg.php?REG=1: the regional championship menu
+    ├── menu_reg_2.html                    # menu_reg.php?REG=2: a menu with championships
+    ├── menu_tor_1.html                    # menu_tor.php?REG=1: the tournament type menu
     ├── bianca_reg_1.html                  # bianca.php?REG=1: the regional calendar shell
     ├── testata_reg_1.html                 # testata.php?REG=1: the regional committee header
     ├── visualizza_campionati_2.html       # visualizza_campionati.php?CID=2
@@ -35,10 +38,17 @@ tests/fixtures/fitet/
 ```
 
 The chain is deliberately complete: `menu.php` frames point at the region and
-championship surfaces, the calendar lists the `INCONTRO` link, the giornata
-home frames the referto, and `ajax.php?term=kozul` resolves the same athlete id
-(`737436`) that `dettaglio_partita.php` names — that cross-reference is an
-assertion in `fantatt-fixtures`.
+championship surfaces, the region frameset carries the regional championship
+menu and the tournament type menu, the calendar lists the `INCONTRO` link, the
+giornata home frames the referto, and `ajax.php?term=kozul` resolves the same
+athlete id (`737436`) that `dettaglio_partita.php` names — that cross-reference
+is an assertion in `fantatt-fixtures`.
+
+`menu_reg.php?REG=1` is recorded with an empty table on purpose: Valle d'Aosta
+runs no regional championships this season, so discovery must treat a menu
+without links as a complete answer rather than a broken page. `menu_reg.php?REG=2`
+carries the populated counterpart (41 championships through `../campionati/`
+relative paths).
 
 The portal grammar changed since the prototype (2023): framesets moved from
 `menu.php?REG=` paths to `?CID=`/`?CAM=`/`?ANNO=` query identifiers, and

@@ -1,0 +1,62 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE fantatt.ingest_jobs\n             SET state = 'RUNNING', started_at = now(), attempts = attempts + 1\n             WHERE job_id = (\n                 SELECT job_id FROM fantatt.ingest_jobs\n                 WHERE state = 'PENDING' AND (next_run_at IS NULL OR next_run_at <= now())\n                 ORDER BY scheduled_at\n                 FOR UPDATE SKIP LOCKED\n                 LIMIT 1\n             )\n             RETURNING job_id, job_type, source_id, payload",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "job_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.ingest_jobs",
+            "name": "job_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "job_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.ingest_jobs",
+            "name": "job_type"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "source_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.ingest_jobs",
+            "name": "source_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "payload",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "fantatt.ingest_jobs",
+            "name": "payload"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "7cd9cd2cdc329fc1cdeeb81281cb90973d6ce5252636d81b6597c2cc783fcffc"
+}

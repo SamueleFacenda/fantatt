@@ -475,3 +475,202 @@ async fn identifiers_must_be_prefixed_ulids() {
     .expect_err("malformed identifiers must be rejected");
     assert_check_violation(error);
 }
+
+async fn write_job(pool: &sqlx::PgPool, job_id: &str, state: &str) -> Result<u64, sqlx::Error> {
+    sqlx::query(
+        "INSERT INTO fantatt.ingest_jobs
+            (job_id, job_type, source, source_id, state, payload)
+         VALUES ($1, 'fetch-giornata', 'fitet',
+                 'https://portale.fitet.org/giornata.php?INCONTRO=1', $2, '{}')",
+    )
+    .bind(job_id)
+    .bind(state)
+    .execute(pool)
+    .await
+    .map(|result| result.rows_affected())
+}
+
+async fn finish_job(pool: &sqlx::PgPool, job_id: &str, state: &str) {
+    sqlx::query("UPDATE fantatt.ingest_jobs SET state = $2, finished_at = now() WHERE job_id = $1")
+        .bind(job_id)
+        .bind(state)
+        .execute(pool)
+        .await
+        .expect("the job transitions");
+}
+
+#[tokio::test]
+async fn the_ingest_tables_carry_the_diff_columns() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    for (table, expected) in [("ingest_ledger", LEDGER_COLUMNS.len()), ("ingest_jobs", 14)] {
+        let columns: Vec<(String,)> = sqlx::query_as(
+            "SELECT column_name::text FROM information_schema.columns
+             WHERE table_schema = 'fantatt' AND table_name = $1
+             ORDER BY ordinal_position",
+        )
+        .bind(table)
+        .fetch_all(database.pool())
+        .await
+        .expect("list columns");
+        assert_eq!(columns.len(), expected, "{table} column count");
+    }
+}
+
+/// The columns of the ingest ledger the diff stage reads and writes.
+const LEDGER_COLUMNS: [&str; 10] = [
+    "ledger_id",
+    "source",
+    "source_id",
+    "content_hash",
+    "etag",
+    "last_modified",
+    "state",
+    "payload_location",
+    "fetched_at",
+    "created_at",
+];
+
+/// A ledger row the diff stage would write after fetching one page.
+#[derive(Clone, Copy)]
+struct LedgerWrite<'a> {
+    ledger_id: &'a str,
+    source_id: &'a str,
+    content_hash: &'a str,
+    state: &'a str,
+}
+
+async fn write_ledger_row(pool: &sqlx::PgPool, write: LedgerWrite<'_>) -> Result<u64, sqlx::Error> {
+    sqlx::query(
+        "INSERT INTO fantatt.ingest_ledger
+            (ledger_id, source, source_id, content_hash, etag, last_modified, state, payload_location)
+         VALUES ($1, 'fitet', $2, $3, '\"v1\"', now(), $4, NULL)",
+    )
+    .bind(write.ledger_id)
+    .bind(write.source_id)
+    .bind(write.content_hash)
+    .bind(write.state)
+    .execute(pool)
+    .await
+    .map(|result| result.rows_affected())
+}
+
+#[tokio::test]
+async fn the_ingest_ledger_dedupes_one_hash_per_source_and_url() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    let mut ids = Fixture::new(database.pool());
+    let row = LedgerWrite {
+        ledger_id: &ids.bare_ulid(),
+        source_id: "https://portale.fitet.org/menu.php",
+        content_hash: "hash-one",
+        state: "FETCHED",
+    };
+    write_ledger_row(database.pool(), row)
+        .await
+        .expect("first fetch of a page");
+    assert_repeat_conflicts(database.pool(), row).await;
+}
+
+#[tokio::test]
+async fn a_changed_page_appends_ledger_history() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    let mut ids = Fixture::new(database.pool());
+    let url = "https://portale.fitet.org/menu.php";
+    for hash in ["hash-one", "hash-two"] {
+        let row = LedgerWrite {
+            ledger_id: &ids.bare_ulid(),
+            source_id: url,
+            content_hash: hash,
+            state: "FETCHED",
+        };
+        write_ledger_row(database.pool(), row).await.expect(hash);
+    }
+    let rows: i64 = sqlx::query_scalar(
+        "SELECT count(*) FROM fantatt.ingest_ledger WHERE source = 'fitet' AND source_id = $1",
+    )
+    .bind(url)
+    .fetch_one(database.pool())
+    .await
+    .expect("count the history");
+    assert_eq!(rows, 2);
+}
+
+async fn assert_repeat_conflicts(pool: &sqlx::PgPool, row: LedgerWrite<'_>) {
+    let mut ids = Fixture::new(pool);
+    let same = LedgerWrite {
+        ledger_id: &ids.bare_ulid(),
+        source_id: row.source_id,
+        content_hash: row.content_hash,
+        state: "FETCHED",
+    };
+    let error = write_ledger_row(pool, same)
+        .await
+        .expect_err("a repeated fetch of the same content dedupes");
+    assert!(is_unique_violation(&error), "{error}");
+}
+
+#[tokio::test]
+async fn the_ingest_ledger_rejects_an_unknown_state() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    let mut ids = Fixture::new(database.pool());
+    let error = write_ledger_row(
+        database.pool(),
+        LedgerWrite {
+            ledger_id: &ids.bare_ulid(),
+            source_id: "https://portale.fitet.org/menu.php",
+            content_hash: "hash",
+            state: "IMAGINARY",
+        },
+    )
+    .await
+    .expect_err("an unknown fetch state is rejected");
+    assert_check_violation(error);
+}
+
+#[tokio::test]
+async fn the_ingest_ledger_rejects_a_malformed_identifier() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    let error = write_ledger_row(
+        database.pool(),
+        LedgerWrite {
+            ledger_id: "not-an-ulid",
+            source_id: "https://portale.fitet.org/menu.php",
+            content_hash: "hash",
+            state: "FETCHED",
+        },
+    )
+    .await
+    .expect_err("a malformed ledger id is rejected");
+    assert_check_violation(error);
+}
+
+#[tokio::test]
+async fn the_ingest_job_queue_dedupes_the_active_states_only() {
+    let database = TestDatabase::new().await.expect("ephemeral database");
+    let mut ids = Fixture::new(database.pool());
+    let job = ids.bare_ulid();
+    write_job(database.pool(), &job, "PENDING")
+        .await
+        .expect("first pending job");
+    let error = write_job(database.pool(), &ids.bare_ulid(), "PENDING")
+        .await
+        .expect_err("a second pending job for the same key dedupes");
+    assert!(is_unique_violation(&error), "{error}");
+    let error = write_job(database.pool(), &ids.bare_ulid(), "RUNNING")
+        .await
+        .expect_err("a running job for the same key dedupes");
+    assert!(is_unique_violation(&error), "{error}");
+    finish_job(database.pool(), &job, "SUCCEEDED").await;
+    // why: the queue holds one row per lifecycle, so the finished row leaves
+    // the active index and the key takes a new pending job
+    let freed = ids.bare_ulid();
+    write_job(database.pool(), &freed, "PENDING")
+        .await
+        .expect("the key takes a new pending job");
+}
+
+fn is_unique_violation(error: &sqlx::Error) -> bool {
+    error
+        .as_database_error()
+        .and_then(|reason| reason.code())
+        .is_some_and(|code| code == "23505")
+}

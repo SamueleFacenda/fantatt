@@ -13,6 +13,7 @@ pub mod archive;
 pub mod breaker;
 pub mod client;
 pub mod conditional;
+pub mod discover;
 pub mod error;
 pub mod html;
 pub mod policy;
@@ -20,6 +21,7 @@ pub mod retry;
 pub mod settings;
 pub mod throttle;
 pub mod transport;
+pub mod uri;
 
 pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;

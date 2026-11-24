@@ -1,9 +1,12 @@
 {
   "version": 1,
-  "captured_on": "2026-11-20",
+  "captured_on": "2026-11-23",
   "surfaces": [
     { "kind": "menu", "file": "html/menu.html", "url": "https://portale.fitet.org/menu.php" },
-    { "kind": "region-menu", "file": "html/default_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/default_reg.asp?REG=1" },
+    { "kind": "region-frameset", "file": "html/default_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/default_reg.asp?REG=1" },
+    { "kind": "region-menu", "file": "html/menu_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/menu_reg.php?REG=1" },
+    { "kind": "region-menu", "file": "html/menu_reg_2.html", "url": "https://portale.fitet.org/risultati/regioni/menu_reg.php?REG=2" },
+    { "kind": "tournament-menu", "file": "html/menu_tor_1.html", "url": "https://portale.fitet.org/risultati/regioni/menu_tor.php?REG=1" },
     { "kind": "region-home", "file": "html/bianca_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/bianca.php?REG=1" },
     { "kind": "region-header", "file": "html/testata_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/testata.php?REG=1" },
     { "kind": "championship-index", "file": "html/visualizza_campionati_2.html", "url": "https://portale.fitet.org/risultati/campionati/visualizza_campionati.php?CID=2" },

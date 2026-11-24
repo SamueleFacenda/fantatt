@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.ingest_ledger\n            (ledger_id, source, source_id, content_hash, etag, last_modified, state)\n         VALUES ($1, $2, $3, $4, $5, $6, $7)\n         ON CONFLICT (source, source_id, content_hash)\n         DO UPDATE SET fetched_at = now()",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Timestamptz",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "7460dee4963cfefa645b0e85966328940c9290cb7478ebfbf4145b1ea322dc7e"
+}
