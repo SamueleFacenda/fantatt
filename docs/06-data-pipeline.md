@@ -116,6 +116,14 @@ and a finished job frees its key.
 - Conditional requests (`If-None-Match`) where the source supports them.
 - Raw responses archived to object storage (configurable, can be disabled) so
   any past result can be re-parsed without re-scraping.
+- **Edge behavior**: the portal's HTTPS edge resets non-browser TLS clients with
+  a connection reset before any HTTP exchange — the rustls client the facade
+  uses among them, while the plain-HTTP origin answers normally and a browser
+  does not help because the reset precedes HTTP. `just fixtures-capture`
+  therefore records through curl, and `just discover-smoke` walks over
+  `http://` through `FANTATT_SMOKE_BASE_URL`. The facade itself retries a
+  refused transport, opens the circuit, and reports the block, so an
+  edge-blocked source degrades exactly as G1.2 specifies.
 
 ### 3.4 Parse
 
