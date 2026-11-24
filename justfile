@@ -31,6 +31,17 @@ coverage:
 fixtures-verify:
     cargo run -q --bin fantatt-fixtures -- verify
 
+# Smoke the discovery sweep against the live portal: walk portale.fitet.org
+# through the polite fetch client, record the pages in the dev database, and
+# queue the work list. Needs network access; a second sweep follows to prove
+# the ledger cache prunes. Structural assertions only - the golden
+# expectations live against the recorded fixtures (G1.3).
+discover-smoke: db-migrate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export DATABASE_URL="{{db-url}}"
+    cargo run -q --example live_sweep -p fantatt-jobs
+
 # Re-record the live FITET surfaces behind tests/fixtures/fitet/html, rewrite
 # capture.json and manifest.sha256, then verify the refreshed tree. Needs
 # network access to portale.fitet.org; a surface that fails to fetch fails the

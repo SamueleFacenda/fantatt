@@ -54,6 +54,11 @@ impl Ledger {
     pub fn get(&self, url: &Uri) -> Option<&LedgerEntry> {
         self.entries.get(&url.as_url())
     }
+
+    /// Every normalized URL the snapshot holds.
+    pub fn urls(&self) -> Vec<&str> {
+        self.entries.keys().map(String::as_str).collect()
+    }
 }
 
 #[cfg(test)]
