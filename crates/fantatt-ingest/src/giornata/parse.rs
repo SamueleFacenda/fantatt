@@ -722,7 +722,7 @@ mod tests {
         let mut row = String::from(
             "<tr><td><p class=dettagli><a href=\"dettaglio_partita.php?ID=1594362\">1</a></p></td>\
              <td><p class=dettagli>ROSSI CARLO</p></td><td><p class=dettagli>BIANCHI LUCA</p></td>\
-             <td align=center><p class=dettagli>undici</p></td>"
+             <td align=center><p class=dettagli>undici</p></td>",
         );
         for points in ["9", "11", "7", "11", "6", "0", "0", "0", "0", "2", "1"] {
             row.push_str(&cells.replace("{points}", points));
