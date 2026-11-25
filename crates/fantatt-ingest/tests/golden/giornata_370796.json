@@ -1,0 +1,105 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370796",
+    "date": "2026-09-27",
+    "home_team": "USD APUANIA CARRARA TENNISTAVOLO",
+    "away_team": "TENNISTAVOLO SASSARI",
+    "venue": "Palazzetto dello Sport Avenza di Carrara, Via Giovan Pietro 26, 54033 Carrara (MS)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1594379",
+        "player_a": "Persson Jon Sebastian",
+        "player_b": "Gacina Andrej",
+        "sets": [
+          [
+            8,
+            11
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            5,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1594380",
+        "player_a": "Kulczycki Samuel Szymon",
+        "player_b": "Puppo Andrea",
+        "sets": [
+          [
+            11,
+            4
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            11,
+            3
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1594381",
+        "player_a": "Mutti Matteo",
+        "player_b": "Cappuccio Marco Antonio",
+        "sets": [
+          [
+            11,
+            2
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            7
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1594382",
+        "player_a": "Kulczycki Samuel Szymon",
+        "player_b": "Gacina Andrej",
+        "sets": [
+          [
+            2,
+            11
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            5
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

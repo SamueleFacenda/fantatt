@@ -1,0 +1,85 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370793",
+    "date": "2026-09-26",
+    "home_team": "TENNISTAVOLO SASSARI",
+    "away_team": "ASD MURAVERA TT",
+    "venue": "PALESTRA SCUOLA MEDIA N 2, CORSO COSSIGA 6, 07100 Sassari (SS)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1594362",
+        "player_a": "Puppo Andrea",
+        "player_b": "Kozul Deni",
+        "sets": [
+          [
+            6,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1594363",
+        "player_a": "Gacina Andrej",
+        "player_b": "Abusev Artur",
+        "sets": [
+          [
+            5,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            5,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1594364",
+        "player_a": "Cappuccio Marco Antonio",
+        "player_b": "Trevisan Francesco",
+        "sets": [
+          [
+            11,
+            13
+          ],
+          [
+            12,
+            10
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

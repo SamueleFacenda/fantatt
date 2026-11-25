@@ -1,0 +1,181 @@
+{
+  "giornata": {
+    "championship_id": "201",
+    "contest_id": "376203",
+    "date": "2026-10-17",
+    "home_team": "TT. Biella-Legno",
+    "away_team": "TT.Ossola2000 Giulini Rubinetterie",
+    "venue": "Palestra Oratorio Santo Stefano, Via don Minzoni, 4b, 13900 Biella (BI)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1604996",
+        "player_a": "Motta Lodovica",
+        "player_b": "Cesaro Gianluca",
+        "sets": [
+          [
+            4,
+            11
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            8,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1604997",
+        "player_a": "Rizzo Alessandro",
+        "player_b": "Delai Mattia",
+        "sets": [
+          [
+            11,
+            5
+          ],
+          [
+            11,
+            5
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1604998",
+        "player_a": "Torrero Stefano",
+        "player_b": "Antonietti Erica",
+        "sets": [
+          [
+            11,
+            8
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            15,
+            13
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1604999",
+        "player_a": "Motta L - Rizzo A",
+        "player_b": "Antonietti E - Delai M",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            4,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1605000",
+        "player_a": "Motta Lodovica",
+        "player_b": "Delai Mattia",
+        "sets": [
+          [
+            11,
+            7
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            15,
+            13
+          ],
+          [
+            11,
+            8
+          ]
+        ]
+      },
+      {
+        "match_number": 6,
+        "detail_id": "1605001",
+        "player_a": "Torrero Stefano",
+        "player_b": "Cesaro Gianluca",
+        "sets": [
+          [
+            5,
+            11
+          ],
+          [
+            11,
+            13
+          ],
+          [
+            3,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 7,
+        "detail_id": "1605002",
+        "player_a": "Rizzo Alessandro",
+        "player_b": "Antonietti Erica",
+        "sets": [
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            7
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

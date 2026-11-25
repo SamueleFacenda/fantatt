@@ -1,0 +1,77 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370800",
+    "date": "2026-10-21",
+    "home_team": "ASD MURAVERA TT",
+    "away_team": "USD APUANIA CARRARA TENNISTAVOLO",
+    "venue": "PALESTRA COMUNALE GIOVANNI CUCCU, VIALE RINASCITA SNC, 09043 Muravera (SU)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1609618",
+        "player_a": "Cipriano Jacopo",
+        "player_b": "Kulczycki Samuel Szymon",
+        "sets": [
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1609619",
+        "player_a": "Trevisan Francesco",
+        "player_b": "Mutti Matteo",
+        "sets": [
+          [
+            13,
+            11
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            12,
+            14
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1609620",
+        "player_a": "Cuboni Emanuele",
+        "player_b": "Persson Jon Sebastian",
+        "sets": [
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "captured_on": "2026-11-23",
+  "captured_on": "2026-11-25",
   "surfaces": [
     { "kind": "menu", "file": "html/menu.html", "url": "https://portale.fitet.org/menu.php" },
     { "kind": "region-frameset", "file": "html/default_reg_1.html", "url": "https://portale.fitet.org/risultati/regioni/default_reg.asp?REG=1" },
@@ -16,6 +16,17 @@
     { "kind": "calendar", "file": "html/Calendario_cam1_a41.html", "url": "https://portale.fitet.org/risultati/campionati/Calendario.asp?CAM=1&ANNO=41" },
     { "kind": "giornata-home", "file": "html/giornata_home_370793.html", "url": "https://portale.fitet.org/risultati/campionati/giornata_home.php?INCONTRO=370793&CAM=1&FORMULA=17" },
     { "kind": "giornata", "file": "html/giornata_370793.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370793&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370794.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370794&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370796.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370796&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370800.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370800&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370805.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370805&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_370808.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=370808&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_392016.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=392016&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_392017.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=392017&CAM=1&FORMULA=17" },
+    { "kind": "giornata", "file": "html/giornata_376199.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=376199&CAM=201&FORMULA=19" },
+    { "kind": "giornata", "file": "html/giornata_376201.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=376201&CAM=201&FORMULA=19" },
+    { "kind": "giornata", "file": "html/giornata_376203.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=376203&CAM=201&FORMULA=19" },
+    { "kind": "giornata", "file": "html/giornata_376255.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=376255&CAM=202&FORMULA=19" },
     { "kind": "match-detail", "file": "html/dettaglio_partita_1594362.html", "url": "https://portale.fitet.org/risultati/campionati/dettaglio_partita.php?ID=1594362" },
     { "kind": "player-search", "file": "html/ajax_kozul.json", "url": "https://portale.fitet.org/risultati/new_rank/ajax.php?term=kozul" },
     { "kind": "legacy-matches", "file": "matches.json", "url": "legacy prototype commit 444d843 (assets/matches.json, 1085 records)" }

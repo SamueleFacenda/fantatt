@@ -1,0 +1,125 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370808",
+    "date": "2026-11-07",
+    "home_team": "USD APUANIA CARRARA TENNISTAVOLO",
+    "away_team": "ASD TT SANTA TECLA NULVI",
+    "venue": "Palazzetto dello Sport Avenza di Carrara, Via Giovan Pietro 26, 54033 Carrara (MS)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1613697",
+        "player_a": "Mutti Matteo",
+        "player_b": "Park Jeongwoo",
+        "sets": [
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            11,
+            2
+          ],
+          [
+            6,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1613698",
+        "player_a": "Artemenko Nikita",
+        "player_b": "Muramatsu Yuto",
+        "sets": [
+          [
+            7,
+            11
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            7,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1613699",
+        "player_a": "Persson Jon Sebastian",
+        "player_b": "Giovannetti Tommaso Maria",
+        "sets": [
+          [
+            11,
+            8
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            6
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1613700",
+        "player_a": "Artemenko Nikita",
+        "player_b": "Park Jeongwoo",
+        "sets": [
+          [
+            11,
+            8
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            9
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1613701",
+        "player_a": "Mutti Matteo",
+        "player_b": "Muramatsu Yuto",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            6,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

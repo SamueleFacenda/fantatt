@@ -1,0 +1,169 @@
+{
+  "giornata": {
+    "championship_id": "201",
+    "contest_id": "376199",
+    "date": "2026-10-10",
+    "home_team": "ASD TT NOVARA A",
+    "away_team": "TT. Biella-Legno",
+    "venue": "PALESTRA RIGUTINI, VIA DE AMICIS DI FRONTE AL N.9, 28100 Novara (NO)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1596087",
+        "player_a": "Sorrentino Tommaso",
+        "player_b": "Erba Stefano",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            2
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1596088",
+        "player_a": "Palazzo Nicole",
+        "player_b": "Rizzo Alessandro",
+        "sets": [
+          [
+            4,
+            11
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            10,
+            12
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1596089",
+        "player_a": "Mussa Gabriele",
+        "player_b": "Torrero Stefano",
+        "sets": [
+          [
+            11,
+            8
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            5
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1596090",
+        "player_a": "Sorrentino T - Palazzo N",
+        "player_b": "Rizzo A - Erba S",
+        "sets": [
+          [
+            6,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            11,
+            5
+          ],
+          [
+            3,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1596091",
+        "player_a": "Sorrentino Tommaso",
+        "player_b": "Rizzo Alessandro",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            2
+          ]
+        ]
+      },
+      {
+        "match_number": 6,
+        "detail_id": "1596092",
+        "player_a": "Mussa Gabriele",
+        "player_b": "Erba Stefano",
+        "sets": [
+          [
+            8,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            11,
+            8
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            9
+          ]
+        ]
+      },
+      {
+        "match_number": 7,
+        "detail_id": "1596093",
+        "player_a": "Nino Martina",
+        "player_b": "Torrero Stefano",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            11,
+            13
+          ],
+          [
+            8,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

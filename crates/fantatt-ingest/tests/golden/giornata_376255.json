@@ -1,0 +1,165 @@
+{
+  "giornata": {
+    "championship_id": "202",
+    "contest_id": "376255",
+    "date": "2026-10-09",
+    "home_team": "TT.Torino A",
+    "away_team": "TT Vercelli Mazzeri Assicurazioni",
+    "venue": "PALESTRA E/23, VIA STEFANO TEMPIA 8, 10156 Torino (TO)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1595633",
+        "player_a": "Fanizza Stefano",
+        "player_b": "Mazzeri Alberto",
+        "sets": [
+          [
+            11,
+            5
+          ],
+          [
+            11,
+            4
+          ],
+          [
+            11,
+            7
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1595634",
+        "player_a": "Livizoru Valeriu",
+        "player_b": "Corallino Davide",
+        "sets": [
+          [
+            11,
+            7
+          ],
+          [
+            14,
+            16
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            6,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1595635",
+        "player_a": "Cacace Giuseppina",
+        "player_b": "Vallaro Daniele",
+        "sets": [
+          [
+            4,
+            11
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            8,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1595636",
+        "player_a": "Fanizza S - Cacace G",
+        "player_b": "Corallino D - Vallaro D",
+        "sets": [
+          [
+            7,
+            11
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            5,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1595637",
+        "player_a": "Fanizza Stefano",
+        "player_b": "Corallino Davide",
+        "sets": [
+          [
+            11,
+            6
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            15,
+            13
+          ]
+        ]
+      },
+      {
+        "match_number": 6,
+        "detail_id": "1595638",
+        "player_a": "Cacace Giuseppina",
+        "player_b": "Mazzeri Alberto",
+        "sets": [
+          [
+            8,
+            11
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            7,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 7,
+        "detail_id": "1595639",
+        "player_a": "Livizoru Valeriu",
+        "player_b": "Menin Lorenzo",
+        "sets": [
+          [
+            11,
+            0
+          ],
+          [
+            11,
+            7
+          ],
+          [
+            11,
+            7
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

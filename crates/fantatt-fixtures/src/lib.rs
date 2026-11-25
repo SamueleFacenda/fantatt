@@ -314,7 +314,7 @@ mod tests {
         let set = FixtureSet::discover().expect("fixture tree");
         let report = set.verify().expect("verification");
         assert_eq!(report.matches, 1085);
-        assert_eq!(report.surfaces, 16);
+        assert_eq!(report.surfaces, 27);
         assert_eq!(report.files, report.entries);
     }
 
