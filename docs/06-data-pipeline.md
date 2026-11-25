@@ -127,36 +127,62 @@ and a finished job frees its key.
 
 ### 3.4 Parse
 
-Pure functions from owned HTML strings to domain records. No I/O, no network,
-fully unit-testable with recorded fixtures.
+Pure functions from owned page bytes to canonical records. No I/O, no network,
+fully unit-testable with recorded fixtures. The giornata parser
+(`fantatt-ingest::giornata`) is the first stage; the calendar, classification,
+player, and bracket surfaces land with G1.5 and G1.11.
 
 Canonical record:
 
 ```rust
 struct RawGiornata {
-    championship_id: String,
-    contest_id: String,
-    date: Date,
+    championship_id: String,   // the CAM query value
+    contest_id: String,        // the INCONTRO query value
+    date: Option<Date>,        // none when the referto confirms no date yet
+    home_team: String,
+    away_team: String,
+    venue: Option<String>,     // the campo gara block, label stripped
     rows: Vec<GiornataRow>,
 }
 
 struct GiornataRow {
     match_number: u32,
-    player_a: String,
+    detail_id: Option<String>, // the ID of the tie's detail page
+    player_a: String,          // canonical form; a doubles pair is one cell
     player_b: String,
-    sets: Vec<(u8, u8)>,        // empty = not played
+    sets: Vec<(u8, u8)>,       // three to five, in play order
 }
 ```
 
-Parsing rules inherited from the prototype:
+A parse returns the record plus a skip log: every tie the page carried but the
+matchday cannot count, each with a reason (`not_a_tie` for a row that is prose,
+`unplayed` for a tie whose every set pair is empty), so a scheduled matchday
+without ties and a tie without a result are observable states rather than
+errors. A page reporting the `(incontri disputati …)` marker fails the parse
+with its counts instead of yielding partial data.
 
-- Names are title-cased and trimmed (`"FACENDA SAMUELE"` → `"Facenda Samuele"`).
+Parsing rules:
+
+- Names are title-cased per word, including after an apostrophe, and inner
+  whitespace collapses (`"FACENDA SAMUELE"` → `"Facenda Samuele"`,
+  `"D'ANGELO MARIO"` → `"D'Angelo Mario"`). The shared normalization is the
+  same function identity reconciliation (G1.6) resolves against.
 - `assente`/`ritirato` results become a 0-3 or 3-0 walkover, direction from the
-  marker text.
-- A row whose first cell is not a digit is not a match row.
-- Unplayed rows (future date in the score cell) are skipped.
-- Tournament brackets use the elimination-table layout with `bit_count` logic for
-  byes, third-place matches, and consolation brackets.
+  marker text: a marker on the home player, on one of the home set cells, or on
+  the sets-won summary records three sets to love for the away side, and
+  symmetrically for the away side.
+- A row whose first cell is not a digit is not a tie.
+- Unplayed ties are skipped with a reason.
+- Team names and venue text keep the portal's spelling, trimmed and with inner
+  whitespace collapsed.
+- Every failure is a typed error naming the selector, row, or cell at fault:
+  the societies (`p.incontro`), the giornata heading (`b`, which a paragraph
+  cannot contain because it closes before its own `center`), the tie table
+  header (`p.titolo_scheda`), or the row and cell of malformed text. The
+  declared set counts in the summary cells are cross-checked against the scores
+  as a drift signal.
+- Tournament brackets use the elimination-table layout with `bit_count` logic
+  for byes, third-place matches, and consolation brackets.
 - Set scores in brackets may carry `(R)` for retired, encoded as 0.
 
 ### 3.5 Validate
@@ -248,3 +274,12 @@ final bracket structure before the event, then the results for scoring.
 The prototype's `assets/matches.json` (1085 matches, both `partita` and `torneo`
 sources) is promoted to a golden fixture set: recorded HTML plus the expected
 canonical records. Tests replay them without network access.
+
+Twelve referti are recorded: the corpus side pins the expected records (every
+one of the 1085 matches is a canonical tie, the eighteen walkovers included),
+and the HTML side is the parser's input — twelve matchdays across three
+championships, including a doubles tie, a scheduled matchday with a future
+date, and one whose date is not confirmed yet. The parser test compares every
+page byte for byte with the canonical record committed under
+`crates/fantatt-ingest/tests/golden/`, so a parser change or a portal drift
+fails the suite; a mutated page fails naming the selector that broke.

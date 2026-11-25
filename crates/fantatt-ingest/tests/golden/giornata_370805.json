@@ -1,0 +1,125 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370805",
+    "date": "2026-10-31",
+    "home_team": "ASD TT SANTA TECLA NULVI",
+    "away_team": "ASD TT CITTA' DI SIRACUSA",
+    "venue": "Palazzetto dello Sport, Corso Vittorio Emanuele, 07032 Nulvi (SS)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1610805",
+        "player_a": "Park Jeongwoo",
+        "player_b": "Turrini Rafael Vinicius",
+        "sets": [
+          [
+            11,
+            3
+          ],
+          [
+            11,
+            8
+          ],
+          [
+            11,
+            7
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1610806",
+        "player_a": "Soderlund Hampus Ake Hannes",
+        "player_b": "Hodaei Seyedamirhossein",
+        "sets": [
+          [
+            8,
+            11
+          ],
+          [
+            11,
+            13
+          ],
+          [
+            10,
+            12
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1610807",
+        "player_a": "Giovannetti Tommaso Maria",
+        "player_b": "Gkionis Panagiotis",
+        "sets": [
+          [
+            11,
+            4
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            3,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1610808",
+        "player_a": "Park Jeongwoo",
+        "player_b": "Hodaei Seyedamirhossein",
+        "sets": [
+          [
+            7,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            11,
+            5
+          ],
+          [
+            11,
+            9
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1610809",
+        "player_a": "Soderlund Hampus Ake Hannes",
+        "player_b": "Turrini Rafael Vinicius",
+        "sets": [
+          [
+            9,
+            11
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

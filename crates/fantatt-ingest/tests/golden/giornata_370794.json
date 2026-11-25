@@ -1,0 +1,137 @@
+{
+  "giornata": {
+    "championship_id": "1",
+    "contest_id": "370794",
+    "date": "2026-09-26",
+    "home_team": "ASD MARCOZZI",
+    "away_team": "T.T. REGGIO EMILIA GRISSIN BON",
+    "venue": "palatennistavolo, via Crespellani 11, 09121 Cagliari (CA)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1594369",
+        "player_a": "Rossi Carlo",
+        "player_b": "Dyjas Jakub Wiktor",
+        "sets": [
+          [
+            12,
+            14
+          ],
+          [
+            12,
+            10
+          ],
+          [
+            11,
+            5
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            12,
+            10
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1594370",
+        "player_a": "Berglund Simon Alexander",
+        "player_b": "Andrade Selgas Monteiro Joao Pedro",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            8
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1594371",
+        "player_a": "Manhani Junior Humberto",
+        "player_b": "Bobocica Mihai Razvan",
+        "sets": [
+          [
+            9,
+            11
+          ],
+          [
+            6,
+            11
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1594372",
+        "player_a": "Berglund Simon Alexander",
+        "player_b": "Dyjas Jakub Wiktor",
+        "sets": [
+          [
+            11,
+            5
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            11,
+            13
+          ],
+          [
+            6,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1594373",
+        "player_a": "Rossi Carlo",
+        "player_b": "Andrade Selgas Monteiro Joao Pedro",
+        "sets": [
+          [
+            11,
+            6
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            8,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

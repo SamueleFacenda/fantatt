@@ -1,0 +1,185 @@
+{
+  "giornata": {
+    "championship_id": "201",
+    "contest_id": "376201",
+    "date": "2026-10-10",
+    "home_team": "ASD TT NOVARA B",
+    "away_team": "GS REGALDI NOVARA",
+    "venue": "PALESTRA RIGUTINI, VIA DE AMICIS DI FRONTE AL N.9, 28100 Novara (NO)",
+    "rows": [
+      {
+        "match_number": 1,
+        "detail_id": "1596796",
+        "player_a": "Guerra Mattia",
+        "player_b": "Castagno Maurizio",
+        "sets": [
+          [
+            7,
+            11
+          ],
+          [
+            13,
+            11
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            4,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 2,
+        "detail_id": "1596797",
+        "player_a": "Gavinelli Tommaso",
+        "player_b": "Cristofaro Massimiliano",
+        "sets": [
+          [
+            4,
+            11
+          ],
+          [
+            11,
+            9
+          ],
+          [
+            11,
+            8
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            9,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 3,
+        "detail_id": "1596798",
+        "player_a": "Oglietti Fabrizio",
+        "player_b": "Ferrari Andrea",
+        "sets": [
+          [
+            4,
+            11
+          ],
+          [
+            11,
+            1
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            11,
+            3
+          ],
+          [
+            8,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 4,
+        "detail_id": "1596799",
+        "player_a": "Gavinelli T - Guerra M",
+        "player_b": "Cristofaro M - Castagno M",
+        "sets": [
+          [
+            11,
+            9
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            13,
+            15
+          ]
+        ]
+      },
+      {
+        "match_number": 5,
+        "detail_id": "1596800",
+        "player_a": "Gavinelli Tommaso",
+        "player_b": "Castagno Maurizio",
+        "sets": [
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            16,
+            14
+          ]
+        ]
+      },
+      {
+        "match_number": 6,
+        "detail_id": "1596801",
+        "player_a": "Guerra Mattia",
+        "player_b": "Ferrari Andrea",
+        "sets": [
+          [
+            5,
+            11
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            2,
+            11
+          ]
+        ]
+      },
+      {
+        "match_number": 7,
+        "detail_id": "1596802",
+        "player_a": "Oglietti Fabrizio",
+        "player_b": "Cristofaro Massimiliano",
+        "sets": [
+          [
+            10,
+            12
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "skipped": []
+}

@@ -15,7 +15,9 @@ pub mod client;
 pub mod conditional;
 pub mod discover;
 pub mod error;
+pub mod giornata;
 pub mod html;
+pub mod names;
 pub mod policy;
 pub mod retry;
 pub mod settings;
@@ -25,5 +27,9 @@ pub mod uri;
 
 pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;
+pub use giornata::{
+    GiornataCoordinates, GiornataParseError, GiornataRow, ParsedGiornata, RawGiornata,
+    parse_giornata,
+};
 pub use settings::FetchSettings;
 pub use transport::Transport;

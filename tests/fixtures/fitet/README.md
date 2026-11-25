@@ -18,7 +18,9 @@ tests/fixtures/fitet/
 │                           # every recorded surface (fixtures are located by
 │                           # kind, not by hardcoded paths)
 ├── manifest.sha256         # one sha256 line per file (README excluded)
-└── html/                   # current-portal HTML surfaces, captured 2026-11-23
+└── html/                   # current-portal HTML surfaces; the base set was
+                            # captured 2026-11-23 and the giornata set the
+                            # G1.4 parser builds against on 2026-11-25
     ├── menu.html                          # menu.php: the frameset entry point
     ├── default_reg_1.html                 # default_reg.asp?REG=1: the Valle d'Aosta frameset
     ├── menu_reg_1.html                    # menu_reg.php?REG=1: the regional championship menu
@@ -33,6 +35,17 @@ tests/fixtures/fitet/
     ├── Calendario_cam1_a41.html           # Calendario.asp?CAM=1&ANNO=41 (season 2026/27)
     ├── giornata_home_370793.html          # giornata_home.php?INCONTRO=370793&CAM=1&FORMULA=17
     ├── giornata_370793.html               # giornata.php: the Sassari–Muravera referto
+    ├── giornata_370794.html               # giornata.php: Marcozzi–Reggio Emilia, five ties
+    ├── giornata_370796.html               # giornata.php: Apuania–Sassari, four ties
+    ├── giornata_370800.html               # giornata.php: Muravera–Apuania, three ties
+    ├── giornata_370805.html               # giornata.php: Santa Tecla–Siracusa, five ties
+    ├── giornata_370808.html               # giornata.php: five ties, three decided 3-2
+    ├── giornata_392016.html               # giornata.php: scheduled, no tie played yet
+    ├── giornata_392017.html              # giornata.php: scheduled, date not confirmed
+    ├── giornata_376199.html               # giornata.php: CAM=201, seven ties
+    ├── giornata_376201.html               # giornata.php: CAM=201, a 1-6 matchday
+    ├── giornata_376203.html               # giornata.php: CAM=201, includes a doubles tie
+    ├── giornata_376255.html               # giornata.php: CAM=202, seven ties
     ├── dettaglio_partita_1594362.html     # dettaglio_partita.php?ID=1594362: PUPPO–KOZUL
     └── ajax_kozul.json                    # ajax.php?term=kozul: the player search reply
 ```
