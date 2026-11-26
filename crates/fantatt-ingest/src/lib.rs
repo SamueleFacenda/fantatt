@@ -24,6 +24,7 @@ pub mod policy;
 pub mod retry;
 pub mod settings;
 pub mod throttle;
+pub mod tournament;
 pub mod transport;
 pub mod uri;
 
@@ -42,4 +43,10 @@ pub use giornata::{
     parse_giornata,
 };
 pub use settings::FetchSettings;
+pub use tournament::{
+    BracketDocument, BracketHomeCoordinates, BracketSection, ParsedBracketHome,
+    ParsedTournamentHeader, ParsedTournamentList, TournamentHeaderCoordinates, TournamentLink,
+    TournamentListCoordinates, TournamentParseError, parse_bracket_home, parse_tournament_header,
+    parse_tournament_list,
+};
 pub use transport::Transport;
