@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT alias_id FROM fantatt.identity_aliases WHERE normalized_alias = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "alias_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_aliases",
+            "name": "alias_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "4fa6e3e90f60bf333e79d573ea42871fc6f0bc44e1aeae16a6b03e09f64a6d11"
+}

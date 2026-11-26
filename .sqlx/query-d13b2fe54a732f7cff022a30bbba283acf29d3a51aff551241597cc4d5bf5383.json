@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE fantatt.identity_aliases SET player_id = $2, status = 'RESOLVED', resolved_at = now() WHERE alias_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d13b2fe54a732f7cff022a30bbba283acf29d3a51aff551241597cc4d5bf5383"
+}

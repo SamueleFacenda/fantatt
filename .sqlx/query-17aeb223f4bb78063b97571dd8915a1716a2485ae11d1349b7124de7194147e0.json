@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT value, confidence FROM fantatt.player_ratings WHERE player_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "value",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "fantatt.player_ratings",
+            "name": "value"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "confidence",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.player_ratings",
+            "name": "confidence"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "17aeb223f4bb78063b97571dd8915a1716a2485ae11d1349b7124de7194147e0"
+}

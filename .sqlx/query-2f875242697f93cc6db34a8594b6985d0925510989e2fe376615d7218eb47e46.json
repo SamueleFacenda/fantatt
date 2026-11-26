@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT candidate_player_ids FROM fantatt.identity_ambiguity_queue WHERE queue_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "candidate_player_ids",
+        "type_info": "TextArray",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_ambiguity_queue",
+            "name": "candidate_player_ids"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2f875242697f93cc6db34a8594b6985d0925510989e2fe376615d7218eb47e46"
+}

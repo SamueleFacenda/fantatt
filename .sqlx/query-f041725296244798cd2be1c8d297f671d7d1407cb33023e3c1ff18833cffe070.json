@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.identity_aliases (alias_id, player_id, raw_alias, normalized_alias, evidence, confidence, status) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (player_id, normalized_alias) DO UPDATE SET raw_alias = EXCLUDED.raw_alias, evidence = EXCLUDED.evidence, confidence = EXCLUDED.confidence, status = EXCLUDED.status, resolved_at = CASE WHEN EXCLUDED.status = 'RESOLVED' THEN now() ELSE NULL END RETURNING alias_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "alias_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_aliases",
+            "name": "alias_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Jsonb",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f041725296244798cd2be1c8d297f671d7d1407cb33023e3c1ff18833cffe070"
+}

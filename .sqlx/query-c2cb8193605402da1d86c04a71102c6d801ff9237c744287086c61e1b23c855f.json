@@ -1,0 +1,83 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT q.queue_id, q.alias_id, q.status, a.raw_alias, a.normalized_alias,\n                    (SELECT jsonb_agg(jsonb_build_object(\n                                'player_id', p.player_id, 'full_name', p.full_name)\n                                ORDER BY p.player_id)\n                       FROM fantatt.players p\n                      WHERE p.player_id = ANY (q.candidate_player_ids)) AS candidates\n               FROM fantatt.identity_ambiguity_queue q\n               JOIN fantatt.identity_aliases a ON a.alias_id = q.alias_id\n              WHERE q.status = 'PENDING'\n              ORDER BY q.created_at DESC\n              LIMIT $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "queue_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_ambiguity_queue",
+            "name": "queue_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "alias_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_ambiguity_queue",
+            "name": "alias_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "status",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_ambiguity_queue",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "raw_alias",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_aliases",
+            "name": "raw_alias"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "normalized_alias",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_aliases",
+            "name": "normalized_alias"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "candidates",
+        "type_info": "Jsonb",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "c2cb8193605402da1d86c04a71102c6d801ff9237c744287086c61e1b23c855f"
+}

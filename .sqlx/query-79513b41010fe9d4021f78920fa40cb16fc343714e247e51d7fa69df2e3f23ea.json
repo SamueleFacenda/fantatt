@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.player_ratings\n            (rating_id, player_id, value, as_of, source, confidence, valid_from)\n         VALUES ($1, $2, $3, $4, $5, $6, $7)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Int4",
+        "Date",
+        "Text",
+        "Text",
+        "Date"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "79513b41010fe9d4021f78920fa40cb16fc343714e247e51d7fa69df2e3f23ea"
+}

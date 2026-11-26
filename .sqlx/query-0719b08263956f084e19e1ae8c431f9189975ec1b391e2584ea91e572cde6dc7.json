@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.audit_log (actor_id, action, entity_type, entity_id, payload) VALUES ($1, 'identity.ambiguity.resolved', 'player', $2, $3)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Jsonb"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0719b08263956f084e19e1ae8c431f9189975ec1b391e2584ea91e572cde6dc7"
+}
