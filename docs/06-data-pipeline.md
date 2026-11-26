@@ -129,8 +129,12 @@ and a finished job frees its key.
 
 Pure functions from owned page bytes to canonical records. No I/O, no network,
 fully unit-testable with recorded fixtures. The giornata parser
-(`fantatt-ingest::giornata`) is the first stage; the calendar, classification,
-player, and bracket surfaces land with G1.5 and G1.11.
+(`fantatt-ingest::giornata`) is the first stage; the championship catalog, the
+matchday calendar, and the tournament surfaces land with G1.5
+(`fantatt-ingest::championship`, `::calendar`, `::tournament`), the
+classification and player surfaces land with G1.5 as well
+(`::classification`, `::player`), and the bracket tables that turn those pages
+into gironi and eliminatorie land with G1.11.
 
 Canonical record:
 
