@@ -84,7 +84,10 @@ fn a_mutated_championship_list_fails_naming_the_selector_that_broke() {
     assert!(
         matches!(
             error,
-            ChampionshipParseError::MissingSelector { selector: "p.stile", .. }
+            ChampionshipParseError::MissingSelector {
+                selector: "p.stile",
+                ..
+            }
         ),
         "{error}"
     );
