@@ -67,6 +67,24 @@ fn canonical_tie(record: &fantatt_fixtures::records::RawMatch) -> GiornataRow {
 }
 
 #[test]
+fn ingest_and_core_normalise_every_legacy_player_name_alike() {
+    let set = FixtureSet::discover().expect("fixture set");
+    let records = set.legacy_matches().expect("legacy matches");
+    let mut compared = 0;
+    for record in &records {
+        for name in [&record.one, &record.two] {
+            assert_eq!(
+                fantatt_core::identity::normalise_name(name),
+                normalize_name(name),
+                "{name}"
+            );
+            compared += 1;
+        }
+    }
+    assert_eq!(compared, records.len() * 2);
+}
+
+#[test]
 fn a_mutated_referto_fails_naming_the_selector_that_broke() {
     let set = FixtureSet::discover().expect("fixture set");
     let surface = first_giornata_surface(&set);

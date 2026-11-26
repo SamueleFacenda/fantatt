@@ -1433,6 +1433,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "axum",
+ "fantatt-core",
  "fantatt-fixtures",
  "rand 0.9.5",
  "reqwest 0.13.0",

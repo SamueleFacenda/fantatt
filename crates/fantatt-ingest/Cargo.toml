@@ -7,6 +7,7 @@ repository.workspace = true
 
 [dependencies]
 async-trait.workspace = true
+fantatt-core = { path = "../fantatt-core" }
 rand.workspace = true
 reqwest.workspace = true
 scraper.workspace = true

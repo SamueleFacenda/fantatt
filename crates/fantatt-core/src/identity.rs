@@ -58,23 +58,25 @@ impl Alias {
 /// matching the same players (docs/02-domain-model.md section 4).
 pub fn normalise_name(name: &str) -> String {
     name.split_whitespace()
-        .map(capitalise_word)
+        .map(title_case)
         .collect::<Vec<_>>()
         .join(" ")
 }
 
-/// why: split_whitespace never yields empty words, so the head of a word always
-/// exists and no fallback branch is needed.
-fn capitalise_word(word: &str) -> String {
-    let mut cased = String::with_capacity(word.len());
-    for (index, character) in word.chars().enumerate() {
-        if index == 0 {
-            cased.extend(character.to_uppercase());
+/// why: a cased character after an uncased one starts a word, which keeps
+/// `D'ANGELO` and `D'Angelo Mario` in one canonical form.
+fn title_case(word: &str) -> String {
+    let mut out = String::with_capacity(word.len());
+    let mut previous: Option<char> = None;
+    for character in word.chars() {
+        if previous.is_none_or(|prior| !prior.is_alphanumeric()) {
+            out.extend(character.to_uppercase());
         } else {
-            cased.extend(character.to_lowercase());
+            out.extend(character.to_lowercase());
         }
+        previous = Some(character);
     }
-    cased
+    out
 }
 
 /// One row of the published classifica a match was checked against.
@@ -286,6 +288,13 @@ mod tests {
     }
 
     #[test]
+    fn punctuation_after_a_letter_starts_a_new_canonical_word() {
+        assert_eq!(normalise_name("D'ANGELO MARIO"), "D'Angelo Mario");
+        assert_eq!(normalise_name("ROSSI A/BIANCHI B"), "Rossi A/Bianchi B");
+        assert_eq!(normalise_name("  DE LUCA   marco "), "De Luca Marco");
+    }
+
+    #[test]
     fn distinct_aliases_accumulate() {
         let mut identity = PlayerIdentity::unresolved(id(), Alias::new("Bendoni"));
         identity.add_alias(Alias::new("Lorenzo Bendoni"));
@@ -326,6 +335,14 @@ mod tests {
     proptest! {
         #[test]
         fn normalisation_is_idempotent(name in "[a-zA-Z]{1,20}( [a-zA-Z]{1,20}){0,3}") {
+            let once = normalise_name(&name);
+            prop_assert_eq!(normalise_name(&once), once);
+        }
+
+        #[test]
+        fn normalisation_is_idempotent_across_punctuation(
+            name in "[a-zA-Z'/.-]{1,8}( [a-zA-Z'/.-]{1,8}){0,3}"
+        ) {
             let once = normalise_name(&name);
             prop_assert_eq!(normalise_name(&once), once);
         }
