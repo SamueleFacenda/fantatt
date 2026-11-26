@@ -13,6 +13,7 @@ pub mod archive;
 pub mod breaker;
 pub mod calendar;
 pub mod championship;
+pub mod classification;
 pub mod client;
 pub mod conditional;
 pub mod discover;
@@ -20,6 +21,7 @@ pub mod error;
 pub mod giornata;
 pub mod html;
 pub mod names;
+pub mod player;
 pub mod policy;
 pub mod retry;
 pub mod settings;
@@ -36,11 +38,20 @@ pub use championship::{
     ChampionshipLink, ChampionshipParseError, ParsedChampionshipList, ParsedRegionMenu,
     RegionCoordinates, parse_championship_list, parse_region_menu,
 };
+pub use classification::{
+    ClassificationCoordinates, ClassificationHeaderCoordinates, ClassificationParseError,
+    ClassificationRow, ParsedClassification, ParsedClassificationHeader, RankingSection,
+    parse_classification, parse_classification_header,
+};
 pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;
 pub use giornata::{
     GiornataCoordinates, GiornataParseError, GiornataRow, ParsedGiornata, RawGiornata,
     parse_giornata,
+};
+pub use player::{
+    ParsedPlayerDetail, PlayerCandidate, PlayerCoordinates, PlayerField, PlayerParseError,
+    PlayerSearchParseError, parse_player_detail, parse_player_search,
 };
 pub use settings::FetchSettings;
 pub use tournament::{
