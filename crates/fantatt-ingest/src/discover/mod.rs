@@ -5,11 +5,12 @@
 //! lists — and hashes each page against the ledger. A cached page the ledger
 //! already holds with the same hash is not re-expanded, so an unchanged
 //! portal yields an empty work list (docs/06-data-pipeline.md §3.1–§3.2). The
-//! expansion levels below a championship are gated by that comparison: a new
-//! or changed championship expands down to its matchday leaves, and the
-//! leaves — giornata pages, match details, tournament results — become the
-//! fetch jobs the worker drains. Discovery itself fetches only the pages it
-//! walks; the scheduler records every walked page in the ledger.
+//! expansion levels below a championship and below a tournament index are
+//! gated by that comparison: a new or changed championship expands down to
+//! its matchday leaves, and the leaves — giornata pages, match details,
+//! bracket homes, classification headers — become the fetch jobs the worker
+//! drains. Discovery itself fetches only the pages it walks; the scheduler
+//! records every walked page in the ledger.
 
 mod ledger;
 mod source;
@@ -76,6 +77,12 @@ const EDGES: &[Edge] = &[
     (
         Surface::Menu,
         LinkKind::Href,
+        Surface::ClassificationHeader,
+        true,
+    ),
+    (
+        Surface::Menu,
+        LinkKind::Href,
         Surface::RegionFrameset,
         false,
     ),
@@ -89,7 +96,7 @@ const EDGES: &[Edge] = &[
         Surface::Menu,
         LinkKind::Href,
         Surface::TournamentIndex,
-        true,
+        false,
     ),
     (
         Surface::RegionFrameset,
@@ -155,6 +162,30 @@ const EDGES: &[Edge] = &[
         Surface::TournamentMenu,
         LinkKind::Href,
         Surface::TournamentIndex,
+        false,
+    ),
+    (
+        Surface::TournamentIndex,
+        LinkKind::Frame,
+        Surface::TournamentHeader,
+        false,
+    ),
+    (
+        Surface::TournamentIndex,
+        LinkKind::Frame,
+        Surface::TournamentList,
+        false,
+    ),
+    (
+        Surface::TournamentList,
+        LinkKind::Href,
+        Surface::TournamentResults,
+        false,
+    ),
+    (
+        Surface::TournamentResults,
+        LinkKind::Frame,
+        Surface::BracketHome,
         true,
     ),
 ];
@@ -414,6 +445,7 @@ mod tests {
     const MENU: &[u8] = br#"<html><body>
         <a href="r/default_reg.asp?REG=1">Valle d'Aosta</a>
         <a href="c/visualizza_campionati.php?CID=2">Under</a>
+        <a href="s/testaclassifica_auto.php?ID_CLASS=248&ID=1&PASS=20">Classifica</a>
         <a href="t/risultati_tornei.php?TOR=9&COMIT=30&ID=0">Nazionali</a>
         <a href="scheda_atleti.php">Atleti</a>
     </body></html>"#;
@@ -425,6 +457,19 @@ mod tests {
     const TOURNAMENT_MENU: &[u8] = br#"<html><body><table>
         <tr><td><a href="../tornei/risultati_tornei.php?TOR=110&COMIT=1&ID=0">Regionali</a></td></tr>
     </table></body></html>"#;
+    const TOURNAMENT_FRAMESET: &[u8] = br#"<html><frameset>
+        <frame src="testa_tornei.php?TOR=110&COMIT=1&ID=0">
+        <frame src="elenco_tornei.php?TOR=110&COMIT=1&ID=0">
+        <frame src="grigia_tor.php?TOR=110&COMIT=1">
+    </frameset></html>"#;
+    const TOURNAMENT_HEADER: &[u8] = br#"<html><body><table width="120"></table></body></html>"#;
+    const TOURNAMENT_LIST: &[u8] = br#"<html><body>
+        <a href="visualizza_risultati.php?IDT=7&ANNO=41&COM=1" target="inferiore">01/03/2026<br>Roma</a>
+    </body></html>"#;
+    const TOURNAMENT_RESULTS: &[u8] = br#"<html><frameset>
+        <frame src="elenco_gare.php?IDT=7&COM=1">
+        <frame src="grigia_logo.php?ANNO=41&IDT=7">
+    </frameset></html>"#;
     const INDEX: &[u8] = br#"<html><frameset>
         <frame src="elenco_campionati.php?ID_CAMP=2">
     </frameset></html>"#;
@@ -454,27 +499,59 @@ mod tests {
 
     impl MapSource {
         fn portal() -> Self {
-            let base = "https://portale.fitet.org";
-            let pages = [
-                ("menu.php", MENU),
-                ("r/default_reg.asp?REG=1", FRAMESET),
-                ("r/menu_reg.php?REG=1", REGION_MENU),
-                ("r/menu_tor.php?REG=1", TOURNAMENT_MENU),
-                ("c/visualizza_campionati.php?CID=2", INDEX),
-                ("c/elenco_campionati.php?ID_CAMP=2", LIST),
-                ("c/campionati.php?CAM=1&CONC=0", CHAMPIONSHIP),
-                ("c/testa_campionati.php?CAM=1&CONC=0", HEADER),
-                ("c/Calendario.asp?ANNO=41&CAM=1", CALENDAR),
-                (
-                    "c/giornata_home.php?CAM=1&FORMULA=17&INCONTRO=370793",
-                    GIORNATA_HOME,
-                ),
-            ];
-            let map: BTreeMap<String, &'static [u8]> = pages
-                .map(|(path, bytes)| (format!("{base}/{path}"), bytes))
-                .into();
+            let mut map = chain_tree();
+            map.extend(tournament_tree());
             Self(map)
         }
+    }
+
+    /// The menu and the region, championship and matchday chain behind it.
+    fn chain_tree() -> BTreeMap<String, &'static [u8]> {
+        let base = "https://portale.fitet.org";
+        let pages = [
+            ("menu.php", MENU),
+            ("r/default_reg.asp?REG=1", FRAMESET),
+            ("r/menu_reg.php?REG=1", REGION_MENU),
+            ("r/menu_tor.php?REG=1", TOURNAMENT_MENU),
+            ("c/visualizza_campionati.php?CID=2", INDEX),
+            ("c/elenco_campionati.php?ID_CAMP=2", LIST),
+            ("c/campionati.php?CAM=1&CONC=0", CHAMPIONSHIP),
+            ("c/testa_campionati.php?CAM=1&CONC=0", HEADER),
+            ("c/Calendario.asp?ANNO=41&CAM=1", CALENDAR),
+            (
+                "c/giornata_home.php?CAM=1&FORMULA=17&INCONTRO=370793",
+                GIORNATA_HOME,
+            ),
+        ];
+        pages
+            .map(|(path, bytes)| (format!("{base}/{path}"), bytes))
+            .into()
+    }
+
+    /// The tournament branch of the miniature portal: the frameset, header and
+    /// list the regional tournament index frames, and the results chain the
+    /// list links.
+    fn tournament_tree() -> BTreeMap<String, &'static [u8]> {
+        let root = "https://portale.fitet.org/tornei";
+        let pages = [
+            (
+                format!("{root}/risultati_tornei.php?COMIT=1&ID=0&TOR=110"),
+                TOURNAMENT_FRAMESET,
+            ),
+            (
+                format!("{root}/testa_tornei.php?COMIT=1&ID=0&TOR=110"),
+                TOURNAMENT_HEADER,
+            ),
+            (
+                format!("{root}/elenco_tornei.php?COMIT=1&ID=0&TOR=110"),
+                TOURNAMENT_LIST,
+            ),
+            (
+                format!("{root}/visualizza_risultati.php?ANNO=41&COM=1&IDT=7"),
+                TOURNAMENT_RESULTS,
+            ),
+        ];
+        pages.into_iter().collect()
     }
 
     #[async_trait]
@@ -521,33 +598,38 @@ mod tests {
         assert_eq!(
             jobs,
             [
+                "https://portale.fitet.org/s/testaclassifica_auto.php?ID=1&ID_CLASS=248&PASS=20",
+                "https://portale.fitet.org/tornei/elenco_gare.php?COM=1&IDT=7",
                 "https://portale.fitet.org/c/giornata.php?CAM=1&FORMULA=17&INCONTRO=370793",
                 "https://portale.fitet.org/c/dettaglio_partita.php?ID=1594362",
-                "https://portale.fitet.org/t/risultati_tornei.php?COMIT=30&ID=0&TOR=9",
-                "https://portale.fitet.org/tornei/risultati_tornei.php?COMIT=1&ID=0&TOR=110",
             ]
         );
     }
+
+    /// Every page the miniature portal walk reads, in the surface order the
+    /// plan sorts into.
+    const WALKED_CHAIN: &[Surface] = &[
+        Surface::Menu,
+        Surface::RegionFrameset,
+        Surface::RegionMenu,
+        Surface::TournamentMenu,
+        Surface::TournamentIndex,
+        Surface::TournamentHeader,
+        Surface::TournamentList,
+        Surface::TournamentResults,
+        Surface::ChampionshipIndex,
+        Surface::ChampionshipList,
+        Surface::ChampionshipPage,
+        Surface::ChampionshipHeader,
+        Surface::Calendar,
+        Surface::GiornataHome,
+    ];
 
     #[tokio::test]
     async fn the_sweep_walks_every_page_of_the_chain() {
         let plan = sweep(&Ledger::new(), DEFAULT_TTL).await;
         let walked: Vec<Surface> = plan.walked.iter().map(|page| page.surface).collect();
-        assert_eq!(
-            walked,
-            [
-                Surface::Menu,
-                Surface::RegionFrameset,
-                Surface::RegionMenu,
-                Surface::TournamentMenu,
-                Surface::ChampionshipIndex,
-                Surface::ChampionshipList,
-                Surface::ChampionshipPage,
-                Surface::ChampionshipHeader,
-                Surface::Calendar,
-                Surface::GiornataHome,
-            ]
-        );
+        assert_eq!(walked, WALKED_CHAIN);
     }
 
     #[tokio::test]
@@ -560,6 +642,7 @@ mod tests {
                 url(
                     "https://portale.fitet.org/c/giornata_home.php?CAM=1&FORMULA=17&INCONTRO=370794"
                 ),
+                url("https://portale.fitet.org/t/risultati_tornei.php?COMIT=30&ID=0&TOR=9"),
             ]
         );
     }
@@ -570,9 +653,10 @@ mod tests {
         let ledger = ledger_of(&first, SystemTime::now());
         let second = sweep(&ledger, DEFAULT_TTL).await;
         assert!(second.jobs.is_empty(), "{:?}", second.jobs);
-        // why: the pruned championship no longer re-reads its matchday links,
-        // so only the unrecorded championship the list page links stays missing
-        assert_eq!(second.missing.len(), 1);
+        // why: the pruned championship and tournament branches no longer
+        // re-read their links, so only the unrecorded championship and the
+        // unrecorded national tournament index the menu links stay missing
+        assert_eq!(second.missing.len(), 2);
         let rewalked: Vec<Surface> = second.walked.iter().map(|page| page.surface).collect();
         assert_eq!(
             rewalked,
@@ -594,7 +678,7 @@ mod tests {
         let stale = SystemTime::now() - DEFAULT_TTL - Duration::from_secs(60);
         let second = sweep(&ledger_of(&first, stale), DEFAULT_TTL).await;
         // why: the stale expansion pages are re-read, an unchanged one plans no
-        // new work, and only the menu's own stale leaf links are re-planned
+        // new work, and only the stale classification header stays a job
         assert!(
             second
                 .walked
@@ -602,7 +686,7 @@ mod tests {
                 .any(|page| page.surface == Surface::ChampionshipPage)
         );
         assert!(second.walked.iter().all(|page| page.unchanged));
-        assert_eq!(second.jobs.len(), 2);
+        assert_eq!(second.jobs.len(), 1);
     }
 
     /// The ledger the scheduler would have written after one sweep: one row per

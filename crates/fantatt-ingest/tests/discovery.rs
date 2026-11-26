@@ -100,36 +100,59 @@ async fn the_recorded_tree_plans_the_expected_work_list() {
     let plan = sweep(&tree, &Ledger::new(), DEFAULT_TTL).await;
     let jobs = &plan.jobs;
 
-    // the menu links 16 national tournaments, the regional tournament menu
-    // links 9 more, and the one recorded giornata home frames its referto and
-    // its match detail
-    assert_eq!(jobs.len(), 27, "{jobs:?}");
+    // the menu links the four national classifica headers, and the one
+    // recorded giornata home frames its referto and its match detail; the
+    // tournament indexes are walked now, so they plan no fetch job
+    assert_eq!(jobs.len(), 6, "{jobs:?}");
     let count = |surface| jobs.iter().filter(|job| job.surface == surface).count();
-    assert_eq!(count(Surface::TournamentIndex), 25);
+    assert_eq!(count(Surface::ClassificationHeader), 4);
     assert_eq!(count(Surface::Giornata), 1);
     assert_eq!(count(Surface::MatchDetail), 1);
 }
+
+/// Every page the recorded tree walk reads, in the surface order the plan
+/// sorts into.
+const RECORDED_WALKED: &[Surface] = &[
+    Surface::Menu,
+    Surface::RegionFrameset,
+    Surface::RegionMenu,
+    Surface::TournamentMenu,
+    Surface::TournamentIndex,
+    Surface::TournamentHeader,
+    Surface::TournamentList,
+    Surface::ChampionshipIndex,
+    Surface::ChampionshipList,
+    Surface::ChampionshipPage,
+    Surface::ChampionshipHeader,
+    Surface::Calendar,
+    Surface::GiornataHome,
+];
+
+/// The leaf jobs the recorded tree plans: the giornata and its match detail,
+/// and the four classifica headers the menu links.
+const LEAF_JOBS: &[&str] = &[
+    "https://portale.fitet.org/risultati/campionati/giornata.php?CAM=1&FORMULA=17&INCONTRO=370793",
+    "https://portale.fitet.org/risultati/campionati/dettaglio_partita.php?ID=1594362",
+    "https://portale.fitet.org/risultati/new_rank/testaclassifica_auto.php?ID=1&ID_CLASS=248&PASS=20",
+];
+
+/// The one recorded tournament index: its OPEN tournament drops the ID
+/// parameter the other types carry.
+const WALKED_TOURNAMENT: &str =
+    "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=1&TOR=100";
+
+/// The tournament indexes no fixture records.
+const MISSING_TOURNAMENTS: &[&str] = &[
+    "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=1&ID=0&TOR=110",
+    "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=30&ID=0&TOR=9",
+];
 
 #[tokio::test]
 async fn the_sweep_walks_the_whole_recorded_chain() {
     let tree = RecordedTree::load();
     let plan = sweep(&tree, &Ledger::new(), DEFAULT_TTL).await;
     let walked: Vec<Surface> = plan.walked.iter().map(|page| page.surface).collect();
-    assert_eq!(
-        walked,
-        [
-            Surface::Menu,
-            Surface::RegionFrameset,
-            Surface::RegionMenu,
-            Surface::TournamentMenu,
-            Surface::ChampionshipIndex,
-            Surface::ChampionshipList,
-            Surface::ChampionshipPage,
-            Surface::ChampionshipHeader,
-            Surface::Calendar,
-            Surface::GiornataHome,
-        ]
-    );
+    assert_eq!(walked, RECORDED_WALKED);
 }
 
 #[tokio::test]
@@ -138,9 +161,9 @@ async fn unrecorded_links_are_reported_and_commented_out_ones_are_not() {
     let plan = sweep(&tree, &Ledger::new(), DEFAULT_TTL).await;
 
     // the recorded boundary: 20 further regions, 7 further indexes (the
-    // commented-out ones never reach the walk), 7 further championships, and
-    // 55 further matchdays
-    assert_eq!(plan.missing.len(), 89);
+    // commented-out ones never reach the walk), 7 further championships,
+    // 55 further matchdays, and 24 tournament indexes the walk now expands
+    assert_eq!(plan.missing.len(), 113);
     assert!(
         plan.missing
             .iter()
@@ -153,16 +176,17 @@ async fn unrecorded_links_are_reported_and_commented_out_ones_are_not() {
 async fn the_leaves_carry_their_identifiers() {
     let tree = RecordedTree::load();
     let plan = sweep(&tree, &Ledger::new(), DEFAULT_TTL).await;
-    let urls: Vec<String> = plan.jobs.iter().map(|job| job.url.as_url()).collect();
-    // the OPEN tournament drops the ID parameter the other types carry
-    for expected in [
-        "https://portale.fitet.org/risultati/campionati/giornata.php?CAM=1&FORMULA=17&INCONTRO=370793",
-        "https://portale.fitet.org/risultati/campionati/dettaglio_partita.php?ID=1594362",
-        "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=1&ID=0&TOR=110",
-        "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=30&ID=0&TOR=9",
-        "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?COMIT=1&TOR=100",
-    ] {
-        assert!(urls.iter().any(|url| url == expected), "{expected}");
+    let jobs: Vec<String> = plan.jobs.iter().map(|job| job.url.as_url()).collect();
+    let walked: Vec<String> = plan.walked.iter().map(|page| page.url.as_url()).collect();
+    let missing: Vec<String> = plan.missing.iter().map(|url| url.as_url()).collect();
+    for expected in LEAF_JOBS {
+        assert!(jobs.iter().any(|url| url == expected), "{expected}");
+    }
+    // why: the tournament indexes are walked now, so their identifiers land
+    // in the walked tree and the missing pages, not in the job list
+    assert!(walked.iter().any(|url| url == WALKED_TOURNAMENT), "walked");
+    for expected in MISSING_TOURNAMENTS {
+        assert!(missing.iter().any(|url| url == expected), "{expected}");
     }
 }
 

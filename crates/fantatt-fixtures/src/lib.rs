@@ -1,9 +1,9 @@
 //! Recorded FITET golden fixtures for the ingest pipeline (G1.1).
 //!
 //! The fixture tree lives in `tests/fixtures/fitet/`: the legacy match corpus
-//! recovered from the prototype plus the HTML surfaces recorded on 2026-11-20
-//! (see `tests/fixtures/fitet/README.md`). Tests read the set through this
-//! crate, so no test touches the network or an absolute path.
+//! recovered from the prototype plus the HTML surfaces the capture script
+//! records (see `tests/fixtures/fitet/README.md`). Tests read the set through
+//! this crate, so no test touches the network or an absolute path.
 #![forbid(unsafe_code)]
 
 pub mod capture;
@@ -314,7 +314,7 @@ mod tests {
         let set = FixtureSet::discover().expect("fixture tree");
         let report = set.verify().expect("verification");
         assert_eq!(report.matches, 1085);
-        assert_eq!(report.surfaces, 27);
+        assert_eq!(report.surfaces, 43);
         assert_eq!(report.files, report.entries);
     }
 
