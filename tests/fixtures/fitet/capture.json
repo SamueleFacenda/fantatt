@@ -29,6 +29,22 @@
     { "kind": "giornata", "file": "html/giornata_376255.html", "url": "https://portale.fitet.org/risultati/campionati/giornata.php?INCONTRO=376255&CAM=202&FORMULA=19" },
     { "kind": "match-detail", "file": "html/dettaglio_partita_1594362.html", "url": "https://portale.fitet.org/risultati/campionati/dettaglio_partita.php?ID=1594362" },
     { "kind": "player-search", "file": "html/ajax_kozul.json", "url": "https://portale.fitet.org/risultati/new_rank/ajax.php?term=kozul" },
+    { "kind": "classification-header", "file": "html/classifica_header_248.html", "url": "https://portale.fitet.org/risultati/new_rank/testaclassifica_auto.php?ID_CLASS=248&ID=1&PASS=20" },
+    { "kind": "classification-page", "file": "html/ranking_unica_248_m_p1.html", "url": "https://portale.fitet.org/risultati/new_rank/ranking_unica.php?SESSO=M&ID_CLASS=248&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0" },
+    { "kind": "classification-page", "file": "html/ranking_unica_248_f_p1.html", "url": "https://portale.fitet.org/risultati/new_rank/ranking_unica.php?SESSO=F&ID_CLASS=248&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0" },
+    { "kind": "classification-page", "file": "html/ranking_unica_245_m_p1.html", "url": "https://portale.fitet.org/risultati/new_rank/ranking_unica.php?SESSO=M&ID_CLASS=245&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0" },
+    { "kind": "player-detail", "file": "html/dettaglioatleta_737436.html", "url": "https://portale.fitet.org/risultati/new_rank/dettaglioatleta_unica.php?ATLETA=737436&ID_CLASS=248&ZU=1&AVVERSARIO=0" },
+    { "kind": "player-detail", "file": "html/dettaglioatleta_710705.html", "url": "https://portale.fitet.org/risultati/new_rank/dettaglioatleta_unica.php?ATLETA=710705&ID_CLASS=248&ZU=1&AVVERSARIO=0" },
+    { "kind": "tournament-frameset", "file": "html/risultati_tornei_100_1.html", "url": "https://portale.fitet.org/risultati/tornei/risultati_tornei.php?TOR=100&COMIT=1" },
+    { "kind": "tournament-header", "file": "html/testa_tornei_100_1.html", "url": "https://portale.fitet.org/risultati/tornei/testa_tornei.php?TOR=100&COMIT=1&ID=0" },
+    { "kind": "tournament-list", "file": "html/elenco_tornei_100_1.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_tornei.php?TOR=100&COMIT=1&ID=0" },
+    { "kind": "tournament-list", "file": "html/elenco_tornei_100_6.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_tornei.php?TOR=100&COMIT=6&ID=0" },
+    { "kind": "tournament-list", "file": "html/elenco_tornei_100_7.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_tornei.php?TOR=100&COMIT=7&ID=0" },
+    { "kind": "tournament-list", "file": "html/elenco_tornei_100_9.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_tornei.php?TOR=100&COMIT=9&ID=0" },
+    { "kind": "tournament-results", "file": "html/visualizza_risultati_1_41.html", "url": "https://portale.fitet.org/risultati/tornei/visualizza_risultati.php?IDT=1&ANNO=41&COM=6" },
+    { "kind": "bracket-home", "file": "html/elenco_gare_1_6.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_gare.php?IDT=1&COM=6" },
+    { "kind": "tournament-results", "file": "html/visualizza_risultati_2_41.html", "url": "https://portale.fitet.org/risultati/tornei/visualizza_risultati.php?IDT=2&ANNO=41&COM=9" },
+    { "kind": "bracket-home", "file": "html/elenco_gare_2_9.html", "url": "https://portale.fitet.org/risultati/tornei/elenco_gare.php?IDT=2&COM=9" },
     { "kind": "legacy-matches", "file": "matches.json", "url": "legacy prototype commit 444d843 (assets/matches.json, 1085 records)" }
   ]
 }

@@ -47,7 +47,23 @@ tests/fixtures/fitet/
     ├── giornata_376203.html               # giornata.php: CAM=201, includes a doubles tie
     ├── giornata_376255.html               # giornata.php: CAM=202, seven ties
     ├── dettaglio_partita_1594362.html     # dettaglio_partita.php?ID=1594362: PUPPO–KOZUL
-    └── ajax_kozul.json                    # ajax.php?term=kozul: the player search reply
+    ├── ajax_kozul.json                    # ajax.php?term=kozul: the player search reply
+    ├── classifica_header_248.html         # testaclassifica_auto.php?ID_CLASS=248: the classification header
+    ├── ranking_unica_248_m_p1.html        # ranking_unica.php: the general male ranking, first page
+    ├── ranking_unica_248_f_p1.html        # ranking_unica.php: the general female ranking, first page
+    ├── ranking_unica_245_m_p1.html        # ranking_unica.php: a second classification's first page
+    ├── dettaglioatleta_737436.html        # dettaglioatleta_unica.php: the searched athlete's sheet
+    ├── dettaglioatleta_710705.html        # dettaglioatleta_unica.php: the top-ranked athlete's sheet
+    ├── risultati_tornei_100_1.html        # risultati_tornei.php?TOR=100: the tournament frameset
+    ├── testa_tornei_100_1.html            # testa_tornei.php: the tournament type header
+    ├── elenco_tornei_100_1.html           # elenco_tornei.php: a committee with no tournament listed
+    ├── elenco_tornei_100_6.html           # elenco_tornei.php: one tournament listed
+    ├── elenco_tornei_100_7.html           # elenco_tornei.php: two tournaments listed
+    ├── elenco_tornei_100_9.html           # elenco_tornei.php: six tournaments listed
+    ├── visualizza_risultati_1_41.html     # visualizza_risultati.php: the tournament results frameset
+    ├── elenco_gare_1_6.html               # elenco_gare.php: the bracket home of the Trento tournament
+    ├── visualizza_risultati_2_41.html     # visualizza_risultati.php: a second tournament's frameset
+    └── elenco_gare_2_9.html               # elenco_gare.php: a second tournament's bracket home
 ```
 
 The chain is deliberately complete: `menu.php` frames point at the region and
@@ -56,6 +72,17 @@ menu and the tournament type menu, the calendar lists the `INCONTRO` link, the
 giornata home frames the referto, and `ajax.php?term=kozul` resolves the same
 athlete id (`737436`) that `dettaglio_partita.php` names — that cross-reference
 is an assertion in `fantatt-fixtures`.
+
+The classification axis is recorded alongside it: the classification header
+page drives its ranking tables through XHR calls whose parameters the page
+spells in its `onclick` handlers, and the ranking rows name the athlete ids the
+player sheets carry. The tournament axis keeps both states of a committee
+listing: `elenco_tornei.php?TOR=100&COMIT=1` answers with an empty table, the
+committees above it list tournaments whose results frame the bracket home
+`elenco_gare.php` renders. The non-empty committee listings are constructed
+URLs rather than links the frameset names, so discovery reaches them by
+sweeping the committee range of a tournament type instead of by following a
+page.
 
 `menu_reg.php?REG=1` is recorded with an empty table on purpose: Valle d'Aosta
 runs no regional championships this season, so discovery must treat a menu

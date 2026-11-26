@@ -1,0 +1,440 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="it">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<style type="text/css">
+<!--
+p.stile_t {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #1D63AB;
+	font-size: 13px;
+	font-style: normal;
+	vertical-align: middle;
+    margin-top: 2px;
+    margin-bottom: 8px;
+}
+p.stile_menu {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #000000;
+	font-size: 11px;
+	font-style: normal;
+	vertical-align: middle;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+p.dettagli {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: #000000;
+    font-size: 13px;
+    font-style: normal;
+    vertical-align: middle;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+p.dettagli_1 {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: #000000;
+    font-size: 13px;
+    font-style: normal;
+    vertical-align: middle;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+p.stile_generale {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #000000;
+	font-size: 11px;
+	font-style: normal;
+	vertical-align: middle;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+.stile_menu a:hover {
+    color:#000000;
+    text-decoration:underline;
+    cursor:pointer;
+    cursor:hand;
+}
+.stile_titoli {
+	font-family: Verdana, Helvetica, sans-serif;
+	font-weight: bold;
+	font-color: #FFFFFF;
+	font-size: 13px;
+	vertical-align: middle;
+	text-align: center;
+}
+.stile_titoli a {
+	color:#FFFFFF;
+    cursor:pointer;
+    cursor:hand;
+}
+.stile_titoli a:hover {	
+	color:#FFFFFF;
+	text-decoration:underline;
+    cursor:pointer;
+    cursor:hand;
+}
+div#ranking{
+	position:relative;
+	top:1px;
+}
+-->
+</style>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-56185219-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<link href="jquery-ui.min.css" rel="stylesheet" />
+<link href="autocomplete.css" rel="stylesheet" />
+<script src="jquery-1.11.3.min.js"></script>
+<script src="jquery-ui.min.js"></script>
+<script src="jquery.ui.autocomplete.html.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="//raw.github.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
+<body bgcolor="#FFFFFF" alink="#1D63AB" text="#000000" link="#000000" vlink="#000000">
+	<p class="stile_t" align="center">CLASSIFICHE&nbsp; NAZIONALI&nbsp; INDIVIDUALI&nbsp; AL&nbsp; 25/10/2026</p>
+	<div align="center" margin-bottom="0">
+	<table width="800" height="70" border="0" bordercolor="#C0C0C0" cellspacing="1">
+		<tr>
+    		<td width="300" bgcolor="#1D63AB" height="20" align=center>
+    			<p class="stile_titoli">
+                    <b><a id="all" onclick='getPage("M", 248, 1, 1)' title="Maschile Generale">MASCHILE</a></b>
+                </p>
+   	  		</td>
+   	  		<td width="3">
+   	  		</td>
+      		<td width="300" bgcolor="#1D63AB" height="20" align=center>
+      		    <p class="stile_titoli">
+					<a id="all" onclick='getPage("F", 248, 1, 1)' title="Femmnile Generale">FEMMINILE</a>
+    			</p>
+   	  		</td>
+    	</tr>
+    	<tr>
+    		<td width="400" valign="top" bgcolor="#COCOCO">
+    			<div align=center>
+    			<table>
+    				<tr>
+						<td valign="top">
+							<p class="stile_menu" align="center">Giovanili</p>
+							<p class="stile_menu" align="center">							    <a id="all" onclick='getPageGiov("M", 248, 1, 0, "G")' title="Under11">U11</a>
+                                <a id="all" onclick='getPageGiov("M", 248, 1, 0, "R")' title="Under13">U13</a>
+                                <a id="all" onclick='getPageGiov("M", 248, 1, 0, "D")' title="Under15">U15</a>
+                                <a id="all" onclick='getPageGiov("M", 248, 1, 0, "A")' title="Under17">U17</a>
+								<a id="all" onclick='getPageGiov("M", 248, 1, 0, "J")' title="Under19">U19</a>
+                                <a id="all" onclick='getPageGiov("M", 248, 1, 0, "U")' title="Under21">U21</a></p>
+						</td>
+						<td>
+							<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+						<td valign="top">
+							<p class="stile_menu" align="center">Master</p>
+							<p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "1")' title="Over 40/50">1</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "2")' title="Over 50/60">2</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "3")' title="Over 60/65">3</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "4")' title="Over 65/70">4</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "5")' title="Over 70/75">5</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "6")' title="Over 75/80">6</a>
+                                <a id="all" onclick='getPageVet("M", 248, 1, 0, "7")' title="Over 80">7</a>
+                            </p>
+						</td>
+						<td>
+							<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+						<td valign="top">
+							<p class="stile_menu" align="center">Paralimpici</p>
+							<p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageParal("M", 248, 1, 2, 1)' title="Classe 1-5">1-5</a>
+                                <a id="all" onclick='getPageParal("M", 248, 1, 2, 6)' title="Classe 6-10">6-10</a>
+                                <a id="all" onclick='getPageParal("M", 248, 1, 2, 11)' title="Classe 11">11</a>
+                            </p>
+						</td>
+						<td>
+							<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+						<td valign="top">
+                        	<p class="stile_menu" align="center">
+                        	    <a id="all" onclick='getPageStranieri("M", 248, 1, 0)' title="Stranieri">STRANIERI</a>
+                        	</p>
+                            <p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageProv("M", 248, 1, 9)' title="Provvisori">PROVV</a>&nbsp;&nbsp;
+								<a id="all" onclick='getPageFQ("M", 248, 1, 0)' title="Fuori Quadro">FQ</a>
+                            </p>
+						</td>
+					</tr>
+				</table>
+				</div>
+	  		</td>
+	  		<td width="0">
+	  		</td>
+			<td width="400" height="46" valign="top" bgcolor="#COCOCO">
+    			<div align=center>
+    			<table>
+    				<tr>
+						<td valign="top">
+							<p class="stile_menu" align="center">Giovanili</p>
+							<p class="stile_menu" align="center">								<a id="all" onclick='getPageGiov("F", 248, 1, 0, "G")' title="Giovanissimi">U11</a>
+                                <a id="all" onclick='getPageGiov("F", 248, 1, 0, "R")' title="Ragazzi">U13</a>
+                                <a id="all" onclick='getPageGiov("F", 248, 1, 0, "D")' title="Allievi">U15</a>
+                                <a id="all" onclick='getPageGiov("F", 248, 1, 0, "A")' title="Juniores">U17</a>
+								<a id="all" onclick='getPageGiov("F", 248, 1, 0, "J")' title="Juniores">U19</a>
+                                <a id="all" onclick='getPageGiov("F", 248, 1, 0, "U")' title="Under 21">U21</a></p>
+						</td>
+						<td>
+						<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+						<td valign="top">
+							<p class="stile_menu" align="center">Master</p>
+							<p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "1")' title="Over 40/50">1</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "2")' title="Over 50/60">2</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "3")' title="Over 60/65">3</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "4")' title="Over 65/70">4</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "5")' title="Over 70/75">5</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "6")' title="Over 75/80">6</a>
+                                <a id="all" onclick='getPageVet("F", 248, 1, 0, "7")' title="Over 80">7</a>
+                             </p>
+						</td>
+						<td>
+							<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+						<td valign="top">
+							<p class="stile_menu" align="center">Paralimpici</p>
+                            <p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageParal("F", 248, 1, 2, 1)' title="Classe 1-5">1-5</a>
+                                <a id="all" onclick='getPageParal("F", 248, 1, 2, 6)' title="Classe 6-10">6-10</a>
+                                <a id="all" onclick='getPageParal("F", 248, 1, 2, 11)' title="Classe 11">11</a>
+                            </p>
+						</td>
+						<td>
+							<p class="stile_menu" align="center">&nbsp;|&nbsp;</p>
+						</td>
+    					<td valign="top">
+                            <p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageStranieri("F", 248, 1, 0)' title="Stranieri">STRANIERI</a>
+                            </p>
+                            <p class="stile_menu" align="center">
+                                <a id="all" onclick='getPageProv("F", 248, 1, 9)' title="Provvisori">PROVV</a>&nbsp;&nbsp;
+								<a id="all" onclick='getPageFQ("F", 248, 1, 0)' title="Fuori Quadro">FQ</a>
+                            </p>
+						</td>	
+					</tr>
+				</table>
+				</div>
+    		</td>
+    	</tr>
+    	<tr>
+			<td colspan="3" height="22" bordercolor="#FFE4B5" bgcolor="#COCOCO">
+				<p class="stile_generale"><base target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ricerca atleta: <input type="text" id="topic_title" size="34"> (digitare min. 2 caratteri)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<base target="_blank">&nbsp;</p>
+        	</td>
+    	</tr>
+	</table>
+</div>
+<div id="ranking" align="center">
+<table width="800" border="1" bordercolor="#CCCCCC" bgcolor="#FFFFFF" style="border-collapse: collapse">
+    <tr>
+        <td valign="top">
+            <table border="1" bordercolor="#CCCCCC" bgcolor="#FFFFFF" style="border-collapse: collapse">
+                <tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>1</p></td><td width=253><p class=dettagli>&nbsp;OYEBODE JOHN MICHAEL</p></td><td width=40 valign=top><img src=../../images/atleti/710705.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>2</p></td><td width=253><p class=dettagli>&nbsp;BOBOCICA MIHAI RAZVAN</p></td><td width=40 valign=top><img src=../../images/atleti/594848.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>3</p></td><td width=253><p class=dettagli>&nbsp;STOYANOV NIAGOL IVANOV</p></td><td width=40 valign=top><img src=../../images/atleti/598079.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>4</p></td><td width=253><p class=dettagli>&nbsp;MUTTI MATTEO</p></td><td width=40 valign=top><img src=../../images/atleti/696674.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>5</p></td><td width=253><p class=dettagli>&nbsp;PUPPO ANDREA</p></td><td width=40 valign=top><img src=../../images/atleti/706240.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>6</p></td><td width=253><p class=dettagli>&nbsp;FASO DANILO</p></td><td width=40 valign=top><img src=../../images/atleti/748580.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>7</p></td><td width=253><p class=dettagli>&nbsp;ROSSI CARLO</p></td><td width=40 valign=top><img src=../../images/atleti/706227.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>8</p></td><td width=253><p class=dettagli>&nbsp;SANCHI FRANCISCO</p></td><td width=40 valign=top><img src=../../images/atleti/772233.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>9</p></td><td width=253><p class=dettagli>&nbsp;BISI PAOLO</p></td><td width=40 valign=top><img src=../../images/atleti/587915.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=#CCCCCC><p class=dettagli_1>10</p></td><td width=253><p class=dettagli>&nbsp;LORENZO SANTIAGO JAVIER</p></td><td width=40 valign=top><img src=../../images/atleti/774859.jpg height=100 width=90></td></tr>            </table>
+        </td>
+        <td width="4"></td>
+        <td valign="top">
+            <table border="1" bordercolor="#CCCCCC" bgcolor="#FFFFFF" style="border-collapse: collapse">
+                <tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>1</p></td><td width=253><p class=dettagli>&nbsp;MONFARDINI GAIA</p></td><td width=40 valign=top><img src=../../images/atleti/701714.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>2</p></td><td width=253><p class=dettagli>&nbsp;PICCOLIN GIORGIA</p></td><td width=40 valign=top><img src=../../images/atleti/696109.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>3</p></td><td width=253><p class=dettagli>&nbsp;VIVARELLI DEBORA</p></td><td width=40 valign=top><img src=../../images/atleti/597808.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>4</p></td><td width=253><p class=dettagli>&nbsp;ARLIA NICOLE</p></td><td width=40 valign=top><img src=../../images/atleti/725242.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>5</p></td><td width=253><p class=dettagli>&nbsp;ORTEGA GOMEZ DANIELA YOLITA</p></td><td width=40 valign=top><img src=../../images/atleti/824718.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>6</p></td><td width=253><p class=dettagli>&nbsp;STEFANOVA NIKOLETA</p></td><td width=40 valign=top><img src=../../images/atleti/594841.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>7</p></td><td width=253><p class=dettagli>&nbsp;COLANTONI CHIARA</p></td><td width=40 valign=top><img src=../../images/atleti/609947.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>8</p></td><td width=253><p class=dettagli>&nbsp;MOSCONI VERONICA</p></td><td width=40 valign=top><img src=../../images/atleti/696325.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>9</p></td><td width=253><p class=dettagli>&nbsp;WANG XUELAN</p></td><td width=40 valign=top><img src=../../images/atleti/595290.jpg height=100 width=90></td></tr><tr><td width=27 bgcolor=CCCCCC><p class=dettagli_1>10</p></td><td width=253><p class=dettagli>&nbsp;BARANI ARIANNA</p></td><td width=40 valign=top><img src=../../images/atleti/711597.jpg height=100 width=90></td></tr>            </table>
+        </td>
+    </tr>
+</table>
+
+</div>
+<script type="text/javascript">
+	$(function() { 
+		$("#topic_title").autocomplete({
+			source: "ajax.php",
+			minLength: 2,
+			select: function(event, ui) {
+				var value = ui.item.id;
+				if(value != '#') {
+				    scheda_dett(value, 248, 1, 0);
+				}
+			},
+			html: true, // optional (jquery.ui.autocomplete.html.js required)
+			open: function(event, ui) {
+				$(".ui-autocomplete").css("z-index", 1000);
+			}
+		});
+	});
+
+    function getPage(gender, rank, z, n) {
+	    $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+	        someData = {
+               'SESSO': gender,
+               'ID_CLASS': rank,
+		    	'ZU': z,
+		    	'TIPO': n,
+                'SETT': 0,
+		    	'page': 1,
+                'S': 0,
+                'FQ': 0,
+                'G': 0,
+                'V': 0
+        };
+	    jQuery.ajax({
+	    	url: "ranking_unica.php",
+	    	data: someData,
+	    	success:function(data){$('#ranking').html(data);}
+	    });
+    }
+    function getPageStranieri(gender, rank, z, n) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'SETT': 0,
+            'page': 1,
+            'S': 1,
+            'FQ': 0,
+            'G': 0,
+            'V': 0
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function getPageFQ(gender, rank, z, n) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'SETT': 0,
+            'page': 1,
+            'S': 0,
+            'FQ': 1,
+            'G': 0,
+            'V': 0
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function getPageProv(gender, rank, z, n) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'SETT': 0,
+            'page': 1,
+            'S': 0,
+            'FQ': 1,
+            'G': 0,
+            'V': 0
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function getPageGiov(gender, rank, z, n, sett) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'SETT': sett,
+            'page': 1,
+            'S': 0,
+            'FQ': 0,
+            'G': 1,
+            'V': 0
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function getPageVet(gender, rank, z, n, sett) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'SETT': sett,
+            'page': 1,
+            'S': 0,
+            'FQ': 0,
+            'G': 0,
+            'V': 1
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function getPageParal(gender, rank, z, n, sett) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'SESSO': gender,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'TIPO': n,
+            'P': sett,
+			'SETT':0,
+            'page': 1,
+            'S': 0,
+            'FQ': 0,
+            'G': 0,
+            'V': 0
+        };
+        jQuery.ajax({
+            url: "ranking_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+    function scheda_dett(atleta, rank, z, avv) {
+        $('#ranking').html('<img src="../../images/LoaderIcon.gif" />');
+        someData = {
+            'ATLETA': atleta,
+            'ID_CLASS': rank,
+            'ZU': z,
+            'AVVERSARIO': avv
+        };
+        jQuery.ajax({
+            url: "dettaglioatleta_unica.php",
+            data: someData,
+            success:function(data){$('#ranking').html(data);}
+        });
+    }
+</script>
+</body>
+</html>

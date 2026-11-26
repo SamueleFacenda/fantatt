@@ -9,6 +9,7 @@ set -euo pipefail
 
 base="https://portale.fitet.org"
 user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"
+referer="$base/risultati/new_rank/testaclassifica_auto.php?ID_CLASS=248&ID=1&PASS=20"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../tests/fixtures/fitet" && pwd)"
 html="$root/html"
 
@@ -44,6 +45,22 @@ entries=(
   "giornata|risultati/campionati/giornata.php?INCONTRO=376255&CAM=202&FORMULA=19|giornata_376255.html"
   "match-detail|risultati/campionati/dettaglio_partita.php?ID=1594362|dettaglio_partita_1594362.html"
   "player-search|risultati/new_rank/ajax.php?term=kozul|ajax_kozul.json"
+  "classification-header|risultati/new_rank/testaclassifica_auto.php?ID_CLASS=248&ID=1&PASS=20|classifica_header_248.html"
+  "classification-page|risultati/new_rank/ranking_unica.php?SESSO=M&ID_CLASS=248&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0|ranking_unica_248_m_p1.html"
+  "classification-page|risultati/new_rank/ranking_unica.php?SESSO=F&ID_CLASS=248&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0|ranking_unica_248_f_p1.html"
+  "classification-page|risultati/new_rank/ranking_unica.php?SESSO=M&ID_CLASS=245&ZU=1&TIPO=1&SETT=0&page=1&S=0&FQ=0&G=0&V=0|ranking_unica_245_m_p1.html"
+  "player-detail|risultati/new_rank/dettaglioatleta_unica.php?ATLETA=737436&ID_CLASS=248&ZU=1&AVVERSARIO=0|dettaglioatleta_737436.html"
+  "player-detail|risultati/new_rank/dettaglioatleta_unica.php?ATLETA=710705&ID_CLASS=248&ZU=1&AVVERSARIO=0|dettaglioatleta_710705.html"
+  "tournament-frameset|risultati/tornei/risultati_tornei.php?TOR=100&COMIT=1|risultati_tornei_100_1.html"
+  "tournament-header|risultati/tornei/testa_tornei.php?TOR=100&COMIT=1&ID=0|testa_tornei_100_1.html"
+  "tournament-list|risultati/tornei/elenco_tornei.php?TOR=100&COMIT=1&ID=0|elenco_tornei_100_1.html"
+  "tournament-list|risultati/tornei/elenco_tornei.php?TOR=100&COMIT=6&ID=0|elenco_tornei_100_6.html"
+  "tournament-list|risultati/tornei/elenco_tornei.php?TOR=100&COMIT=7&ID=0|elenco_tornei_100_7.html"
+  "tournament-list|risultati/tornei/elenco_tornei.php?TOR=100&COMIT=9&ID=0|elenco_tornei_100_9.html"
+  "tournament-results|risultati/tornei/visualizza_risultati.php?IDT=1&ANNO=41&COM=6|visualizza_risultati_1_41.html"
+  "bracket-home|risultati/tornei/elenco_gare.php?IDT=1&COM=6|elenco_gare_1_6.html"
+  "tournament-results|risultati/tornei/visualizza_risultati.php?IDT=2&ANNO=41&COM=9|visualizza_risultati_2_41.html"
+  "bracket-home|risultati/tornei/elenco_gare.php?IDT=2&COM=9|elenco_gare_2_9.html"
 )
 
 [ -f "$root/matches.json" ] || {
@@ -56,10 +73,18 @@ for entry in "${entries[@]}"; do
   IFS='|' read -r kind relative file <<<"$entry"
   target="$base/$relative"
   extra=()
-  if [ "$kind" = "player-search" ]; then
-    # why: the ajax search surface answers only to an XHR request
-    extra+=(--header 'X-Requested-With: XMLHttpRequest')
-  fi
+  case "$kind" in
+    player-search)
+      # why: the ajax search surface answers only to an XHR request
+      extra+=(--header 'X-Requested-With: XMLHttpRequest')
+      ;;
+    classification-page | player-detail)
+      # why: the new_rank ajax surfaces answer only to an XHR request the
+      # classification header page issues
+      extra+=(--header 'X-Requested-With: XMLHttpRequest')
+      extra+=(--header "Referer: $referer")
+      ;;
+  esac
   # why: a failed fetch must never truncate the committed fixture, so the
   # capture lands on a partial name and moves into place on success
   if ! curl --fail --silent --show-error --location --compressed \
