@@ -53,17 +53,23 @@ capability, and adding an endpoint without declaring one fails the build.
 ```rust
 DeclaredRouter::new()
     .route(
-        "/leagues/{league_id}",
-        authz::get(roster, authz::guard(Capability::LeagueRead, authz::league("league_id"))),
+        "/api/v1/admin/players/reconciliation",
+        authz::get(queue, authz::guard(Capability::PlatformAdmin, authz::platform())),
     )
     .build()
 ```
 
+A mutating admin route layers CSRF enforcement on top of its declaration, the
+way the session route does: the middleware wraps the method router before
+`DeclaredRoute` records the guard.
+
 Object scopes resolve from the matched path: `authz::platform()`,
 `authz::league("league_id")` (the object is the league named by the path
 parameter), and `authz::account("user_id")` (the object is the user named by
-the path parameter). The five shell routes of `docs/20-api-shell.md` all
-declare `public`, so the OpenAPI document is unchanged.
+the path parameter). The shell routes of `docs/20-api-shell.md` all declare
+`public`; the first capability-gated routes are the identity reconciliation
+admin routes of `docs/07-api-spec.md` §12, which declare `platform:admin` and
+answer 403 problem+json per route in the OpenAPI document.
 
 ## 3. The authorize middleware
 
@@ -107,14 +113,15 @@ and the negative-control test together carry the guarantee; see ADR-0011.
 `crates/fantatt-api/tests/authorization_matrix.rs` boots its own shell around
 a router built from the same declared builder, carrying representative
 object-scoped routes: a league read, an invitation, a squad submission, the
-admin user list, role assignment, and own-account preferences. Each test seeds
-a fresh ephemeral Postgres, mints a session through `GET /auth/csrf`, writes
-the principal id into the session data, and walks anonymous callers plus each
-role against the routes, asserting allow/deny per §1: anonymous callers reach
-only public routes, a member reads its league but cannot invite or submit, a
-collaborator invites but cannot submit, only the superadmin reaches the admin
-surface, a session route serves its own account and refuses another's, and the
-undeclared route denies everyone.
+admin user list, role assignment, the identity ambiguity queue, and
+own-account preferences. Each test seeds a fresh ephemeral Postgres, mints a
+session through `GET /auth/csrf`, writes the principal id into the session
+data, and walks anonymous callers plus each role against the routes, asserting
+allow/deny per §1: anonymous callers reach only public routes, a member reads
+its league but cannot invite or submit, a collaborator invites but cannot
+submit, only the superadmin reaches the admin surface, a session route serves
+its own account and refuses another's, and the undeclared route denies
+everyone.
 
 ## 6. Configuration
 
@@ -125,8 +132,6 @@ that does not name a user id.
 
 ## 7. Deferred
 
-- Per-route 403 responses in the OpenAPI document, with the first
-  capability-gated route (G1.12).
 - Audit-log rows on denial, with the append-only hash chain of G2.4; the deny
   path logs a structured event until then.
 - Reconciling `MembershipRole` (owner/manager) with the five-role capability

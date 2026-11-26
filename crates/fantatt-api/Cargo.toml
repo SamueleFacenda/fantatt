@@ -10,6 +10,7 @@ axum.workspace = true
 async-trait.workspace = true
 fantatt-config = { path = "../fantatt-config" }
 fantatt-core = { path = "../fantatt-core" }
+fantatt-jobs = { path = "../fantatt-jobs" }
 governor.workspace = true
 hmac.workspace = true
 oauth2.workspace = true

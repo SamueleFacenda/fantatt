@@ -7,6 +7,9 @@ use crate::error::Problem;
 use crate::routes::auth::CsrfToken;
 use crate::routes::csp_report::{CspReport, ViolationReport};
 use crate::routes::health::HealthStatus;
+use crate::routes::reconciliation::{
+    AmbiguityItem, AmbiguityQueue, CandidatePlayer, ResolutionConfirmation, ResolutionRequest,
+};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -20,9 +23,22 @@ use crate::routes::health::HealthStatus;
         crate::routes::auth::issue_csrf_token,
         crate::routes::auth::revoke_session,
         crate::routes::csp_report::report_violation,
+        crate::routes::reconciliation::list_ambiguities,
+        crate::routes::reconciliation::resolve_ambiguity,
         openapi_document,
     ),
-    components(schemas(Problem, HealthStatus, CsrfToken, CspReport, ViolationReport))
+    components(schemas(
+        Problem,
+        HealthStatus,
+        CsrfToken,
+        CspReport,
+        ViolationReport,
+        AmbiguityQueue,
+        AmbiguityItem,
+        CandidatePlayer,
+        ResolutionRequest,
+        ResolutionConfirmation,
+    ))
 )]
 pub struct ApiDoc;
 

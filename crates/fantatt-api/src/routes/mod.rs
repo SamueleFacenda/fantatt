@@ -7,7 +7,7 @@ use axum::Extension;
 use axum::Router;
 use axum::http::Method;
 use axum::middleware::{from_fn, from_fn_with_state};
-use axum::routing::delete;
+use axum::routing::{MethodRouter, delete, post};
 
 use fantatt_core::authz::Capability;
 
@@ -20,6 +20,7 @@ use crate::state::AppState;
 pub mod auth;
 pub mod csp_report;
 pub mod health;
+pub mod reconciliation;
 
 pub fn build_router(state: AppState) -> Router {
     let (routes, table) = shell_declarations(state.clone()).build();
@@ -63,8 +64,11 @@ fn with_authorization(
 }
 
 fn shell_declarations(state: AppState) -> DeclaredRouter<AppState> {
-    let revoke = delete(auth::revoke_session)
-        .layer(from_fn_with_state(state, middleware::csrf::enforce_csrf));
+    let revoke = with_csrf(state.clone(), delete(auth::revoke_session));
+    admin_declarations(shell_routes(revoke), state)
+}
+
+fn shell_routes(revoke: MethodRouter<AppState>) -> DeclaredRouter<AppState> {
     DeclaredRouter::new()
         .route("/healthz", authz::get(health::healthz, public_guard()))
         .route(
@@ -85,10 +89,42 @@ fn shell_declarations(state: AppState) -> DeclaredRouter<AppState> {
         )
 }
 
+/// why: the admin surface serves platform operators only, so every route under
+/// it declares the capability a superadmin alone holds, with CSRF enforcement
+/// on the mutating one.
+fn admin_declarations(
+    shell: DeclaredRouter<AppState>,
+    state: AppState,
+) -> DeclaredRouter<AppState> {
+    let settle = with_csrf(state, post(reconciliation::resolve_ambiguity));
+    shell
+        .route(
+            "/api/v1/admin/players/reconciliation",
+            authz::get(reconciliation::list_ambiguities, admin_guard()),
+        )
+        .route(
+            "/api/v1/admin/players/reconciliation/{queue_id}/resolve",
+            authz::DeclaredRoute::new(Method::POST, settle, admin_guard()),
+        )
+}
+
+/// A mutating route wrapped in the double-submit CSRF guard.
+fn with_csrf<S>(state: AppState, route: MethodRouter<S>) -> MethodRouter<S>
+where
+    S: Clone + Send + Sync + 'static,
+{
+    route.layer(from_fn_with_state(state, middleware::csrf::enforce_csrf))
+}
+
 /// why: the shell routes serve anonymous visitors, so every one of them
 /// declares the `public` capability until the first gated route lands.
 fn public_guard() -> Guard {
     guard(Capability::Public, authz::platform())
+}
+
+/// The platform capability only a superadmin holds.
+fn admin_guard() -> Guard {
+    guard(Capability::PlatformAdmin, authz::platform())
 }
 
 fn harden(router: Router<AppState>, state: AppState) -> Router {

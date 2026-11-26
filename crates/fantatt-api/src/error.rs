@@ -121,6 +121,13 @@ impl Problem {
         Self::from_type(problem_type_for_status(status))
     }
 
+    /// The status this problem answers with, which a rule verdict may choose
+    /// freely while the envelope keeps its shape.
+    pub fn with_status(mut self, status: StatusCode) -> Self {
+        self.status = status.as_u16();
+        self
+    }
+
     pub fn with_code(mut self, code: impl Into<String>) -> Self {
         self.extras_mut().code = Some(code.into());
         self
