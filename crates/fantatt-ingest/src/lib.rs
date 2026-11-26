@@ -11,6 +11,7 @@
 
 pub mod archive;
 pub mod breaker;
+pub mod championship;
 pub mod client;
 pub mod conditional;
 pub mod discover;
@@ -25,6 +26,10 @@ pub mod throttle;
 pub mod transport;
 pub mod uri;
 
+pub use championship::{
+    ChampionshipLink, ChampionshipParseError, ParsedChampionshipList, ParsedRegionMenu,
+    RegionCoordinates, parse_championship_list, parse_region_menu,
+};
 pub use client::{FetchClient, Fetched, FetchedPage};
 pub use error::FetchError;
 pub use giornata::{
