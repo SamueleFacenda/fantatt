@@ -113,11 +113,14 @@ async fn a_sweep_records_the_walk_and_queues_the_work_list() {
     let tree = RecordedTree::load();
     let report = sweep(&store, &tree).await;
 
-    assert_eq!(report.walked, 10, "{report:?}");
-    assert_eq!(report.jobs, 27, "{report:?}");
-    assert_eq!(report.missing, 89, "{report:?}");
-    assert_eq!(ledger_rows(&store).await, 10);
-    assert_eq!(job_rows(&store).await, 27);
+    // why: the tournament indexes are walked now, so one frameset, its
+    // header and its list join the tenth page the G1.3 chain walked, and the
+    // four classifica headers the menu links join the jobs
+    assert_eq!(report.walked, 13, "{report:?}");
+    assert_eq!(report.jobs, 6, "{report:?}");
+    assert_eq!(report.missing, 113, "{report:?}");
+    assert_eq!(ledger_rows(&store).await, 13);
+    assert_eq!(job_rows(&store).await, 6);
 }
 
 #[tokio::test]
@@ -127,11 +130,11 @@ async fn a_second_sweep_records_nothing_new_and_queues_nothing_new() {
     let first = sweep(&store, &tree).await;
     let second = sweep(&store, &tree).await;
 
-    assert_eq!(first.jobs, 27);
+    assert_eq!(first.jobs, 6);
     assert_eq!(second.walked, 6, "{second:?}");
     assert_eq!(second.jobs, 0, "{second:?}");
-    assert_eq!(ledger_rows(&store).await, 10);
-    assert_eq!(job_rows(&store).await, 27);
+    assert_eq!(ledger_rows(&store).await, 13);
+    assert_eq!(job_rows(&store).await, 6);
 }
 
 #[tokio::test]
@@ -142,11 +145,12 @@ async fn the_worker_drains_the_whole_work_list() {
 
     let drained = scheduler::drain(&store, &tree).await.expect("drain");
     assert_eq!(jobs_in(&store, "PENDING").await, 0);
-    // the two recorded leaves fetched; the 25 unrecorded tournament pages skipped
-    assert_eq!(jobs_in(&store, "SUCCEEDED").await, 2);
-    assert_eq!(jobs_in(&store, "SKIPPED").await, 25);
-    assert_eq!(drained, 27);
-    assert_eq!(ledger_rows(&store).await, 12);
+    // why: the recorded leaves fetched — the classifica header, the giornata,
+    // and the match detail — while the three unrecorded classifica headers skip
+    assert_eq!(jobs_in(&store, "SUCCEEDED").await, 3);
+    assert_eq!(jobs_in(&store, "SKIPPED").await, 3);
+    assert_eq!(drained, 6);
+    assert_eq!(ledger_rows(&store).await, 16);
 }
 
 #[tokio::test]
