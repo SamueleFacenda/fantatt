@@ -95,6 +95,18 @@ impl ClassificaEntry {
             region: region.to_owned(),
         }
     }
+
+    pub fn classifica_id(&self) -> &str {
+        &self.classifica_id
+    }
+
+    pub fn points(&self) -> i64 {
+        self.points
+    }
+
+    pub fn region(&self) -> &str {
+        &self.region
+    }
 }
 
 /// Evidence that a classifica entry refers to this player.
@@ -112,6 +124,18 @@ impl Evidence {
             seen_in_competition,
             matches,
         }
+    }
+
+    pub fn entry(&self) -> &ClassificaEntry {
+        &self.entry
+    }
+
+    pub fn seen_in_competition(&self) -> &Identifier {
+        &self.seen_in_competition
+    }
+
+    pub fn matches(&self) -> u32 {
+        self.matches
     }
 }
 
@@ -147,6 +171,14 @@ impl PlayerIdentity {
 
     pub fn resolved_at(&self) -> Option<Date> {
         self.resolved_at
+    }
+
+    pub fn aliases(&self) -> &[Alias] {
+        &self.aliases
+    }
+
+    pub fn evidence(&self) -> &[Evidence] {
+        &self.evidence
     }
 
     pub fn add_alias(&mut self, alias: Alias) {

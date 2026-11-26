@@ -21,6 +21,7 @@ pub mod money;
 pub mod player;
 pub mod purge;
 pub mod rating;
+pub mod reconciliation;
 pub mod squad;
 
 #[cfg(test)]
