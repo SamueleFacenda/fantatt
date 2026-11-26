@@ -218,6 +218,10 @@ alias → candidates (classifica entries)
 - `UNRESOLVED`: no candidate → provisional player, rating 2000 (the prototype's
   `NEW_PLAYER_SCORE`), visible in the UI as "new/unranked".
 
+The queue is the `fantatt.identity_ambiguity_queue` table; a superadmin reads
+it and settles one entry through the admin routes of `docs/07-api-spec.md` §12,
+and the decision lands in the append-only audit log.
+
 Ratings are stored per `asOf` date, never overwritten in place, so historical
 scoring is reproducible.
 
