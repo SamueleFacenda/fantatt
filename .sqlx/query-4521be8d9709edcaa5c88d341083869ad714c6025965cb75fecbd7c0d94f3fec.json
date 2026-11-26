@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE fantatt.players SET provisional = false, updated_at = now() WHERE player_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4521be8d9709edcaa5c88d341083869ad714c6025965cb75fecbd7c0d94f3fec"
+}

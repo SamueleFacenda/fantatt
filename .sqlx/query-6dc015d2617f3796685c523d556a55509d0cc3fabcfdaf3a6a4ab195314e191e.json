@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE fantatt.identity_ambiguity_queue SET status = 'RESOLVED', resolved_player_id = $2, resolved_by = $3, resolution_note = $4, resolved_at = now() WHERE queue_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6dc015d2617f3796685c523d556a55509d0cc3fabcfdaf3a6a4ab195314e191e"
+}

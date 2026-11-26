@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT EXISTS (\n            SELECT 1 FROM fantatt.player_ratings WHERE player_id = $1 AND as_of = $2\n         ) AS recorded",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "recorded",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Date"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "7899b82ad3e01a05ceddf1a2e34d318f61305a5ef653bd6a6555d01a1307a641"
+}

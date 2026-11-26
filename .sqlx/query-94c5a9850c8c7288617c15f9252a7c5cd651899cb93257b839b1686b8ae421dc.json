@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.players (player_id, fitet_person_id, full_name, gender)\n         VALUES ($1, $2, $3, $4)\n         ON CONFLICT (player_id)\n         DO UPDATE SET full_name = EXCLUDED.full_name, updated_at = now()\n         RETURNING player_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "player_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.players",
+            "name": "player_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "94c5a9850c8c7288617c15f9252a7c5cd651899cb93257b839b1686b8ae421dc"
+}

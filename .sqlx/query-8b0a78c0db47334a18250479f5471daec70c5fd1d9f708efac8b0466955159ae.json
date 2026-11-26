@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT entity_id FROM fantatt.audit_log WHERE action = 'identity.ambiguity.resolved'",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "entity_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.audit_log",
+            "name": "entity_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "8b0a78c0db47334a18250479f5471daec70c5fd1d9f708efac8b0466955159ae"
+}

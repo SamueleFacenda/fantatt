@@ -48,6 +48,10 @@ async fn stub_handler() -> &'static str {
     "stub"
 }
 
+async fn ambiguity_queue() -> &'static str {
+    "queue"
+}
+
 fn public_guard() -> authz::Guard {
     authz::guard(Capability::Public, authz::platform())
 }
@@ -86,6 +90,16 @@ fn league_mutation_routes(router: DeclaredRouter<AppState>) -> DeclaredRouter<Ap
         )
 }
 
+fn identity_routes(router: DeclaredRouter<AppState>) -> DeclaredRouter<AppState> {
+    router.route(
+        "/admin/players/reconciliation",
+        authz::get(
+            ambiguity_queue,
+            authz::guard(Capability::PlatformAdmin, authz::platform()),
+        ),
+    )
+}
+
 fn admin_routes(router: DeclaredRouter<AppState>) -> DeclaredRouter<AppState> {
     router
         .route(
@@ -118,6 +132,7 @@ fn matrix_routes() -> (axum::Router<AppState>, authz::RouteTable) {
     let declared = shell_routes(DeclaredRouter::<AppState>::new());
     let declared = league_mutation_routes(declared);
     let declared = admin_routes(declared);
+    let declared = identity_routes(declared);
     let declared = account_routes(declared);
     let (router, table) = declared.build();
     (
@@ -342,6 +357,23 @@ async fn role_assignment_requires_the_superadmin_flag() {
     let platform = seed_caller(&shell, 'A', "SUPERADMIN").await;
     let response = put(&shell, &path, Some(&platform)).await;
     assert_eq!(response.status(), 200, "the superadmin assigns roles");
+}
+
+#[tokio::test]
+async fn the_ambiguity_queue_requires_the_superadmin_flag() {
+    let shell = boot().await;
+    let anonymous = read(&shell, "/admin/players/reconciliation", None).await;
+    assert_eq!(anonymous.status(), 403, "anonymous opens no admin route");
+    let admin = seed_caller(&shell, 'E', "LEAGUE_ADMIN").await;
+    let response = read(&shell, "/admin/players/reconciliation", Some(&admin)).await;
+    assert_eq!(
+        response.status(),
+        403,
+        "a league admin is no platform superadmin"
+    );
+    let platform = seed_caller(&shell, 'A', "SUPERADMIN").await;
+    let response = read(&shell, "/admin/players/reconciliation", Some(&platform)).await;
+    assert_eq!(response.status(), 200, "the superadmin reads the queue");
 }
 
 #[tokio::test]

@@ -1371,6 +1371,7 @@ dependencies = [
  "axum",
  "fantatt-config",
  "fantatt-core",
+ "fantatt-jobs",
  "fantatt-test-support",
  "governor",
  "hmac 0.13.0",
@@ -1433,6 +1434,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "axum",
+ "fantatt-core",
  "fantatt-fixtures",
  "rand 0.9.5",
  "reqwest 0.13.0",
@@ -1452,6 +1454,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "fantatt-config",
+ "fantatt-core",
  "fantatt-fixtures",
  "fantatt-ingest",
  "fantatt-test-support",

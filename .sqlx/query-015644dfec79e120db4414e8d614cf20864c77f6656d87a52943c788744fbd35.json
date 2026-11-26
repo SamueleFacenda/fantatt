@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT player_id FROM fantatt.identity_aliases\n              WHERE normalized_alias = $1 ORDER BY created_at LIMIT 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "player_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_aliases",
+            "name": "player_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "015644dfec79e120db4414e8d614cf20864c77f6656d87a52943c788744fbd35"
+}

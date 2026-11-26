@@ -1,0 +1,30 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO fantatt.identity_ambiguity_queue\n                (queue_id, alias_id, candidate_player_ids)\n             VALUES ($1, $2, $3) RETURNING queue_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "queue_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.identity_ambiguity_queue",
+            "name": "queue_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "c048066e5c35e3950ad9a691bd68e0426a9c3286cbe9cdcdac27aba752c19598"
+}

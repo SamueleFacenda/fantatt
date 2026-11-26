@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM fantatt.identity_aliases WHERE alias_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c728eee298ca72558a4ee66d5b5e37b1feb47397dbf48c1ed4d9429d91420d2d"
+}

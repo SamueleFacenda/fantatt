@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT provisional, full_name FROM fantatt.players WHERE player_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "provisional",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "fantatt.players",
+            "name": "provisional"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "full_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "fantatt.players",
+            "name": "full_name"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "645dc0be304840909bb82b547245210bc9f86f001f8a40d59a4161b04c8090f2"
+}

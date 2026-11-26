@@ -10,6 +10,129 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/admin/players/reconciliation": {
+      "get": {
+        "tags": [
+          "crate::routes::reconciliation"
+        ],
+        "summary": "The ambiguities awaiting a decision, newest first, each with the candidate\nplayers it waits on.",
+        "operationId": "list_ambiguities",
+        "responses": {
+          "200": {
+            "description": "The pending ambiguities, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AmbiguityQueue"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The session expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The session is no platform superadmin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The queue is unreadable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/players/reconciliation/{queue_id}/resolve": {
+      "post": {
+        "tags": [
+          "crate::routes::reconciliation"
+        ],
+        "summary": "Settles one queued ambiguity the way the admin decided: the alias moves to\nthe chosen player, who stops being provisional, and the append-only log\nrecords who decided.",
+        "operationId": "resolve_ambiguity",
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "description": "The queued ambiguity to settle",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolutionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The merge the decision settled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolutionConfirmation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The session expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The session is no platform superadmin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The ambiguity awaits no decision, or the chosen player is no candidate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/csp-report": {
       "post": {
         "tags": [
@@ -145,6 +268,72 @@
   },
   "components": {
     "schemas": {
+      "AmbiguityItem": {
+        "type": "object",
+        "description": "One queued ambiguity with the candidate players it waits on.",
+        "required": [
+          "queue_id",
+          "alias_id",
+          "raw_alias",
+          "normalized_alias",
+          "status",
+          "candidates"
+        ],
+        "properties": {
+          "alias_id": {
+            "type": "string"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CandidatePlayer"
+            }
+          },
+          "normalized_alias": {
+            "type": "string"
+          },
+          "queue_id": {
+            "type": "string"
+          },
+          "raw_alias": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AmbiguityQueue": {
+        "type": "object",
+        "description": "The ambiguities awaiting a decision.",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AmbiguityItem"
+            }
+          }
+        }
+      },
+      "CandidatePlayer": {
+        "type": "object",
+        "description": "One candidate of a queued ambiguity.",
+        "required": [
+          "player_id",
+          "full_name"
+        ],
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "player_id": {
+            "type": "string"
+          }
+        }
+      },
       "CspReport": {
         "type": "object",
         "required": [
@@ -230,6 +419,40 @@
               "string",
               "null"
             ]
+          }
+        }
+      },
+      "ResolutionConfirmation": {
+        "type": "object",
+        "description": "The merge the admin decision settled.",
+        "required": [
+          "queue_id",
+          "resolved_player_id"
+        ],
+        "properties": {
+          "queue_id": {
+            "type": "string"
+          },
+          "resolved_player_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ResolutionRequest": {
+        "type": "object",
+        "description": "The admin decision on one queued ambiguity.",
+        "required": [
+          "resolved_player_id"
+        ],
+        "properties": {
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "resolved_player_id": {
+            "type": "string"
           }
         }
       },

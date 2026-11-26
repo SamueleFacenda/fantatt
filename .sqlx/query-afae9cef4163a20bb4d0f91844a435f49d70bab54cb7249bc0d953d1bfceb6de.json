@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT value FROM fantatt.player_ratings WHERE player_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "value",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "fantatt.player_ratings",
+            "name": "value"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "afae9cef4163a20bb4d0f91844a435f49d70bab54cb7249bc0d953d1bfceb6de"
+}

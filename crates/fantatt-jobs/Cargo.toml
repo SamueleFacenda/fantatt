@@ -8,6 +8,7 @@ repository.workspace = true
 [dependencies]
 async-trait.workspace = true
 fantatt-config = { path = "../fantatt-config" }
+fantatt-core = { path = "../fantatt-core" }
 fantatt-ingest = { path = "../fantatt-ingest" }
 rand.workspace = true
 serde.workspace = true

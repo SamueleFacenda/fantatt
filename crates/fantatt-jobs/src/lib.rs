@@ -7,10 +7,12 @@
 //! §4).
 
 pub mod config;
+pub mod identity;
 pub mod ids;
 pub mod scheduler;
 pub mod store;
 pub mod sweep;
 pub mod worker;
 
+pub use identity::{Applied, IdentityStore, QueuedAmbiguity};
 pub use store::{ClaimedJob, NewJob, Outcome, Store};
