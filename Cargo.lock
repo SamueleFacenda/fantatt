@@ -1493,6 +1493,7 @@ dependencies = [
 name = "fantatt-rules"
 version = "0.1.0"
 dependencies = [
+ "oxigraph",
  "serde",
  "sha2 0.11.1",
  "thiserror 1.0.69",

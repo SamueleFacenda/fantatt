@@ -159,3 +159,39 @@ fn the_in_repo_rules_directory_discovers() {
         assert!(!bundle.files().is_empty(), "{}", bundle.name());
     }
 }
+
+/// The committed `fantatt-core` bundle, recorded so an edit to a rule file, an
+/// ontology file, or a golden expectation fails the suite instead of shipping a
+/// ruleset version nobody reviewed.
+const COMMITTED_RULESET: &str = "e561028ae5f9496c668bb279be4248281a1137d2223048d85d4f1efcfac1ce57";
+
+#[test]
+fn the_committed_bundle_addresses_the_version_it_records() {
+    let set = BundleSet::discover().expect("rules directory");
+    let bundle = set
+        .bundles()
+        .expect("bundles")
+        .into_iter()
+        .next()
+        .expect("a committed bundle");
+    assert_eq!(bundle.ruleset_version().as_str(), COMMITTED_RULESET);
+}
+
+#[test]
+fn every_graph_in_the_committed_bundles_parses_as_turtle() {
+    use oxigraph::io::{RdfFormat, RdfParser};
+
+    let set = BundleSet::discover().expect("rules directory");
+    for bundle in set.bundles().expect("bundles") {
+        for file in bundle.files() {
+            if file.relative.ends_with(".ttl") {
+                let text = String::from_utf8_lossy(&file.bytes);
+                let parsed: Result<Vec<_>, _> = RdfParser::from_format(RdfFormat::Turtle)
+                    .for_reader(text.as_bytes())
+                    .collect();
+                let quads = parsed.expect("graph parses as turtle");
+                assert!(!quads.is_empty(), "{} holds no triples", file.relative);
+            }
+        }
+    }
+}
