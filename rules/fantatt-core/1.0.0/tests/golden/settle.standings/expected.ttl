@@ -1,7 +1,6 @@
 # why: 10 + 8 + 6 is the matchday score, and with one scored matchday the month
 # and the season carry the same total.
-@prefix tt: <https://fantatt.org/ontology/tt#> .
-@prefix r:  <https://fantatt.org/rules/settle/1.0.0#> .
-@prefix data: <https://fantatt.org/data/> .
+@prefix r: <https://fantatt.org/rules/settle/1.0.0#> .
 
-data:squad/7f2a r:matchdayScore 24 ; r:monthStandings 24 ; r:seasonStandings 24 .
+<https://fantatt.org/data/squad/7f2a> r:matchdayScore 24 ; r:monthStandings 24 ;
+  r:seasonStandings 24 .

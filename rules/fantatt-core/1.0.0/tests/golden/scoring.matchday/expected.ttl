@@ -3,7 +3,8 @@
 # opponent, keeps 5200 unadjusted, and its ratio of 2.825 lifts the multiplier.
 @prefix tt: <https://fantatt.org/ontology/tt#> .
 @prefix r:  <https://fantatt.org/rules/scoring/1.0.0#> .
-@prefix data: <https://fantatt.org/data/> .
 
-data:appearance/1 tt:opponentRatingAdjusted 4425 ; tt:ratingRatio 0.8875 ; r:multiplier 1.0 .
-data:appearance/2 tt:opponentRatingAdjusted 5200 ; tt:ratingRatio 2.825 ; r:multiplier 2.825 .
+<https://fantatt.org/data/appearance/1> tt:opponentRatingAdjusted 4425 ; tt:ratingRatio 0.8875 ;
+  r:multiplier 1.0 .
+<https://fantatt.org/data/appearance/2> tt:opponentRatingAdjusted 5200 ; tt:ratingRatio 2.825 ;
+  r:multiplier 2.825 .

@@ -1,14 +1,17 @@
 # why: one open lot in an exclusive league with two offers from one manager,
 # one at the current best and one below it (docs/04-reasoning-rules.md §5).
 @prefix tt: <https://fantatt.org/ontology/tt#> .
-@prefix data: <https://fantatt.org/data/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-data:league/7 a tt:League ; tt:ownershipMode tt:Exclusive .
-data:manager/3 a tt:Manager ; tt:inLeague data:league/7 ; tt:budget 100 ; tt:committed 20 .
-data:player/p1 a tt:Player .
-data:lot/9 a tt:Lot ; tt:inLeague data:league/7 ; tt:player data:player/p1 ; tt:status tt:Open .
-data:bid/91 a tt:Bid ; tt:lot data:lot/9 ; tt:manager data:manager/3 ;
-  tt:amount 50 ; tt:placedAt "2026-11-20T20:00:00Z"^^xsd:dateTime .
-data:bid/92 a tt:Bid ; tt:lot data:lot/9 ; tt:manager data:manager/3 ;
-  tt:amount 30 ; tt:placedAt "2026-11-20T20:05:00Z"^^xsd:dateTime .
+<https://fantatt.org/data/league/7> a tt:League ; tt:ownershipMode tt:Exclusive .
+<https://fantatt.org/data/manager/3> a tt:Manager ; tt:inLeague <https://fantatt.org/data/league/7> ;
+  tt:budget 100 ; tt:committed 20 .
+<https://fantatt.org/data/player/p1> a tt:Player .
+<https://fantatt.org/data/lot/9> a tt:Lot ; tt:inLeague <https://fantatt.org/data/league/7> ;
+  tt:player <https://fantatt.org/data/player/p1> ; tt:status tt:Open .
+<https://fantatt.org/data/bid/91> a tt:Bid ; tt:lot <https://fantatt.org/data/lot/9> ;
+  tt:manager <https://fantatt.org/data/manager/3> ; tt:amount 50 ;
+  tt:placedAt "2026-11-20T20:00:00Z"^^xsd:dateTime .
+<https://fantatt.org/data/bid/92> a tt:Bid ; tt:lot <https://fantatt.org/data/lot/9> ;
+  tt:manager <https://fantatt.org/data/manager/3> ; tt:amount 30 ;
+  tt:placedAt "2026-11-20T20:05:00Z"^^xsd:dateTime .

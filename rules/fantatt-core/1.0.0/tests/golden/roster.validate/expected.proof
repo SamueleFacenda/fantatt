@@ -6,5 +6,5 @@ rules-fired:
   - roster.validate.slotTierMatchesPlayer
   - roster.validate.slotCountPerTier
 violations:
-  - E_RosterSize: squad data:squad/7f2a carries 14 slots, INV-2 requires 15
-  - E_TierSlotCount: squad data:squad/7f2a carries 2 slots in tier tt:D2, INV-2 requires 3
+  - E_RosterSize: squad <https://fantatt.org/data/squad/7f2a> carries 14 slots, INV-2 requires 15
+  - E_TierSlotCount: squad <https://fantatt.org/data/squad/7f2a> carries 2 slots in tier tt:D2, INV-2 requires 3

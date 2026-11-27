@@ -2,32 +2,51 @@
 # they play in, so the eligibility rule fires for two slots and the case stays
 # small (docs/03-knowledge-graph.md §1 rule 4, closed-world validation).
 @prefix tt: <https://fantatt.org/ontology/tt#> .
-@prefix data: <https://fantatt.org/data/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-data:league/7 a tt:League ; tt:ownershipMode tt:Exclusive ; tt:hasSquad data:squad/7f2a .
-data:squad/7f2a a tt:Squad ; tt:month "2026-11"^^xsd:gYearMonth ;
-  tt:hasSlot data:slot/b2-1 , data:slot/b2-2 , data:slot/b2-3 ,
-              data:slot/c1-1 , data:slot/c1-2 , data:slot/c1-3 ,
-              data:slot/c2-1 , data:slot/c2-2 , data:slot/c2-3 ,
-              data:slot/d1-1 , data:slot/d1-2 , data:slot/d1-3 ,
-              data:slot/d2-1 , data:slot/d2-2 .
+<https://fantatt.org/data/league/7> a tt:League ;
+  tt:ownershipMode tt:Exclusive ;
+  tt:hasSquad <https://fantatt.org/data/squad/7f2a> .
 
-data:slot/b2-1 tt:slotTier tt:B2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p1 .
-data:slot/b2-2 tt:slotTier tt:B2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p2 .
-data:slot/b2-3 tt:slotTier tt:B2 ; tt:slotKind tt:Bench ; tt:slotPlayer data:player/p3 .
-data:slot/c1-1 tt:slotTier tt:C1 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p4 .
-data:slot/c1-2 tt:slotTier tt:C1 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p5 .
-data:slot/c1-3 tt:slotTier tt:C1 ; tt:slotKind tt:Bench ; tt:slotPlayer data:player/p6 .
-data:slot/c2-1 tt:slotTier tt:C2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p7 .
-data:slot/c2-2 tt:slotTier tt:C2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p8 .
-data:slot/c2-3 tt:slotTier tt:C2 ; tt:slotKind tt:Bench ; tt:slotPlayer data:player/p9 .
-data:slot/d1-1 tt:slotTier tt:D1 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p10 .
-data:slot/d1-2 tt:slotTier tt:D1 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p11 .
-data:slot/d1-3 tt:slotTier tt:D1 ; tt:slotKind tt:Bench ; tt:slotPlayer data:player/p12 .
-data:slot/d2-1 tt:slotTier tt:D2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p13 .
-data:slot/d2-2 tt:slotTier tt:D2 ; tt:slotKind tt:Starter ; tt:slotPlayer data:player/p14 .
+<https://fantatt.org/data/squad/7f2a> a tt:Squad ;
+  tt:month "2026-11"^^xsd:gYearMonth ;
+  tt:hasSlot <https://fantatt.org/data/slot/b2-1> , <https://fantatt.org/data/slot/b2-2> ,
+              <https://fantatt.org/data/slot/b2-3> , <https://fantatt.org/data/slot/c1-1> ,
+              <https://fantatt.org/data/slot/c1-2> , <https://fantatt.org/data/slot/c1-3> ,
+              <https://fantatt.org/data/slot/c2-1> , <https://fantatt.org/data/slot/c2-2> ,
+              <https://fantatt.org/data/slot/c2-3> , <https://fantatt.org/data/slot/d1-1> ,
+              <https://fantatt.org/data/slot/d1-2> , <https://fantatt.org/data/slot/d1-3> ,
+              <https://fantatt.org/data/slot/d2-1> , <https://fantatt.org/data/slot/d2-2> .
 
-data:player/p1 tt:playsIn data:competition/b2 .
-data:player/p2 tt:playsIn data:competition/b2 .
-data:competition/b2 tt:divisionTier tt:B2 .
+<https://fantatt.org/data/slot/b2-1> tt:slotTier tt:B2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p1> .
+<https://fantatt.org/data/slot/b2-2> tt:slotTier tt:B2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p2> .
+<https://fantatt.org/data/slot/b2-3> tt:slotTier tt:B2 ; tt:slotKind tt:Bench ;
+  tt:slotPlayer <https://fantatt.org/data/player/p3> .
+<https://fantatt.org/data/slot/c1-1> tt:slotTier tt:C1 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p4> .
+<https://fantatt.org/data/slot/c1-2> tt:slotTier tt:C1 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p5> .
+<https://fantatt.org/data/slot/c1-3> tt:slotTier tt:C1 ; tt:slotKind tt:Bench ;
+  tt:slotPlayer <https://fantatt.org/data/player/p6> .
+<https://fantatt.org/data/slot/c2-1> tt:slotTier tt:C2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p7> .
+<https://fantatt.org/data/slot/c2-2> tt:slotTier tt:C2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p8> .
+<https://fantatt.org/data/slot/c2-3> tt:slotTier tt:C2 ; tt:slotKind tt:Bench ;
+  tt:slotPlayer <https://fantatt.org/data/player/p9> .
+<https://fantatt.org/data/slot/d1-1> tt:slotTier tt:D1 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p10> .
+<https://fantatt.org/data/slot/d1-2> tt:slotTier tt:D1 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p11> .
+<https://fantatt.org/data/slot/d1-3> tt:slotTier tt:D1 ; tt:slotKind tt:Bench ;
+  tt:slotPlayer <https://fantatt.org/data/player/p12> .
+<https://fantatt.org/data/slot/d2-1> tt:slotTier tt:D2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p13> .
+<https://fantatt.org/data/slot/d2-2> tt:slotTier tt:D2 ; tt:slotKind tt:Starter ;
+  tt:slotPlayer <https://fantatt.org/data/player/p14> .
+
+<https://fantatt.org/data/player/p1> tt:playsIn <https://fantatt.org/data/competition/b2> .
+<https://fantatt.org/data/player/p2> tt:playsIn <https://fantatt.org/data/competition/b2> .
+<https://fantatt.org/data/competition/b2> tt:divisionTier tt:B2 .
