@@ -80,6 +80,10 @@ impl Matchup {
     pub fn opponent(&self) -> Option<&Identifier> {
         self.opponent.as_ref()
     }
+
+    pub fn opponent_rating(&self) -> Option<i64> {
+        self.opponent_rating
+    }
 }
 
 /// How the sets fell, from the player's perspective.
@@ -210,8 +214,24 @@ impl PlayerAppearance {
         &self.player_id
     }
 
+    pub fn matchday_id(&self) -> &Identifier {
+        &self.matchday_id
+    }
+
+    pub fn tie_id(&self) -> &Identifier {
+        &self.tie_id
+    }
+
     pub fn kind(&self) -> AppearanceKind {
         self.kind
+    }
+
+    pub fn matchup(&self) -> &Matchup {
+        &self.matchup
+    }
+
+    pub fn played(&self) -> bool {
+        self.played
     }
 
     pub fn outcome(&self) -> Option<Outcome> {
@@ -315,6 +335,24 @@ mod tests {
             DomainPrefix::Appearance
         );
         assert_eq!(appearance.player_id(), &id(DomainPrefix::Player, 'B'));
+    }
+
+    #[test]
+    fn an_appearance_reads_back_its_contest() {
+        let appearance = PlayerAppearance::new(facts(
+            AppearanceKind::Doubles,
+            Some(id(DomainPrefix::Player, 'E')),
+            true,
+        ))
+        .expect("valid doubles appearance");
+        assert_eq!(appearance.matchday_id(), &id(DomainPrefix::Matchday, 'C'));
+        assert_eq!(appearance.tie_id(), &id(DomainPrefix::Tie, 'D'));
+        assert!(appearance.played());
+        assert_eq!(
+            appearance.matchup().partner(),
+            Some(&id(DomainPrefix::Player, 'E'))
+        );
+        assert_eq!(appearance.matchup().opponent_rating(), Some(2100));
     }
 
     #[test]

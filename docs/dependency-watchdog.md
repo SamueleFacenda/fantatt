@@ -25,7 +25,6 @@ unnoticed.
 | scraper | 0.29.0 | 2026-11-23 | 2026-10-21 (0.29.0) | 3 (causal-agent, adamreichold, cfvescovo) | 37.8M total, 11.2M recent downloads (~4.0M monthly); used in 2,188 crates; 39 releases | 2027-02-21 |
 | axum | 0.8.9 | 2026-11-11 | 2026-04-14 (0.8.9) | 4 (2 users + `tokio-rs:core`, `tokio-rs:axum-release` teams) | 605.9M total, 171.0M recent downloads; HTTP surface of the whole API | 2027-02-09 |
 | config | 0.14.1 | 2026-11-11 | 2026-09-30 (0.15.27) | 5 (3 users + `rust-cli:maintainers` team) | 131.5M total, 23.7M recent downloads; the 0.15 line is newer and not adopted | 2027-02-09 |
-| eyeron | 0.9.2 | 2026-11-11 | 2026-11-09 (0.9.2) | 1 (josd) | 411 total, 411 recent downloads; single owner, tiny adoption — the rule engine has no fallback maintainer (docs/adr/0002) | 2027-02-09 |
 | governor | 0.10.4 | 2026-11-11 | 2025-12-16 (0.10.4) | 1 (antifuchs) | 96.2M total, 24.3M recent downloads; last release 2025-12-16 | 2027-02-09 |
 | oauth2 | 5.0.0 | 2026-11-11 | 2025-01-21 (5.0.0) | 1 (ramosbugs) | 66.1M total, 20.0M recent downloads; last release 2025-01-21 | 2027-02-09 |
 | openidconnect | 4.1.0 | 2026-11-11 | 2026-10-31 (4.1.0) | 1 (ramosbugs) | 18.1M total, 6.1M recent downloads | 2027-02-09 |
