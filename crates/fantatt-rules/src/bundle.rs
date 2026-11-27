@@ -130,7 +130,7 @@ impl Loader {
                 if !self.carries(&file) {
                     return Err(BundleError::MissingGolden {
                         bundle: self.name().to_string(),
-                        entrypoint: format!("{entrypoint}/{name}"),
+                        entrypoint: entrypoint.clone(),
                         file,
                     });
                 }
@@ -213,11 +213,8 @@ fn read_manifest(root: &Path) -> Result<(Manifest, Vec<u8>), BundleError> {
 /// Every file the bundle carries except its manifest, sorted by relative path,
 /// with every root entry the layout does not declare rejected.
 fn walk(root: &Path) -> Result<Vec<BundleFile>, BundleError> {
-    let declared: Vec<String> = read_dir(root)?
-        .into_iter()
-        .map(|entry| entry.file_name().to_string_lossy().into_owned())
-        .collect();
-    for name in declared {
+    for entry in read_dir(root)? {
+        let name = entry.file_name().to_string_lossy().into_owned();
         if !ROOT_ENTRIES.contains(&name.as_str()) {
             return Err(BundleError::Unlisted {
                 bundle: display(root, ""),
@@ -264,24 +261,23 @@ fn read_file(path: &Path, root: &Path) -> Result<BundleFile, BundleError> {
 }
 
 fn read_bytes(path: &Path) -> Result<Vec<u8>, BundleError> {
-    std::fs::read(path).map_err(|reason| BundleError::Io {
-        path: display(path, ""),
-        reason: reason.to_string(),
-    })
+    std::fs::read(path).map_err(|reason| io(path, reason))
 }
 
 fn read_dir(dir: &Path) -> Result<Vec<DirEntry>, BundleError> {
-    let read = std::fs::read_dir(dir).map_err(|reason| BundleError::Io {
-        path: display(dir, ""),
-        reason: reason.to_string(),
-    })?;
+    let read = std::fs::read_dir(dir).map_err(|reason| io(dir, reason))?;
     read.collect::<Result<Vec<DirEntry>, _>>()
-        .map_err(|reason| BundleError::Io {
-            path: display(dir, ""),
-            reason: reason.to_string(),
-        })
+        .map_err(|reason| io(dir, reason))
 }
 
+fn io(path: &Path, reason: std::io::Error) -> BundleError {
+    BundleError::Io {
+        path: display(path, ""),
+        reason: reason.to_string(),
+    }
+}
+
+/// Render a path for an error message; an empty name means the path itself.
 fn display(path: &Path, relative: &str) -> String {
     if relative.is_empty() {
         path.display().to_string()
