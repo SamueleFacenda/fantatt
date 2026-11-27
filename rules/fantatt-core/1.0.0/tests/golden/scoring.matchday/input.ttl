@@ -1,0 +1,17 @@
+# why: two singles appearances, one against a female opponent inside the rating
+# adjustment rule and one without it, so both branches of the multiplier chain
+# are covered (docs/05-scoring-spec.md §2.1 and §2.2).
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix data: <https://fantatt.org/data/> .
+
+data:player/8f2a a tt:Player ; tt:gender tt:Male ; tt:rating 4070 .
+data:player/k0z1 a tt:Player ; tt:gender tt:Female ; tt:rating 5900 .
+data:player/q7w2 a tt:Player ; tt:gender tt:Male ; tt:rating 4070 .
+data:player/m4x9 a tt:Player ; tt:gender tt:Male ; tt:rating 5200 .
+
+data:appearance/1 a tt:PlayerAppearance ; tt:appearanceKind tt:Singles ;
+  tt:player data:player/8f2a ; tt:opponent data:player/k0z1 ;
+  tt:setsWon 3 ; tt:setsLost 2 ; tt:isAway true .
+data:appearance/2 a tt:PlayerAppearance ; tt:appearanceKind tt:Singles ;
+  tt:player data:player/q7w2 ; tt:opponent data:player/m4x9 ;
+  tt:setsWon 2 ; tt:setsLost 3 ; tt:isAway false .

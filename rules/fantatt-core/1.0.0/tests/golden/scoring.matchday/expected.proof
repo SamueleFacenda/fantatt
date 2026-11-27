@@ -1,0 +1,11 @@
+# why: the certificate the engine emits at G1.10 replaces this contract; until
+# then the verdict and the rules that must appear in it are the expectation.
+verdict: checked
+rules-fired:
+  - scoring.matchday.adjustedOpponentRating (read: appearance/1 opponent gender Female, player gender Male, opponent rating 5900)
+  - scoring.matchday.ratingMultiplier (read: appearance/1 singles, adjusted 4425, player rating 4070)
+  - scoring.matchday.unadjustedOpponentRating (read: appearance/2 opponent gender Male)
+  - scoring.matchday.ratingMultiplier (read: appearance/2 singles, adjusted 5200, player rating 4070)
+derived:
+  - appearance/1 opponentRatingAdjusted 4425, ratingRatio 0.8875, multiplier 1.0
+  - appearance/2 opponentRatingAdjusted 5200, ratingRatio 2.825, multiplier 2.825

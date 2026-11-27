@@ -1,0 +1,11 @@
+# why: the monthly and season standings the settle entry point derives
+# (docs/05-scoring-spec.md §11).
+PREFIX tt: <https://fantatt.org/ontology/tt#>
+PREFIX r:  <https://fantatt.org/rules/settle/1.0.0#>
+
+SELECT ?month ?squad ?monthly ?season WHERE {
+  ?squad tt:month ?month ;
+    r:monthStandings ?monthly ;
+    r:seasonStandings ?season .
+}
+ORDER BY ?month DESC(?monthly) ?squad

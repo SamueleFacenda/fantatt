@@ -1,0 +1,9 @@
+# why: the facts the roster entry point derives from input.ttl.
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/roster/1.0.0#> .
+@prefix data: <https://fantatt.org/data/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+data:squad/7f2a r:squadSlotCount "14"^^xsd:integer .
+data:slot/b2-1 r:eligible "true"^^xsd:boolean .
+data:slot/b2-2 r:eligible "true"^^xsd:boolean .

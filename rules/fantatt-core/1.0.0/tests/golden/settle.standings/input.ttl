@@ -1,0 +1,12 @@
+# why: one squad with three scored slots, the smallest graph that exercises
+# matchday, month, and season aggregation (docs/05-scoring-spec.md §11).
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/settle/1.0.0#> .
+@prefix data: <https://fantatt.org/data/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+data:squad/7f2a a tt:Squad ; tt:month "2026-11"^^xsd:gYearMonth ;
+  tt:hasSlot data:slot/a , data:slot/b , data:slot/c .
+data:slot/a r:slotScore 10 .
+data:slot/b r:slotScore 8 .
+data:slot/c r:slotScore 6 .

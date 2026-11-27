@@ -1,0 +1,69 @@
+# why: the vocabulary the core entry points read and assert into, kept beside the
+# rules that use it (docs/03-knowledge-graph.md §3). The shared tt-ontology
+# revision the manifest requires lands with G1.9; this file holds the subset the
+# four entry points name.
+@prefix tt:  <https://fantatt.org/ontology/tt#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+tt:Squad a owl:Class ; rdfs:label "squad"@en, "squadra"@it .
+tt:SquadSlot a owl:Class ; rdfs:label "squad slot"@en .
+tt:DivisionTier a owl:Class ; rdfs:label "division tier"@en .
+tt:SlotKind a owl:Class ; rdfs:label "slot kind"@en .
+tt:Player a owl:Class ; rdfs:label "player"@en .
+tt:Competition a owl:Class ; rdfs:label "competition"@en .
+tt:Gender a owl:Class ; rdfs:label "gender"@en .
+tt:League a owl:Class ; rdfs:label "league"@en .
+tt:OwnershipMode a owl:Class ; rdfs:label "ownership mode"@en .
+tt:Manager a owl:Class ; rdfs:label "manager"@en .
+tt:Matchday a owl:Class ; rdfs:label "matchday"@en .
+tt:AppearanceKind a owl:Class ; rdfs:label "appearance kind"@en .
+tt:PlayerAppearance a owl:Class ; rdfs:label "player appearance"@en .
+tt:Lot a owl:Class ; rdfs:label "auction lot"@en .
+tt:LotStatus a owl:Class ; rdfs:label "lot status"@en .
+tt:Bid a owl:Class ; rdfs:label "auction bid"@en .
+
+tt:Starter a tt:SlotKind . tt:Bench a tt:SlotKind .
+tt:Male a tt:Gender . tt:Female a tt:Gender .
+tt:Singles a tt:AppearanceKind . tt:Doubles a tt:AppearanceKind .
+tt:Exclusive a tt:OwnershipMode . tt:Shared a tt:OwnershipMode .
+tt:Open a tt:LotStatus . tt:Closed a tt:LotStatus .
+
+tt:B2 a tt:DivisionTier ; tt:tierOrder "1"^^xsd:integer .
+tt:C1 a tt:DivisionTier ; tt:tierOrder "2"^^xsd:integer .
+tt:C2 a tt:DivisionTier ; tt:tierOrder "3"^^xsd:integer .
+tt:D1 a tt:DivisionTier ; tt:tierOrder "4"^^xsd:integer .
+tt:D2 a tt:DivisionTier ; tt:tierOrder "5"^^xsd:integer .
+
+tt:hasSlot a owl:ObjectProperty ; rdfs:domain tt:Squad ; rdfs:range tt:SquadSlot .
+tt:slotTier a owl:ObjectProperty ; rdfs:domain tt:SquadSlot ; rdfs:range tt:DivisionTier .
+tt:slotKind a owl:ObjectProperty ; rdfs:domain tt:SquadSlot ; rdfs:range tt:SlotKind .
+tt:slotPlayer a owl:ObjectProperty ; rdfs:domain tt:SquadSlot ; rdfs:range tt:Player .
+tt:playsIn a owl:ObjectProperty ; rdfs:domain tt:Player ; rdfs:range tt:Competition .
+tt:divisionTier a owl:ObjectProperty ; rdfs:domain tt:Competition ; rdfs:range tt:DivisionTier .
+tt:gender a owl:ObjectProperty ; rdfs:domain tt:Player ; rdfs:range tt:Gender .
+tt:ownershipMode a owl:ObjectProperty ; rdfs:domain tt:League ; rdfs:range tt:OwnershipMode .
+tt:hasSquad a owl:ObjectProperty ; rdfs:domain tt:League ; rdfs:range tt:Squad .
+tt:inLeague a owl:ObjectProperty ; rdfs:domain tt:Manager , tt:Lot ; rdfs:range tt:League .
+tt:manager a owl:ObjectProperty ; rdfs:domain tt:Bid ; rdfs:range tt:Manager .
+tt:lot a owl:ObjectProperty ; rdfs:domain tt:Bid ; rdfs:range tt:Lot .
+tt:player a owl:ObjectProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range tt:Player .
+tt:opponent a owl:ObjectProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range tt:Player .
+tt:matchday a owl:ObjectProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range tt:Matchday .
+tt:hasSlotScore a owl:ObjectProperty ; rdfs:domain tt:Matchday ; rdfs:range tt:SquadSlot .
+
+tt:rating a owl:DatatypeProperty ; rdfs:domain tt:Player ; rdfs:range xsd:integer .
+tt:tierOrder a owl:DatatypeProperty ; rdfs:domain tt:DivisionTier ; rdfs:range xsd:integer .
+tt:month a owl:DatatypeProperty ; rdfs:range xsd:gYearMonth .
+tt:number a owl:DatatypeProperty ; rdfs:domain tt:Matchday ; rdfs:range xsd:integer .
+tt:status a owl:DatatypeProperty ; rdfs:domain tt:Lot ; rdfs:range tt:LotStatus .
+tt:amount a owl:DatatypeProperty ; rdfs:domain tt:Bid ; rdfs:range xsd:decimal .
+tt:placedAt a owl:DatatypeProperty ; rdfs:domain tt:Bid ; rdfs:range xsd:dateTime .
+tt:budget a owl:DatatypeProperty ; rdfs:domain tt:Manager ; rdfs:range xsd:decimal .
+tt:committed a owl:DatatypeProperty ; rdfs:domain tt:Manager ; rdfs:range xsd:decimal .
+tt:startingBudget a owl:DatatypeProperty ; rdfs:domain tt:League ; rdfs:range xsd:decimal .
+tt:setsWon a owl:DatatypeProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range xsd:integer .
+tt:setsLost a owl:DatatypeProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range xsd:integer .
+tt:isAway a owl:DatatypeProperty ; rdfs:domain tt:PlayerAppearance ; rdfs:range xsd:boolean .

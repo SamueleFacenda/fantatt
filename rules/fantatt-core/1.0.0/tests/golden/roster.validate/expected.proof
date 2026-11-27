@@ -1,0 +1,10 @@
+# why: the certificate the engine emits at G1.10 replaces this contract; until
+# then the verdict and the rules that must appear in it are the expectation.
+verdict: invalid
+rules-fired:
+  - roster.validate.squadSize
+  - roster.validate.slotTierMatchesPlayer
+  - roster.validate.slotCountPerTier
+violations:
+  - E_RosterSize: squad data:squad/7f2a carries 14 slots, INV-2 requires 15
+  - E_TierSlotCount: squad data:squad/7f2a carries 2 slots in tier tt:D2, INV-2 requires 3
