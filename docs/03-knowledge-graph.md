@@ -89,6 +89,18 @@ tt:SquadSlot a owl:Class ;
   sh:property [ sh:path tt:slotTier ; sh:class tt:DivisionTier ] ,
               [ sh:path tt:slotKind ; sh:in ( tt:Starter tt:Bench ) ] ,
               [ sh:path tt:slotPlayer ; sh:class tt:Player ] .
+
+tt:Tie      sh:property [ sh:path tt:inMatchday ; sh:class tt:Matchday ] ,
+                        [ sh:path tt:decided ; sh:datatype xsd:boolean ] .
+tt:Set      sh:property [ sh:path tt:setOrdinal ; sh:datatype xsd:integer ] ,
+                        [ sh:path tt:setPlayerPoints ; sh:datatype xsd:integer ] ,
+                        [ sh:path tt:setOpponentPoints ; sh:datatype xsd:integer ] .
+tt:AssertionCommit a owl:Class ;
+  sh:property [ sh:path tt:commitId ; sh:datatype xsd:string ] ,
+                [ sh:path tt:importVersion ; sh:datatype xsd:string ] ,
+                [ sh:path tt:sourceUrl ; sh:datatype xsd:string ] ,
+                [ sh:path tt:contentHash ; sh:datatype xsd:string ] ,
+                [ sh:path tt:graphName ; sh:datatype xsd:string ] .
 ```
 
 ## 4. Instance data example
@@ -156,7 +168,33 @@ data:score/squad-s1/matchday-1 a tt:SquadMatchdayScore ;
   tt:computedFromRevision "a19f..." .
 ```
 
-## 6. Query patterns
+## 6. Assert pipeline and snapshots
+
+The assert pipeline (`fantatt-reasoning`) lands one asserted document as one
+named-graph commit:
+
+- Each document materialises into memory as triples, is content-hashed
+  (`CommitId`, SHA-256 over the canonical N-Triples serialisation sorted
+  line-by-line), and lands in
+  `data:matchday/<matchday_id>/asserted/<commitId>` in one storage
+  transaction.
+- Because the write is all-or-nothing, a document that fails validation (an
+  appearance of another matchday, an appearance naming a tie the matchday does
+  not schedule) leaves the graph exactly as it was — the previous graphs stay
+  authoritative, per §8.
+- Re-asserting identical content hashes to the same commit and replaces its
+  graph, so an unchanged portal plans no new history.
+- Every materialised fact node carries `prov:wasGeneratedBy` to its
+  `data:commit/<commitId>` node, plus `tt:bitemporalAssertedAt` and, when the
+  source names a validity day, `tt:bitemporalValidFrom`; the commit node names
+  the actor (`prov:wasAttributedTo data:agent/<importer>`), the source URL,
+  the document hash, the import version, and the graph it wrote.
+- The whole store snapshots as canonical N-Quads (one sorted line per quad)
+  behind a `SnapshotStore` facade, and a store loss is repaired by replaying
+  the assertion log: the graph is a projection, the ledger is the record
+  (docs/adr/0003).
+
+## 7. Query patterns
 
 ### 6.1 Which players are eligible for a D1 starter slot?
 
@@ -197,7 +235,7 @@ WHERE {
 GROUP BY ?player ?rating
 ```
 
-## 7. Storage strategy
+## 8. Storage strategy
 
 | Requirement | Approach |
 | --- | --- |
