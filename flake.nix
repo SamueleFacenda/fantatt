@@ -79,6 +79,10 @@
               # why: fantatt-fixtures reads the recorded fixture tree from
               # disk at test time, so it must reach the build sandbox.
               (pkgs.lib.fileset.maybeMissing ./tests/fixtures)
+              # why: the rule-bundle tests and the `just rules` runner read the
+              # committed bundles from disk, so the tree must reach the build
+              # sandbox like the fixture tree does.
+              (pkgs.lib.fileset.maybeMissing ./rules)
             ];
           };
 

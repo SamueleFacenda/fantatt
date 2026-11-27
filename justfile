@@ -31,6 +31,12 @@ coverage:
 fixtures-verify:
     cargo run -q --bin fantatt-fixtures -- verify
 
+# Verify the committed rule bundles under rules/: every manifest, every declared
+# entry point and its golden case, and the ruleset version each bundle's content
+# addresses to (docs/04-reasoning-rules.md §3).
+rules:
+    cargo run -q --bin fantatt-rules -- verify
+
 # Smoke the discovery sweep against the live portal: walk portale.fitet.org
 # through the polite fetch client, record the pages in the dev database, and
 # queue the work list. Needs network access; a second sweep follows to prove
@@ -56,7 +62,7 @@ fixtures-capture:
 
 # Full local gate suite: format, clippy, tests, fixture tree, comment lint,
 # secret scan, offline query data freshness, docs links, dependency watchdog.
-check: fmt-check lint test fixtures-verify comment-lint secrets db-offline-check docs-check watchdog watchdog-selftest
+check: fmt-check lint test fixtures-verify rules comment-lint secrets db-offline-check docs-check watchdog watchdog-selftest
 
 # Lint with clippy, failing on any warning.
 lint:
