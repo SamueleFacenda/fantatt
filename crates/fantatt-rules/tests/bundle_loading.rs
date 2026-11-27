@@ -51,9 +51,17 @@ fn seed_bundle(root: &Path, name: &str, version: &str) -> PathBuf {
         "manifest.toml",
         manifest_for(name, version).as_bytes(),
     );
-    write(&bundle, "ontology/tt.ttl", b"@prefix tt: <https://fantatt.org/ontology/tt#> .\n");
+    write(
+        &bundle,
+        "ontology/tt.ttl",
+        b"@prefix tt: <https://fantatt.org/ontology/tt#> .\n",
+    );
     for entrypoint in ENTRYPOINTS {
-        write(&bundle, &format!("rules/{entrypoint}.n3"), b"{ ?s ?p ?o }\n");
+        write(
+            &bundle,
+            &format!("rules/{entrypoint}.n3"),
+            b"{ ?s ?p ?o }\n",
+        );
         for name in ["input.ttl", "expected.ttl", "expected.proof"] {
             write(
                 &bundle,
@@ -84,8 +92,7 @@ fn an_edited_rule_file_addresses_a_new_version() {
     let root = scratch("tamper");
     let bundle = full_bundle(&root);
     let before = Bundle::load(&bundle).expect("load");
-    std::fs::write(bundle.join("rules/roster.validate.n3"), b"{ ?s ?p ?o2 }\n")
-        .expect("tamper");
+    std::fs::write(bundle.join("rules/roster.validate.n3"), b"{ ?s ?p ?o2 }\n").expect("tamper");
     let after = Bundle::load(&bundle).expect("reload");
     assert_ne!(before.ruleset_version(), after.ruleset_version());
     std::fs::remove_dir_all(&root).ok();
@@ -110,7 +117,10 @@ fn a_bundle_without_a_golden_case_refuses_to_load() {
     let bundle = full_bundle(&root);
     std::fs::remove_file(bundle.join("tests/golden/auction.bid/expected.proof")).expect("remove");
     let error = Bundle::load(&bundle).expect_err("missing golden case");
-    assert!(matches!(error, BundleError::MissingGolden { .. }), "{error}");
+    assert!(
+        matches!(error, BundleError::MissingGolden { .. }),
+        "{error}"
+    );
     std::fs::remove_dir_all(&root).ok();
 }
 

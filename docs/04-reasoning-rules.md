@@ -59,6 +59,17 @@ evidence = { source = "git", commit = "…", spec = "docs/05-scoring-spec.md §3
 rule file. Changing one constant creates a new ruleset and forces a recompute of
 every score derived from the old one.
 
+An entry point names its rule file and its golden case: `roster.validate` reads
+`rules/roster.validate.n3` and is tested by `tests/golden/roster.validate/`
+(`input.ttl`, `expected.ttl`, `expected.proof`). The loader refuses a bundle
+whose manifest disagrees with its directory, whose entry point has no rule file
+or no golden case, or that carries a file the layout does not declare.
+
+The digest covers the manifest bytes followed by every file the bundle carries,
+in sorted relative-path order, each contribution prefixed with its name length
+and its byte length so no two different file sets can hash alike. `just rules`
+loads every committed bundle and prints the version each one addresses.
+
 ## 4. Core rule set
 
 ### 4.1 Roster validity
@@ -289,4 +300,6 @@ update a single traversal, not a migration.
 For each rule: a **positive case**, a **negative case per violation**, and a
 **boundary case**. Tests are golden-file: input graph, rule bundle, expected
 derived graph, expected proof. This is the mechanism that guarantees the spec in
-`05-scoring-spec.md` §8 stays true forever.
+`05-scoring-spec.md` §8 stays true forever. A committed bundle carries one
+golden case per entry point; the engine that evaluates them and emits the
+certificates they expect arrives with the reasoning-engine goal.

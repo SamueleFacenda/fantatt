@@ -18,6 +18,7 @@ fantatt/
 ├── crates/
 │   ├── fantatt-core/             # domain types, invariants, ports
 │   ├── fantatt-reasoning/        # rule engine + Oxigraph + eyeron integration (rudof arrives with G1.9)
+│   ├── fantatt-rules/            # rule bundle format, content addressing, and the `just rules` runner
 │   ├── fantatt-scoring/          # pure scoring functions
 │   ├── fantatt-ingest/           # FITET scraper and parsers
 │   ├── fantatt-api/              # axum handlers, middleware, OpenAPI
@@ -30,8 +31,8 @@ fantatt/
 │
 ├── migrations/                   # sqlx migrations: <version>_<name>.{up,down}.sql
 │
-├── rules/                        # versioned rule bundles
-│   ├── fantatt-core/1.4.0/...
+├── rules/                        # versioned rule bundles (G1.8)
+│   ├── fantatt-core/1.0.0/...    # roster, scoring, auction, standings
 │   └── ...
 │
 ├── web/                          # React PWA
@@ -70,7 +71,9 @@ fantatt/
 ## 2. Rust workspace
 
 `fantatt-core` depends on nothing external beyond `serde`, `thiserror`, and
-`time`. Everything else builds on it.
+`time`. Everything else builds on it. `fantatt-rules` depends on nothing
+internal: it reads the rule bundles under `rules/` and is the only crate that
+hashes them.
 
 ```toml
 [workspace]
@@ -173,7 +176,7 @@ is atomic and instant.
 | `just test` | Unit + integration |
 | `just e2e` | Browser E2E against the local stack |
 | `just nixos-test` | NixOS VM integration suite |
-| `just rules` | Extract, run, and verify rule bundles |
+| `just rules` | Verify the committed rule bundles: manifest, entry points, golden cases, and content address |
 | `just check` | Everything CI runs |
 | `just security` | Security scans |
 | `just docs` | Validate diagrams and OpenAPI |
