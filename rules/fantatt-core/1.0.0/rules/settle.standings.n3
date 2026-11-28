@@ -1,0 +1,36 @@
+# Standings settlement (docs/04-reasoning-rules.md §7, the aggregation of
+# docs/05-scoring-spec.md §11): slot scores become the matchday score of a
+# squad, and matchday scores become the monthly and season standings.
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/settle/1.0.0#> .
+@prefix rule: <https://fantatt.org/rules/> .
+
+# matchday: the sum of the slot scores the squad fielded that day
+r:matchdayScore a rule:Rule ;
+  r:when {
+    ?squad tt:hasSlot ?slot . ?slot r:slotScore ?points .
+    { SELECT ?squad (SUM(?points) AS ?total) WHERE {
+        ?squad tt:hasSlot ?s . ?s r:slotScore ?points .
+      } GROUP BY ?squad }
+  } ;
+  r:assert { ?squad r:matchdayScore ?total } .
+
+# month: every matchday score the squad scored inside the calendar month
+r:monthStandings a rule:Rule ;
+  r:when {
+    ?squad tt:month ?month ; r:matchdayScore ?score .
+    { SELECT ?squad ?month (SUM(?s) AS ?total) WHERE {
+        ?squad tt:month ?month ; r:matchdayScore ?s .
+      } GROUP BY ?squad ?month }
+  } ;
+  r:assert { ?squad r:monthStandings ?total } .
+
+# season: the cumulative total across every month of the competitive season
+r:seasonStandings a rule:Rule ;
+  r:when {
+    ?squad r:monthStandings ?monthly .
+    { SELECT ?squad (SUM(?m) AS ?total) WHERE { ?squad r:monthStandings ?m } GROUP BY ?squad }
+  } ;
+  r:assert { ?squad r:seasonStandings ?total } ;
+  r:check  { ?total >= 0 } ;
+  r:violation r:E_NegativeStandings .

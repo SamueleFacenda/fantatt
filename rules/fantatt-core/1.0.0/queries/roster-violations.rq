@@ -1,0 +1,10 @@
+# why: the admin view of a refused roster: which squad broke which invariant
+# and by how much (docs/04-reasoning-rules.md §8).
+PREFIX tt: <https://fantatt.org/ontology/tt#>
+PREFIX r:  <https://fantatt.org/rules/roster/1.0.0#>
+
+SELECT ?squad ?slots WHERE {
+  ?squad a tt:Squad ; r:squadSlotCount ?slots .
+  FILTER (?slots != 15)
+}
+ORDER BY ?squad

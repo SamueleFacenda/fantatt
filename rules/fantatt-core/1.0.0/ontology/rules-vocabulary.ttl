@@ -1,0 +1,16 @@
+# why: the shape of an authored rule. Game logic is data, so a rule is a subject
+# with its antecedent, the facts it asserts, the condition that must hold, and
+# the violation it reports (docs/04-reasoning-rules.md §1 and §4).
+@prefix rule: <https://fantatt.org/rules/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+rule:Rule a owl:Class ; rdfs:label "rule"@en .
+rule:when a owl:ObjectProperty ; rdfs:label "antecedent"@en ;
+  rdfs:domain rule:Rule .
+rule:assert a owl:ObjectProperty ; rdfs:label "derived fact"@en ;
+  rdfs:domain rule:Rule .
+rule:check a owl:ObjectProperty ; rdfs:label "condition that must hold"@en ;
+  rdfs:domain rule:Rule .
+rule:violation a owl:ObjectProperty ; rdfs:label "reported violation"@en ;
+  rdfs:domain rule:Rule .

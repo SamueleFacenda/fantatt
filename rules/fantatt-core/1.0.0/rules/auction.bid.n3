@@ -1,0 +1,40 @@
+# Auction rules (docs/04-reasoning-rules.md §5): a bid is valid only while it is
+# the current highest offer, respects the manager's budget, and takes no player
+# the league already owns.
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/auction/1.0.0#> .
+@prefix rule: <https://fantatt.org/rules/> .
+
+# INV-11: an offer wins only if it is the current highest and the window is open
+r:bidValidity a rule:Rule ;
+  r:when {
+    ?lot a tt:Lot ; tt:status tt:Open .
+    ?bid a tt:Bid ; tt:lot ?lot ; tt:amount ?amount ;
+         tt:placedAt ?at ; tt:manager ?m .
+    { SELECT ?lot (MAX(?a) AS ?best) WHERE { ?b tt:lot ?lot ; tt:amount ?a } GROUP BY ?lot }
+  } ;
+  r:assert { ?lot r:winningBid ?bid } ;
+  r:check  { ?amount = ?best } ;
+  r:violation r:E_Outbid .
+
+# INV-12: budget never exceeded
+r:budgetCeiling a rule:Rule ;
+  r:when {
+    ?m tt:inLeague ?league ; tt:budget ?b ; tt:committed ?c .
+    ?bid tt:manager ?m ; tt:amount ?a .
+  } ;
+  r:assert { ?m r:budgetRemaining (b - c) } ;
+  r:check  { ?c + ?a <= ?b } ;
+  r:violation r:E_BudgetExceeded .
+
+# INV: exclusivity of the winner
+r:exclusiveOwnershipBid a rule:Rule ;
+  r:when {
+    ?league tt:ownershipMode tt:Exclusive .
+    ?lot tt:inLeague ?league ; tt:player ?p .
+    { SELECT ?league ?p (COUNT(?squad) AS ?n) WHERE {
+        ?league tt:hasSquad ?squad . ?squad tt:hasSlot ?slot . ?slot tt:slotPlayer ?p .
+      } GROUP BY ?league ?p }
+  } ;
+  r:check  { ?n = 0 } ;
+  r:violation r:E_AlreadyOwned .

@@ -1,0 +1,82 @@
+# Roster validity (docs/04-reasoning-rules.md §4.1 and §4.2): the invariants a
+# squad must hold before a league accepts it. Validation is closed-world — a
+# missing fact reads as invalid, never as absent-and-therefore-fine.
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/roster/1.0.0#> .
+@prefix rule: <https://fantatt.org/rules/> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+
+# INV-2: squad size is fixed
+r:squadSize a rule:Rule ;
+  r:when {
+    ?squad a tt:Squad .
+    { SELECT ?squad (COUNT(?slot) AS ?n) WHERE { ?squad tt:hasSlot ?slot } GROUP BY ?squad }
+  } ;
+  r:assert { ?squad r:squadSlotCount ?n } ;
+  r:check  { ?n = 15 } ;
+  r:violation r:E_RosterSize .
+
+# INV-3: tier match between slot and player's active division
+r:slotTierMatchesPlayer a rule:Rule ;
+  r:when {
+    ?slot tt:slotPlayer ?player ; tt:slotTier ?tier .
+    ?player tt:playsIn/tt:divisionTier ?tier .
+  } ;
+  r:assert { ?slot r:eligible true } ;
+  r:check  { ?slot r:eligible true } ;
+  r:violation r:E_IneligiblePlayer .
+
+# INV-6: no duplicate player in a squad
+r:noDuplicatePlayer a rule:Rule ;
+  r:when {
+    { SELECT ?squad ?player (COUNT(?slot) AS ?n) WHERE {
+        ?squad tt:hasSlot ?slot . ?slot tt:slotPlayer ?player .
+      } GROUP BY ?squad ?player }
+  } ;
+  r:check  { ?n = 1 } ;
+  r:violation r:E_DuplicatePlayer .
+
+# INV-4: exclusivity in exclusive ownership mode
+r:noSharedPlayerInExclusiveLeague a rule:Rule ;
+  r:when {
+    ?league tt:ownershipMode tt:Exclusive .
+    { SELECT ?league ?player (COUNT(?squad) AS ?n) WHERE {
+        ?league tt:hasSquad ?squad . ?squad tt:hasSlot ?slot . ?slot tt:slotPlayer ?player .
+      } GROUP BY ?league ?player }
+  } ;
+  r:check  { ?n <= 1 } ;
+  r:violation r:E_SharedPlayerNotAllowed .
+
+# per tier: exactly 2 starters and 1 bench (INV-2 decomposition)
+r:starterCountPerTier a rule:Rule ;
+  r:when {
+    ?squad tt:hasSlot ?slot . ?slot tt:slotTier ?tier ; tt:slotKind tt:Starter .
+    { SELECT ?squad ?tier (COUNT(?s) AS ?n) WHERE {
+        ?squad tt:hasSlot ?s . ?s tt:slotTier ?tier ; tt:slotKind tt:Starter .
+      } GROUP BY ?squad ?tier }
+  } ;
+  r:check  { ?n = 2 } ;
+  r:violation r:E_StarterCount .
+
+r:benchCountPerTier a rule:Rule ;
+  r:when {
+    ?squad tt:hasSlot ?slot . ?slot tt:slotTier ?tier ; tt:slotKind tt:Bench .
+    { SELECT ?squad ?tier (COUNT(?s) AS ?n) WHERE {
+        ?squad tt:hasSlot ?s . ?s tt:slotTier ?tier ; tt:slotKind tt:Bench .
+      } GROUP BY ?squad ?tier }
+  } ;
+  r:check  { ?n = 1 } ;
+  r:violation r:E_BenchCount .
+
+# why: a bench that was never filled joins no ?bench variable, so the count
+# above cannot see it; the slot count per tier is the closed-world check that
+# catches a short squad inside one tier.
+r:slotCountPerTier a rule:Rule ;
+  r:when {
+    ?squad tt:hasSlot ?slot . ?slot tt:slotTier ?tier .
+    { SELECT ?squad ?tier (COUNT(?s) AS ?n) WHERE {
+        ?squad tt:hasSlot ?s . ?s tt:slotTier ?tier .
+      } GROUP BY ?squad ?tier }
+  } ;
+  r:check  { ?n = 3 } ;
+  r:violation r:E_TierSlotCount .

@@ -1,0 +1,15 @@
+# why: the scoring breakdown of one matchday, the view a manager disputes a
+# score from (docs/07-api-spec.md, docs/05-scoring-spec.md §2).
+PREFIX tt: <https://fantatt.org/ontology/tt#>
+PREFIX r:  <https://fantatt.org/rules/scoring/1.0.0#>
+
+SELECT ?appearance ?kind ?setsWon ?setsLost ?adjusted ?ratio ?multiplier WHERE {
+  ?appearance a tt:PlayerAppearance ;
+    tt:appearanceKind ?kind ;
+    tt:setsWon ?setsWon ;
+    tt:setsLost ?setsLost ;
+    tt:opponentRatingAdjusted ?adjusted ;
+    tt:ratingRatio ?ratio .
+  OPTIONAL { ?appearance r:multiplier ?multiplier }
+}
+ORDER BY ?appearance

@@ -1,0 +1,9 @@
+# why: the certificate the engine emits at G1.10 replaces this contract; until
+# then the verdict and the rules that must appear in it are the expectation.
+verdict: checked
+rules-fired:
+  - settle.standings.matchdayScore (read: squad <https://fantatt.org/data/squad/7f2a> slots scoring 10, 8, 6)
+  - settle.standings.monthStandings (read: squad <https://fantatt.org/data/squad/7f2a> month 2026-11, matchday score 24)
+  - settle.standings.seasonStandings (read: squad <https://fantatt.org/data/squad/7f2a> monthly total 24)
+derived:
+  - squad <https://fantatt.org/data/squad/7f2a> matchdayScore 24, monthStandings 24, seasonStandings 24

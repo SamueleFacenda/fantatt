@@ -1,0 +1,12 @@
+# why: the certificate the engine emits at G1.10 replaces this contract; until
+# then the verdict and the rules that must appear in it are the expectation.
+verdict: invalid
+rules-fired:
+  - auction.bid.bidValidity (read: lot <https://fantatt.org/data/lot/9> open, bids <https://fantatt.org/data/bid/91> at 50 and <https://fantatt.org/data/bid/92> at 30, best 50)
+  - auction.bid.budgetCeiling (read: manager <https://fantatt.org/data/manager/3> budget 100, committed 20)
+  - auction.bid.exclusiveOwnershipBid (read: league <https://fantatt.org/data/league/7> exclusive, player <https://fantatt.org/data/player/p1> owned by 0 squads)
+violations:
+  - E_Outbid: bid <https://fantatt.org/data/bid/92> offers 30 below the current best 50 on lot <https://fantatt.org/data/lot/9>
+checks-held:
+  - auction.bid.budgetCeiling: 20 + 50 <= 100 and 20 + 30 <= 100
+  - auction.bid.exclusiveOwnershipBid: 0 squads own <https://fantatt.org/data/player/p1>

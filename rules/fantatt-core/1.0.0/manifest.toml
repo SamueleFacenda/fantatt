@@ -1,0 +1,14 @@
+# The core game logic: roster validity, matchday scoring, auction bids, and
+# standings settlement (docs/04-reasoning-rules.md §4 and §5).
+name = "fantatt-core"
+version = "1.0.0"
+entrypoints = ["roster.validate", "scoring.matchday", "auction.bid", "settle.standings"]
+
+# The shared ontology revision this bundle was written against: the engine
+# refuses to run it against a revision whose vocabulary moved under it.
+requires = ["tt-ontology@1.2.0"]
+
+[evidence]
+source = "docs/04-reasoning-rules.md"
+commit = "internal"
+spec = "G1.8"

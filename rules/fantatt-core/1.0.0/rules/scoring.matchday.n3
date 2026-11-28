@@ -1,0 +1,38 @@
+# Matchday rating multipliers (docs/04-reasoning-rules.md §4.4 and §4.5, the
+# arithmetic of docs/05-scoring-spec.md §2.1 and §2.2).
+@prefix tt: <https://fantatt.org/ontology/tt#> .
+@prefix r:  <https://fantatt.org/rules/scoring/1.0.0#> .
+@prefix rule: <https://fantatt.org/rules/> .
+
+# a male player faces a female opponent: the opponent rating is adjusted
+r:adjustedOpponentRating a rule:Rule ;
+  r:when {
+    ?app tt:opponent ?opp .
+    ?opp tt:gender tt:Female .
+    ?player tt:gender tt:Male .
+    ?opp tt:rating ?base .
+  } ;
+  r:assert { ?app tt:opponentRatingAdjusted (base * 0.75) } .
+
+r:unadjustedOpponentRating a rule:Rule ;
+  r:when {
+    ?app tt:opponent ?opp .
+    { FILTER NOT EXISTS { ?player tt:gender tt:Male . ?opp tt:gender tt:Female . } }
+    ?opp tt:rating ?base .
+  } ;
+  r:assert { ?app tt:opponentRatingAdjusted ?base } .
+
+# the rating multiplier of a singles appearance: the ratio of the adjusted
+# opponent rating to the player's own, floored at 1.0
+r:ratingMultiplier a rule:Rule ;
+  r:when {
+    ?app a tt:PlayerAppearance ; tt:appearanceKind tt:Singles ;
+         tt:player ?player ; tt:opponentRatingAdjusted ?adj .
+    ?player tt:rating ?own .
+    ?adj - ?own = (diff) .
+    ?diff / 400 = (ratio) .
+  } ;
+  r:assert { ?app tt:ratingRatio ?ratio ;
+             r:multiplier (if(ratio > 1.0, ratio, 1.0)) } .
+
+# doubles carry no rating multiplier: the default 1.0 needs no rule

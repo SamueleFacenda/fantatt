@@ -1,0 +1,6 @@
+# why: the highest offer leads the lot and the manager keeps the budget the
+# committed offers leave (100 - 20).
+@prefix r: <https://fantatt.org/rules/auction/1.0.0#> .
+
+<https://fantatt.org/data/lot/9> r:winningBid <https://fantatt.org/data/bid/91> .
+<https://fantatt.org/data/manager/3> r:budgetRemaining 80 .
