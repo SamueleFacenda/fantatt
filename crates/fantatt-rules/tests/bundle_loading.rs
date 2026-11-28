@@ -57,20 +57,21 @@ fn seed_bundle(root: &Path, name: &str, version: &str) -> PathBuf {
         b"@prefix tt: <https://fantatt.org/ontology/tt#> .\n",
     );
     for entrypoint in ENTRYPOINTS {
-        write(
-            &bundle,
-            &format!("rules/{entrypoint}.n3"),
-            b"{ ?s ?p ?o }\n",
-        );
-        for name in ["input.ttl", "expected.ttl", "expected.proof"] {
-            write(
-                &bundle,
-                &format!("tests/golden/{entrypoint}/{name}"),
-                b"placeholder\n",
-            );
-        }
+        seed_entrypoint(&bundle, entrypoint);
     }
     bundle
+}
+
+/// One entry point's rule file and its golden case.
+fn seed_entrypoint(bundle: &Path, entrypoint: &str) {
+    write(bundle, &format!("rules/{entrypoint}.n3"), b"{ ?s ?p ?o }\n");
+    for name in ["input.ttl", "expected.ttl", "expected.proof"] {
+        write(
+            bundle,
+            &format!("tests/golden/{entrypoint}/{name}"),
+            b"placeholder\n",
+        );
+    }
 }
 
 #[test]
